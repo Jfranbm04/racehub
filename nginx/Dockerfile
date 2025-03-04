@@ -1,14 +1,10 @@
 FROM nginx:latest
 
-# Instala openssl 
+# Install openssl 
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
-# Copia la configuración de Nginx 
+# Create directory for PHP socket
+RUN mkdir -p /var/run/php
+
+# Copy Nginx configuration 
 COPY default.conf /etc/nginx/conf.d/default.conf
-
-# Copia el script de entrypoint y asigna permisos de ejecución
-RUN chmod +x /certificadoRGC.sh
-
-
-
-
