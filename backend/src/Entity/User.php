@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -33,6 +35,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
+    #[ORM\Column]
+    private ?bool $banned = null;
+
+    /**
+     * @var Collection<int, CyclingParticipant>
+     */
+    #[ORM\OneToMany(targetEntity: CyclingParticipant::class, mappedBy: 'user')]
+    private Collection $cyclingParticipants;
+
+    /**
+     * @var Collection<int, RunningParticipant>
+     */
+    #[ORM\OneToMany(targetEntity: RunningParticipant::class, mappedBy: 'user')]
+    private Collection $runningParticipants;
+
+    /**
+     * @var Collection<int, TrailRunningParticipant>
+     */
+    #[ORM\OneToMany(targetEntity: TrailRunningParticipant::class, mappedBy: 'user')]
+    private Collection $trailRunningParticipants;
+
+    public function __construct()
+    {
+        $this->cyclingParticipants = new ArrayCollection();
+        $this->runningParticipants = new ArrayCollection();
+        $this->trailRunningParticipants = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -107,5 +140,119 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function isBanned(): ?bool
+    {
+        return $this->banned;
+    }
+
+    public function setBanned(bool $banned): static
+    {
+        $this->banned = $banned;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CyclingParticipant>
+     */
+    public function getCyclingParticipants(): Collection
+    {
+        return $this->cyclingParticipants;
+    }
+
+    public function addCyclingParticipant(CyclingParticipant $cyclingParticipant): static
+    {
+        if (!$this->cyclingParticipants->contains($cyclingParticipant)) {
+            $this->cyclingParticipants->add($cyclingParticipant);
+            $cyclingParticipant->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCyclingParticipant(CyclingParticipant $cyclingParticipant): static
+    {
+        if ($this->cyclingParticipants->removeElement($cyclingParticipant)) {
+            // set the owning side to null (unless already changed)
+            if ($cyclingParticipant->getUser() === $this) {
+                $cyclingParticipant->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RunningParticipant>
+     */
+    public function getRunningParticipants(): Collection
+    {
+        return $this->runningParticipants;
+    }
+
+    public function addRunningParticipant(RunningParticipant $runningParticipant): static
+    {
+        if (!$this->runningParticipants->contains($runningParticipant)) {
+            $this->runningParticipants->add($runningParticipant);
+            $runningParticipant->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRunningParticipant(RunningParticipant $runningParticipant): static
+    {
+        if ($this->runningParticipants->removeElement($runningParticipant)) {
+            // set the owning side to null (unless already changed)
+            if ($runningParticipant->getUser() === $this) {
+                $runningParticipant->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TrailRunningParticipant>
+     */
+    public function getTrailRunningParticipants(): Collection
+    {
+        return $this->trailRunningParticipants;
+    }
+
+    public function addTrailRunningParticipant(TrailRunningParticipant $trailRunningParticipant): static
+    {
+        if (!$this->trailRunningParticipants->contains($trailRunningParticipant)) {
+            $this->trailRunningParticipants->add($trailRunningParticipant);
+            $trailRunningParticipant->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTrailRunningParticipant(TrailRunningParticipant $trailRunningParticipant): static
+    {
+        if ($this->trailRunningParticipants->removeElement($trailRunningParticipant)) {
+            // set the owning side to null (unless already changed)
+            if ($trailRunningParticipant->getUser() === $this) {
+                $trailRunningParticipant->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

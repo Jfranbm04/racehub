@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Running{% endblock %}
+
+{% block body %}
+    <h1>Edit Running</h1>
+
+    {{ include('running/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_running_index') }}">back to list</a>
+
+    {{ include('running/_delete_form.html.twig') }}
+{% endblock %}
