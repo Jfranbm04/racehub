@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cycling{% endblock %}
+
+{% block body %}
+    <h1>Cycling</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ cycling.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ cycling.name }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ cycling.description }}</td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td>{{ cycling.date ? cycling.date|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Distance_km</th>
+                <td>{{ cycling.distanceKm }}</td>
+            </tr>
+            <tr>
+                <th>Location</th>
+                <td>{{ cycling.location }}</td>
+            </tr>
+            <tr>
+                <th>Coordinates</th>
+                <td>{{ cycling.coordinates }}</td>
+            </tr>
+            <tr>
+                <th>Unevenness</th>
+                <td>{{ cycling.unevenness }}</td>
+            </tr>
+            <tr>
+                <th>Entry_fee</th>
+                <td>{{ cycling.entryFee }}</td>
+            </tr>
+            <tr>
+                <th>Available_slots</th>
+                <td>{{ cycling.availableSlots }}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{ cycling.status }}</td>
+            </tr>
+            <tr>
+                <th>Category</th>
+                <td>{{ cycling.category }}</td>
+            </tr>
+            <tr>
+                <th>Image</th>
+                <td>{{ cycling.image }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_cycling_index') }}">back to list</a>
+
+    <a href="{{ path('app_cycling_edit', {'id': cycling.id}) }}">edit</a>
+
+    {{ include('cycling/_delete_form.html.twig') }}
+{% endblock %}
