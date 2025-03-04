@@ -1,0 +1,44 @@
+services:
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"  # Puerto de tu aplicación Symfony
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - ./backend:/var/www/html  # Monta el código local dentro del contenedor
+    depends_on:
+      - database
+    networks:
+      - network_racehub
+
+  database:
+    image: mysql:8.0
+    env_file:
+      - .env
+    volumes:
+      - db_data:/var/lib/mysql  # Persistencia de datos de MySQL
+    ports:
+      - "3306:3306"  # Puerto de MySQL
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"  # Acceso a PHPMyAdmin en http://localhost:8080
+    environment:
+      PMA_HOST: database  
+      PMA_PORT: 3306
+    env_file:
+      - .env
+    depends_on:
+      - database
+
+
+networks:
+  network_racehub:
+    driver: bridge
+
+volumes:
+  db_data:  # Volumen para persistir los datos de la base de datos
