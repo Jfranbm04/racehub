@@ -9,73 +9,63 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/cycling')]
 final class CyclingController extends AbstractController
 {
     #[Route(name: 'app_cycling_index', methods: ['GET'])]
-    public function index(CyclingRepository $cyclingRepository): Response
+    public function index(CyclingRepository $cyclingRepository, SerializerInterface $serializer): JsonResponse
     {
-        return $this->render('cycling/index.html.twig', [
-            'cyclings' => $cyclingRepository->findAll(),
-        ]);
+        $cyclings = $cyclingRepository->findAll();
+        return $this->json($cyclings, Response::HTTP_OK, [], ['groups' => 'cycling:read']);
     }
 
-    #[Route('/new', name: 'app_cycling_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/new', name: 'app_cycling_new', methods: ['POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
-        $cycling = new Cycling();
-        $form = $this->createForm(CyclingType::class, $cycling);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
+        try {
+            $cycling = $serializer->deserialize($request->getContent(), Cycling::class, 'json');
             $entityManager->persist($cycling);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_cycling_index', [], Response::HTTP_SEE_OTHER);
+            return $this->json($cycling, Response::HTTP_CREATED, [], ['groups' => 'cycling:read']);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
-
-        return $this->render('cycling/new.html.twig', [
-            'cycling' => $cycling,
-            'form' => $form,
-        ]);
     }
 
     #[Route('/{id}', name: 'app_cycling_show', methods: ['GET'])]
-    public function show(Cycling $cycling): Response
+    public function show(Cycling $cycling): JsonResponse
     {
-        return $this->render('cycling/show.html.twig', [
-            'cycling' => $cycling,
-        ]);
+        return $this->json($cycling, Response::HTTP_OK, [], ['groups' => 'cycling:read']);
     }
 
-    #[Route('/{id}/edit', name: 'app_cycling_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Cycling $cycling, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/edit', name: 'app_cycling_edit', methods: ['PUT'])]
+    public function edit(Request $request, Cycling $cycling, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
-        $form = $this->createForm(CyclingType::class, $cycling);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
+        try {
+            $updatedCycling = $serializer->deserialize($request->getContent(), Cycling::class, 'json', ['object_to_populate' => $cycling]);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_cycling_index', [], Response::HTTP_SEE_OTHER);
+            return $this->json($updatedCycling, Response::HTTP_OK, [], ['groups' => 'cycling:read']);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
-
-        return $this->render('cycling/edit.html.twig', [
-            'cycling' => $cycling,
-            'form' => $form,
-        ]);
     }
 
-    #[Route('/{id}', name: 'app_cycling_delete', methods: ['POST'])]
-    public function delete(Request $request, Cycling $cycling, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'app_cycling_delete', methods: ['DELETE'])]
+    public function delete(Request $request, Cycling $cycling, EntityManagerInterface $entityManager): JsonResponse
     {
-        if ($this->isCsrfTokenValid('delete'.$cycling->getId(), $request->getPayload()->getString('_token'))) {
+        try {
             $entityManager->remove($cycling);
             $entityManager->flush();
-        }
 
-        return $this->redirectToRoute('app_cycling_index', [], Response::HTTP_SEE_OTHER);
+            return $this->json(null, Response::HTTP_NO_CONTENT);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
     }
 }

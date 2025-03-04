@@ -3,79 +3,68 @@
 namespace App\Controller;
 
 use App\Entity\TrailRunningParticipant;
-use App\Form\TrailRunningParticipantType;
 use App\Repository\TrailRunningParticipantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/trailrunning/participant')]
 final class TrailRunningParticipantController extends AbstractController
 {
     #[Route(name: 'app_trail_running_participant_index', methods: ['GET'])]
-    public function index(TrailRunningParticipantRepository $trailRunningParticipantRepository): Response
+    public function index(TrailRunningParticipantRepository $trailRunningParticipantRepository): JsonResponse
     {
-        return $this->render('trail_running_participant/index.html.twig', [
-            'trail_running_participants' => $trailRunningParticipantRepository->findAll(),
-        ]);
+        $participants = $trailRunningParticipantRepository->findAll();
+        return $this->json($participants, Response::HTTP_OK, [], ['groups' => 'participant:read']);
     }
 
-    #[Route('/new', name: 'app_trail_running_participant_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/new', name: 'app_trail_running_participant_new', methods: ['POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
-        $trailRunningParticipant = new TrailRunningParticipant();
-        $form = $this->createForm(TrailRunningParticipantType::class, $trailRunningParticipant);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($trailRunningParticipant);
+        try {
+            $participant = $serializer->deserialize($request->getContent(), TrailRunningParticipant::class, 'json');
+            $entityManager->persist($participant);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_trail_running_participant_index', [], Response::HTTP_SEE_OTHER);
+            return $this->json($participant, Response::HTTP_CREATED, [], ['groups' => 'participant:read']);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
-
-        return $this->render('trail_running_participant/new.html.twig', [
-            'trail_running_participant' => $trailRunningParticipant,
-            'form' => $form,
-        ]);
     }
 
     #[Route('/{id}', name: 'app_trail_running_participant_show', methods: ['GET'])]
-    public function show(TrailRunningParticipant $trailRunningParticipant): Response
+    public function show(TrailRunningParticipant $participant): JsonResponse
     {
-        return $this->render('trail_running_participant/show.html.twig', [
-            'trail_running_participant' => $trailRunningParticipant,
-        ]);
+        return $this->json($participant, Response::HTTP_OK, [], ['groups' => 'participant:read']);
     }
 
-    #[Route('/{id}/edit', name: 'app_trail_running_participant_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, TrailRunningParticipant $trailRunningParticipant, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/edit', name: 'app_trail_running_participant_edit', methods: ['PUT'])]
+    public function edit(Request $request, TrailRunningParticipant $participant, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
-        $form = $this->createForm(TrailRunningParticipantType::class, $trailRunningParticipant);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
+        try {
+            $updatedParticipant = $serializer->deserialize($request->getContent(), TrailRunningParticipant::class, 'json', ['object_to_populate' => $participant]);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_trail_running_participant_index', [], Response::HTTP_SEE_OTHER);
+            return $this->json($updatedParticipant, Response::HTTP_OK, [], ['groups' => 'participant:read']);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
-
-        return $this->render('trail_running_participant/edit.html.twig', [
-            'trail_running_participant' => $trailRunningParticipant,
-            'form' => $form,
-        ]);
     }
 
-    #[Route('/{id}', name: 'app_trail_running_participant_delete', methods: ['POST'])]
-    public function delete(Request $request, TrailRunningParticipant $trailRunningParticipant, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'app_trail_running_participant_delete', methods: ['DELETE'])]
+    public function delete(TrailRunningParticipant $participant, EntityManagerInterface $entityManager): JsonResponse
     {
-        if ($this->isCsrfTokenValid('delete' . $trailRunningParticipant->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($trailRunningParticipant);
+        try {
+            $entityManager->remove($participant);
             $entityManager->flush();
-        }
 
-        return $this->redirectToRoute('app_trail_running_participant_index', [], Response::HTTP_SEE_OTHER);
+            return $this->json(null, Response::HTTP_NO_CONTENT);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
     }
 }
