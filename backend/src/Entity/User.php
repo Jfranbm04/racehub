@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -19,45 +20,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("user:read", 'user:new')]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Groups("user:read", 'user:new')]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
+    #[Groups("user:read", 'user:new')]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    // #[Groups(['user:write'])]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read', 'product:new'])]
     private ?string $name = null;
 
     #[ORM\Column]
-    private ?bool $banned = null;
+    #[Groups(['user:read'])]
+    private ?bool $banned = false;
 
     /**
      * @var Collection<int, CyclingParticipant>
      */
     #[ORM\OneToMany(targetEntity: CyclingParticipant::class, mappedBy: 'user')]
+    #[Groups("user:read")]
     private Collection $cyclingParticipants;
 
     /**
      * @var Collection<int, RunningParticipant>
      */
     #[ORM\OneToMany(targetEntity: RunningParticipant::class, mappedBy: 'user')]
+    #[Groups("user:read")]
     private Collection $runningParticipants;
 
     /**
      * @var Collection<int, TrailRunningParticipant>
      */
     #[ORM\OneToMany(targetEntity: TrailRunningParticipant::class, mappedBy: 'user')]
+    #[Groups("user:read")]
     private Collection $trailRunningParticipants;
 
     public function __construct()

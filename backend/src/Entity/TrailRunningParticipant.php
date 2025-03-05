@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\TrailRunningParticipantRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: TrailRunningParticipantRepository::class)]
 class TrailRunningParticipant
@@ -12,21 +14,44 @@ class TrailRunningParticipant
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["trail_running_participant:read", "user:read"])]
     private ?int $id = null;
 
+    /**
+     * Relación ManyToOne con User
+     */
     #[ORM\ManyToOne(inversedBy: 'trailRunningParticipants')]
+    #[MaxDepth(1)]
+    #[Groups(["trail_running_participant:read"])]
     private ?User $user = null;
 
+    /**
+     * Relación ManyToOne con TrailRunning
+     */
     #[ORM\ManyToOne(inversedBy: 'trailRunningParticipants')]
+    #[MaxDepth(1)]
+    #[Groups("trail_running_participant:read")]
     private ?TrailRunning $trailRunning = null;
 
+    /**
+     * Propiedad time
+     */
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(["trail_running_participant:read", "user:read"])]
     private ?\DateTimeInterface $time = null;
 
+    /**
+     * Propiedad dorsal
+     */
     #[ORM\Column]
+    #[Groups(["trail_running_participant:read", "user:read"])]
     private ?int $dorsal = null;
 
-    #[ORM\Column(nullable: true)]
+    /**
+     * Propiedad banned
+     */
+    #[ORM\Column]
+    #[Groups(["trail_running_participant:read", "user:read"])]
     private ?bool $banned = null;
 
     public function getId(): ?int
@@ -87,7 +112,7 @@ class TrailRunningParticipant
         return $this->banned;
     }
 
-    public function setBanned(?bool $banned): static
+    public function setBanned(bool $banned): static
     {
         $this->banned = $banned;
 

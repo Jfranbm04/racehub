@@ -12,59 +12,77 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/user')]
+#[Route('api/user')]
 final class UserController extends AbstractController
 {
     #[Route(name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): JsonResponse
+    public function index(UserRepository $userRepo, Request $request, EntityManagerInterface $entMngr): JsonResponse
     {
-        $users = $userRepository->findAll();
-        return $this->json($users, Response::HTTP_OK, [], ['groups' => 'user:read']);
-    }
-
-    #[Route('/new', name: 'app_user_new', methods: ['POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
-    {
-        try {
-            $user = $serializer->deserialize($request->getContent(), User::class, 'json');
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            return $this->json($user, Response::HTTP_CREATED, [], ['groups' => 'user:read']);
-        } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        try{
+            $users = $userRepo -> findAll();
+            return $this -> json($users, Response::HTTP_OK, [], ['groups' => 'user:read']);
+        }
+        catch(\Exception $e){
+            return $this -> json(['error' => $e -> getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
-    #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
-    public function show(User $user): JsonResponse
+    #[Route('/new', name: 'app_user_edit', methods: ['POST'])]
+    public function new(Request $request, EntityManagerInterface $entMngr): JsonResponse
     {
-        return $this->json($user, Response::HTTP_OK, [], ['groups' => 'user:read']);
+        try{
+            $user = new User();
+            $user -> setName($request -> get('name'));
+            $user -> setEmail($request -> get('email'));
+            $user -> setPassword($request -> get('password')); // TODO: Encriptar contraseña antes de persistirla
+
+            $entMngr -> persist($user);
+            $entMngr -> flush();
+
+            return $this -> json($user, Response::HTTP_CREATED, [], ['groups' => 'user:read']);
+        }
+        catch(\Exception $e){
+            return $this -> json(['error' => $e -> getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    #[Route('/{id}', name: 'app_user_show', methods: ['GET', 'DELETE'])]
+    public function show(User $user, UserRepository $userRepo, Request $request, EntityManagerInterface $entMngr): JsonResponse
+    {
+        try{
+            if($request -> isMethod('GET')){
+                return $this->json($user, Response::HTTP_OK, [], ['groups' => 'user:read']);
+            }
+            else if($request -> isMethod('DELETE')){
+                $entMngr -> remove($user);
+                $entMngr -> flush();
+
+                return $this -> json(['message' => 'Usuario eliminado'], Response::HTTP_OK);
+            }
+        }
+        catch(\Exception $e){
+            return $this -> json(['error' => $e -> getMessage()], Response::HTTP_BAD_REQUEST);
+        }
     }
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['PUT'])]
-    public function edit(Request $request, User $user, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
+    public function edit(User $user, Request $request, EntityManagerInterface $entMngr): JsonResponse
     {
-        try {
-            $updatedUser = $serializer->deserialize($request->getContent(), User::class, 'json', ['object_to_populate' => $user]);
-            $entityManager->flush();
+        try{
+            $user -> setName($request -> get('name'));
+            $user -> setEmail($request -> get('email'));
+            $user -> setPassword($request -> get('password')); // TODO: Encriptar contraseña antes de persistirla
+            $user -> setRoles([$request -> get('role')]);
+            $user -> setBanned($request -> get('banned'));
 
-            return $this->json($updatedUser, Response::HTTP_OK, [], ['groups' => 'user:read']);
-        } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            $check = $this -> json($user, Response::HTTP_OK, [], ['groups' => 'user:new']);
+            $entMngr -> persist($user);
+            $entMngr -> flush();
+
+            return $check;
         }
-    }
-
-    #[Route('/{id}', name: 'app_user_delete', methods: ['DELETE'])]
-    public function delete(User $user, EntityManagerInterface $entityManager): JsonResponse
-    {
-        try {
-            $entityManager->remove($user);
-            $entityManager->flush();
-
-            return $this->json(null, Response::HTTP_NO_CONTENT);
-        } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        catch(\Exception $e){
+            return $this -> json(['error' => $e -> getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 }

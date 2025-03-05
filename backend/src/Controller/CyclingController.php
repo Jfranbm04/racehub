@@ -13,13 +13,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/cycling')]
+#[Route('api/cycling')]
 final class CyclingController extends AbstractController
 {
     #[Route(name: 'app_cycling_index', methods: ['GET'])]
-    public function index(CyclingRepository $cyclingRepository, SerializerInterface $serializer): JsonResponse
+    public function index(CyclingRepository $cyclRepo, SerializerInterface $serializer): JsonResponse
     {
-        $cyclings = $cyclingRepository->findAll();
+        $cyclings = $cyclRepo->findAll();
         return $this->json($cyclings, Response::HTTP_OK, [], ['groups' => 'cycling:read']);
     }
 
