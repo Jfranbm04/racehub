@@ -12,53 +12,46 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('api/users')]
+#[Route('api/user')]
 final class UserController extends AbstractController
 {
-    #[Route(name: 'app_user_index', methods: ['GET', 'POST'])]
+    #[Route(name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepo, Request $request, EntityManagerInterface $entMngr): JsonResponse
     {
         try{
-            if($request -> isMethod('GET')){
-                $users = $userRepo -> findAll();
-                return $this -> json($users, Response::HTTP_OK, [], ['groups' => 'user:read']);
-            }
-            else if($request -> isMethod('POST')){
-                $user = new User();
-                $user -> setName($request -> get('name'));
-                $user -> setEmail($request -> get('email'));
-                $user -> setPassword($request -> get('password')); // TODO: Encriptar contraseña antes de persistirla
-
-                $entMngr -> persist($user);
-                $entMngr -> flush();
-
-                return $this -> json($user, Response::HTTP_CREATED, [], ['groups' => 'user:read']);
-            }
+            $users = $userRepo -> findAll();
+            return $this -> json($users, Response::HTTP_OK, [], ['groups' => 'user:read']);
         }
         catch(\Exception $e){
             return $this -> json(['error' => $e -> getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
-    #[Route('/{id}', name: 'app_user_show', methods: ['GET', 'PUT', 'DELETE'])]
+    #[Route('/new', name: 'app_user_edit', methods: ['POST'])]
+    public function new(Request $request, EntityManagerInterface $entMngr): JsonResponse
+    {
+        try{
+            $user = new User();
+            $user -> setName($request -> get('name'));
+            $user -> setEmail($request -> get('email'));
+            $user -> setPassword($request -> get('password')); // TODO: Encriptar contraseña antes de persistirla
+
+            $entMngr -> persist($user);
+            $entMngr -> flush();
+
+            return $this -> json($user, Response::HTTP_CREATED, [], ['groups' => 'user:read']);
+        }
+        catch(\Exception $e){
+            return $this -> json(['error' => $e -> getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    #[Route('/{id}', name: 'app_user_show', methods: ['GET', 'DELETE'])]
     public function show(User $user, UserRepository $userRepo, Request $request, EntityManagerInterface $entMngr): JsonResponse
     {
         try{
             if($request -> isMethod('GET')){
                 return $this->json($user, Response::HTTP_OK, [], ['groups' => 'user:read']);
-            }
-            else if($request -> isMethod('PUT')){
-                $user -> setName($request -> get('name'));
-                $user -> setEmail($request -> get('email'));
-                $user -> setPassword($request -> get('password')); // TODO: Encriptar contraseña antes de persistirla
-                $user -> setRoles([$request -> get('role')]);
-                $user -> setBanned($request -> get('banned'));
-
-                $check = $this -> json($user, Response::HTTP_OK, [], ['groups' => 'user:new']);
-                $entMngr -> persist($user);
-                $entMngr -> flush();
-
-                return $check;
             }
             else if($request -> isMethod('DELETE')){
                 $entMngr -> remove($user);
@@ -66,6 +59,27 @@ final class UserController extends AbstractController
 
                 return $this -> json(['message' => 'Usuario eliminado'], Response::HTTP_OK);
             }
+        }
+        catch(\Exception $e){
+            return $this -> json(['error' => $e -> getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    #[Route('/{id}/edit', name: 'app_user_edit', methods: ['PUT'])]
+    public function edit(User $user, Request $request, EntityManagerInterface $entMngr): JsonResponse
+    {
+        try{
+            $user -> setName($request -> get('name'));
+            $user -> setEmail($request -> get('email'));
+            $user -> setPassword($request -> get('password')); // TODO: Encriptar contraseña antes de persistirla
+            $user -> setRoles([$request -> get('role')]);
+            $user -> setBanned($request -> get('banned'));
+
+            $check = $this -> json($user, Response::HTTP_OK, [], ['groups' => 'user:new']);
+            $entMngr -> persist($user);
+            $entMngr -> flush();
+
+            return $check;
         }
         catch(\Exception $e){
             return $this -> json(['error' => $e -> getMessage()], Response::HTTP_BAD_REQUEST);

@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/auth')]
+#[Route('api/auth')]
 final class AuthController extends AbstractController
 {
     #[Route('/register', name: 'app_register', methods: ['POST'])]
