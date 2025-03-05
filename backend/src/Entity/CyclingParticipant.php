@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CyclingParticipantRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: CyclingParticipantRepository::class)]
 class CyclingParticipant
@@ -15,9 +16,11 @@ class CyclingParticipant
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'cyclingParticipants')]
+    #[MaxDepth(1)]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'cyclingParticipants')]
+    #[MaxDepth(1)]
     private ?Cycling $cycling = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
