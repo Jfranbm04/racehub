@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: RunningRepository::class)]
 class Running
@@ -14,45 +16,27 @@ class Running
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["running:read", "running_participant:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["running:read"])]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $description = null;
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["running:read"])]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\Column]
-    private ?int $distance_km = null;
-
     #[ORM\Column(length: 255)]
+    #[Groups(["running:read"])]
     private ?string $location = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $coordinates = null;
-
-    #[ORM\Column]
-    private ?int $entry_fee = null;
-
-    #[ORM\Column]
-    private ?int $available_slots = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $status = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $category = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $image = null;
-
     /**
-     * @var Collection<int, RunningParticipant>
+     * Relación OneToMany con RunningParticipant
      */
-    #[ORM\OneToMany(targetEntity: RunningParticipant::class, mappedBy: 'running')]
+    #[ORM\OneToMany(mappedBy: 'running', targetEntity: RunningParticipant::class)]
+    #[MaxDepth(1)]
+    #[Groups(["running:read"])]
     private Collection $runningParticipants;
 
     public function __construct()
@@ -77,18 +61,6 @@ class Running
         return $this;
     }
 
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
     public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
@@ -101,18 +73,6 @@ class Running
         return $this;
     }
 
-    public function getDistanceKm(): ?int
-    {
-        return $this->distance_km;
-    }
-
-    public function setDistanceKm(int $distance_km): static
-    {
-        $this->distance_km = $distance_km;
-
-        return $this;
-    }
-
     public function getLocation(): ?string
     {
         return $this->location;
@@ -121,78 +81,6 @@ class Running
     public function setLocation(string $location): static
     {
         $this->location = $location;
-
-        return $this;
-    }
-
-    public function getCoordinates(): ?string
-    {
-        return $this->coordinates;
-    }
-
-    public function setCoordinates(?string $coordinates): static
-    {
-        $this->coordinates = $coordinates;
-
-        return $this;
-    }
-
-    public function getEntryFee(): ?int
-    {
-        return $this->entry_fee;
-    }
-
-    public function setEntryFee(int $entry_fee): static
-    {
-        $this->entry_fee = $entry_fee;
-
-        return $this;
-    }
-
-    public function getAvailableSlots(): ?int
-    {
-        return $this->available_slots;
-    }
-
-    public function setAvailableSlots(int $available_slots): static
-    {
-        $this->available_slots = $available_slots;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): static
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    public function getCategory(): ?string
-    {
-        return $this->category;
-    }
-
-    public function setCategory(?string $category): static
-    {
-        $this->category = $category;
-
-        return $this;
-    }
-
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function setImage(?string $image): static
-    {
-        $this->image = $image;
 
         return $this;
     }
