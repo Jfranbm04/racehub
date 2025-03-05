@@ -20,34 +20,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups("user:read")]
+    #[Groups("user:read", 'user:new')]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups("user:read")]
+    #[Groups("user:read", 'user:new')]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
-    #[Groups("user:read")]
+    #[Groups("user:read", 'user:new')]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Groups("user:read")] // Incluimos la contraseña en el grupo de serialización
+    // #[Groups(['user:write'])]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups("user:read")]
+    #[Groups(['user:read', 'product:new'])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups("user:read")]
-    private ?bool $banned = null;
+    #[Groups(['user:read'])]
+    private ?bool $banned = false;
 
     /**
      * @var Collection<int, CyclingParticipant>

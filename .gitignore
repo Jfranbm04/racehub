@@ -24,4 +24,5 @@
 /assets/vendor/
 ###< symfony/asset-mapper ###
 
-/public/.htaccess
+/backend/public/.htaccess
+/.vscode/
