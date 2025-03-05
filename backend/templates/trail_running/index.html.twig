@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}TrailRunning index{% endblock %}
+
+{% block body %}
+    <h1>TrailRunning index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Distance_km</th>
+                <th>Location</th>
+                <th>Coordinates</th>
+                <th>Unevenness</th>
+                <th>Entry_fee</th>
+                <th>Available_slots</th>
+                <th>Status</th>
+                <th>Category</th>
+                <th>Image</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for trail_running in trail_runnings %}
+            <tr>
+                <td>{{ trail_running.id }}</td>
+                <td>{{ trail_running.name }}</td>
+                <td>{{ trail_running.description }}</td>
+                <td>{{ trail_running.date ? trail_running.date|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ trail_running.distanceKm }}</td>
+                <td>{{ trail_running.location }}</td>
+                <td>{{ trail_running.coordinates }}</td>
+                <td>{{ trail_running.unevenness }}</td>
+                <td>{{ trail_running.entryFee }}</td>
+                <td>{{ trail_running.availableSlots }}</td>
+                <td>{{ trail_running.status }}</td>
+                <td>{{ trail_running.category }}</td>
+                <td>{{ trail_running.image }}</td>
+                <td>
+                    <a href="{{ path('app_trail_running_show', {'id': trail_running.id}) }}">show</a>
+                    <a href="{{ path('app_trail_running_edit', {'id': trail_running.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="14">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_trail_running_new') }}">Create new</a>
+{% endblock %}

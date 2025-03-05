@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cycling index{% endblock %}
+
+{% block body %}
+    <h1>Cycling index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Distance_km</th>
+                <th>Location</th>
+                <th>Coordinates</th>
+                <th>Unevenness</th>
+                <th>Entry_fee</th>
+                <th>Available_slots</th>
+                <th>Status</th>
+                <th>Category</th>
+                <th>Image</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for cycling in cyclings %}
+            <tr>
+                <td>{{ cycling.id }}</td>
+                <td>{{ cycling.name }}</td>
+                <td>{{ cycling.description }}</td>
+                <td>{{ cycling.date ? cycling.date|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ cycling.distanceKm }}</td>
+                <td>{{ cycling.location }}</td>
+                <td>{{ cycling.coordinates }}</td>
+                <td>{{ cycling.unevenness }}</td>
+                <td>{{ cycling.entryFee }}</td>
+                <td>{{ cycling.availableSlots }}</td>
+                <td>{{ cycling.status }}</td>
+                <td>{{ cycling.category }}</td>
+                <td>{{ cycling.image }}</td>
+                <td>
+                    <a href="{{ path('app_cycling_show', {'id': cycling.id}) }}">show</a>
+                    <a href="{{ path('app_cycling_edit', {'id': cycling.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="14">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_cycling_new') }}">Create new</a>
+{% endblock %}

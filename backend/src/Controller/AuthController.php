@@ -2,58 +2,77 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/auth')]
 final class AuthController extends AbstractController
 {
-    #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    #[Route('/register', name: 'app_register', methods: ['POST'])]
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
-        $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
-        $form->handleRequest($request);
+        try {
+            $user = $serializer->deserialize($request->getContent(), User::class, 'json');
+            $content = json_decode($request->getContent(), true);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
-            $plainPassword = $form->get('plainPassword')->getData();
+            if (!isset($content['password'])) {
+                return $this->json(['error' => 'Password is required'], Response::HTTP_BAD_REQUEST);
+            }
 
             // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            $user->setPassword($userPasswordHasher->hashPassword($user, $content['password']));
 
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // do anything else you need here, like send an email
+            return $this->json([
+                'message' => 'User registered successfully',
+                'user' => $user
+            ], Response::HTTP_CREATED, [], ['groups' => 'user:read']);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+    }
 
-            return $this->redirectToRoute('app_login');
+    #[Route('/login', name: 'app_login', methods: ['POST'])]
+    public function login(AuthenticationUtils $authenticationUtils): JsonResponse
+    {
+        $error = $authenticationUtils->getLastAuthenticationError();
+        
+        if ($error) {
+            return $this->json([
+                'error' => $error->getMessage()
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
-        return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form,
-        ]);
+        $user = $this->getUser();
+        
+        if (!$user) {
+            return $this->json([
+                'error' => 'Invalid credentials'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        return $this->json([
+            'user' => $user,
+            'message' => 'Logged in successfully'
+        ], Response::HTTP_OK, [], ['groups' => 'user:read']);
     }
 
-    #[Route(path: '/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    #[Route('/logout', name: 'app_logout', methods: ['POST'])]
+    public function logout(): JsonResponse
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
-
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
-
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
-    }
-
-    #[Route(path: '/logout', name: 'app_logout')]
-    public function logout(): void
-    {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+        // The actual logout is handled by the security system
+        return $this->json([
+            'message' => 'Logged out successfully'
+        ], Response::HTTP_OK);
     }
 }
