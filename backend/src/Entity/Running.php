@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RunningRepository::class)]
 class Running
@@ -15,46 +16,56 @@ class Running
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["running:read", "running_participant:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["running:read", "running_participant:read"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["running:read", "running_participant:read"])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["running:read", "running_participant:read"])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column]
+    #[Groups(["running:read", "running_participant:read"])]
     private ?int $distance_km = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["running:read", "running_participant:read"])]
     private ?string $location = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["running:read", "running_participant:read"])]
     private ?string $coordinates = null;
 
     #[ORM\Column]
+    #[Groups(["running:read", "running_participant:read"])]
     private ?int $entry_fee = null;
 
     #[ORM\Column]
+    #[Groups(["running:read", "running_participant:read"])]
     private ?int $available_slots = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["running:read", "running_participant:read"])]
     private ?string $status = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["running:read", "running_participant:read"])]
     private ?string $category = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["running:read", "running_participant:read"])]
     private ?string $image = null;
 
-    /**
-     * @var Collection<int, RunningParticipant>
-     */
     #[ORM\OneToMany(targetEntity: RunningParticipant::class, mappedBy: 'running')]
-    #[MaxDepth(1)]
+    #[MaxDepth(1)] // Limita la profundidad de la serialización
+    #[Groups(["running:read"])]
     private Collection $runningParticipants;
 
     public function __construct()
@@ -75,7 +86,6 @@ class Running
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -87,7 +97,6 @@ class Running
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -99,7 +108,6 @@ class Running
     public function setDate(\DateTimeInterface $date): static
     {
         $this->date = $date;
-
         return $this;
     }
 
@@ -111,7 +119,6 @@ class Running
     public function setDistanceKm(int $distance_km): static
     {
         $this->distance_km = $distance_km;
-
         return $this;
     }
 
@@ -123,7 +130,6 @@ class Running
     public function setLocation(string $location): static
     {
         $this->location = $location;
-
         return $this;
     }
 
@@ -135,7 +141,6 @@ class Running
     public function setCoordinates(?string $coordinates): static
     {
         $this->coordinates = $coordinates;
-
         return $this;
     }
 
@@ -147,7 +152,6 @@ class Running
     public function setEntryFee(int $entry_fee): static
     {
         $this->entry_fee = $entry_fee;
-
         return $this;
     }
 
@@ -159,7 +163,6 @@ class Running
     public function setAvailableSlots(int $available_slots): static
     {
         $this->available_slots = $available_slots;
-
         return $this;
     }
 
@@ -171,7 +174,6 @@ class Running
     public function setStatus(string $status): static
     {
         $this->status = $status;
-
         return $this;
     }
 
@@ -183,7 +185,6 @@ class Running
     public function setCategory(?string $category): static
     {
         $this->category = $category;
-
         return $this;
     }
 
@@ -195,7 +196,6 @@ class Running
     public function setImage(?string $image): static
     {
         $this->image = $image;
-
         return $this;
     }
 
@@ -213,19 +213,16 @@ class Running
             $this->runningParticipants->add($runningParticipant);
             $runningParticipant->setRunning($this);
         }
-
         return $this;
     }
 
     public function removeRunningParticipant(RunningParticipant $runningParticipant): static
     {
         if ($this->runningParticipants->removeElement($runningParticipant)) {
-            // set the owning side to null (unless already changed)
             if ($runningParticipant->getRunning() === $this) {
                 $runningParticipant->setRunning(null);
             }
         }
-
         return $this;
     }
 }

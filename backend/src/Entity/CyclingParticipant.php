@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CyclingParticipantRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: CyclingParticipantRepository::class)]
@@ -13,23 +14,44 @@ class CyclingParticipant
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["cycling_participant:read", "user:read"])]
     private ?int $id = null;
 
+    /**
+     * Relación ManyToOne con User
+     */
     #[ORM\ManyToOne(inversedBy: 'cyclingParticipants')]
     #[MaxDepth(1)]
+    #[Groups(["cycling_participant:read"])] // Remove user:read to prevent circular reference
     private ?User $user = null;
 
+    /**
+     * Relación ManyToOne con Cycling
+     */
     #[ORM\ManyToOne(inversedBy: 'cyclingParticipants')]
     #[MaxDepth(1)]
+    #[Groups("cycling_participant:read")]
     private ?Cycling $cycling = null;
 
+    /**
+     * Propiedad time
+     */
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(["cycling_participant:read", "user:read"])]
     private ?\DateTimeInterface $time = null;
 
+    /**
+     * Propiedad dorsal
+     */
     #[ORM\Column]
+    #[Groups(["cycling_participant:read", "user:read"])]
     private ?int $dorsal = null;
 
+    /**
+     * Propiedad banned
+     */
     #[ORM\Column]
+    #[Groups(["cycling_participant:read", "user:read"])]
     private ?bool $banned = null;
 
     public function getId(): ?int
