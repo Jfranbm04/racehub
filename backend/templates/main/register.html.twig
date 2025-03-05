@@ -53,8 +53,7 @@
 
 
 <div class="recuadro">
-    <form action="{{ path('app_register') }}" method="POST">
-    {% include 'flash_messages.html.twig' %}
+    <form action="{{ path('app_register_submit') }}" method="POST">
     <div class="form-group">
         <label for="nombre">Nombre:</label>
         <input type="text" name="nombre" id="nombre" required>
@@ -72,7 +71,7 @@
         <input type="password" name="password_confirm" id="password_confirm" required>
     </div>
     <div class="form-group">
-        <a href="loquesea.com">Ya tengo una cuenta. Iniciar sesión</a>
+        <a href="{{ path('app_login') }}">Ya tengo una cuenta. Iniciar sesión</a>
     </div>
     
     <input type="submit" value="Enviar" id="btnRegistrar">

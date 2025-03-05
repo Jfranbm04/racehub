@@ -21,32 +21,36 @@ final class AuthController extends AbstractController
     {
         return $this->render('main/register.html.twig');
     }
-
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
+    
+    #[Route('/register', name:'app_register_submit', methods: ['POST'])]
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
         try {
-            $user = $serializer->deserialize($request->getContent(), User::class, 'json');
-            $content = json_decode($request->getContent(), true);
+            $password = $request->request->get('password');
+            $passwordConfirm = $request->request->get('password_confirm');
 
-            if (!isset($content['password'])) {
-                return $this->json(['error' => 'Password is required'], Response::HTTP_BAD_REQUEST);
+            if ($password !== $passwordConfirm) {
+                $this->addFlash('error', 'Las contraseñas no coinciden');
+                return $this->redirectToRoute('app_register');
             }
 
-            // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $content['password']));
+            $user = new User();
+            $user->setEmail($request->request->get('email'));
+            $user->setName($request->request->get('nombre'));
+            $user->setBanned(0);
+            $user->setPassword($userPasswordHasher->hashPassword($user, $password));
 
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->json([
-                'message' => 'User registered successfully',
-                'user' => $user
-            ], Response::HTTP_CREATED, [], ['groups' => 'user:read']);
+            $this->addFlash('success', 'Usuario registrado correctamente');
+            return $this->redirectToRoute('app_login');
+            
         } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            $this->addFlash('error', 'Error al registrar el usuario');
+            return $this->redirectToRoute('app_register');
         }
     }
-
     #[Route('/login', name: 'app_login', methods: ['GET'])]
     public function showLogin(AuthenticationUtils $authenticationUtils): Response
     {
