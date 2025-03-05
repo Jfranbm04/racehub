@@ -28,6 +28,7 @@
         margin: 1em auto; 
         max-width: 400px; 
         font: 18px/1.5 sans-serif; 
+        background-color: #f2f2f2;
     }
     .form-group {
         margin-bottom: 10px;
@@ -54,7 +55,6 @@
 
 <div class="recuadro">
     <form action="{{ path('app_register') }}" method="POST">
-    {% include 'flash_messages.html.twig' %}
     <div class="form-group">
         <label for="nombre">Nombre:</label>
         <input type="text" name="nombre" id="nombre" required>
