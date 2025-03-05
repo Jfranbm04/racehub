@@ -16,7 +16,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/auth')]
 final class AuthController extends AbstractController
 {
-    #[Route('/register', name: 'app_register', methods: ['POST'])]
+    #[Route('/register', name: 'app_register', methods: ['GET'])]
+    public function showRegister(): Response
+    {
+        return $this->render('main/register.html.twig');
+    }
+
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
         try {
@@ -42,7 +47,16 @@ final class AuthController extends AbstractController
         }
     }
 
-    #[Route('/login', name: 'app_login', methods: ['POST'])]
+    #[Route('/login', name: 'app_login', methods: ['GET'])]
+    public function showLogin(AuthenticationUtils $authenticationUtils): Response
+    {
+        return $this->render('main/login.html.twig', [
+            'error' => $authenticationUtils->getLastAuthenticationError(),
+            'last_username' => $authenticationUtils->getLastUsername(),
+        ]);
+    }
+
+    #[Route('/login/submit', name: 'app_login_submit', methods: ['POST'])]
     public function login(AuthenticationUtils $authenticationUtils): JsonResponse
     {
         $error = $authenticationUtils->getLastAuthenticationError();

@@ -10,11 +10,10 @@ use Symfony\Component\Routing\Attribute\Route;
 final class MainController extends AbstractController
 {
     #[Route('/main', name: 'app_main')]
-    public function index(): JsonResponse
+    public function index(): Response
     {
-        return $this->json([
-            'message' => 'Welcome to RaceHub API',
-            'controller' => 'MainController'
-        ], Response::HTTP_OK);
+        return $this->render('main/index.html.twig', [
+            'controller_name' => 'MainController',
+        ]);
     }
 }
