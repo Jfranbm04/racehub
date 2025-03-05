@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -46,18 +47,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, CyclingParticipant>
      */
     #[ORM\OneToMany(targetEntity: CyclingParticipant::class, mappedBy: 'user')]
+    #[MaxDepth(1)]
     private Collection $cyclingParticipants;
 
     /**
      * @var Collection<int, RunningParticipant>
      */
     #[ORM\OneToMany(targetEntity: RunningParticipant::class, mappedBy: 'user')]
+    #[MaxDepth(1)]
     private Collection $runningParticipants;
 
     /**
      * @var Collection<int, TrailRunningParticipant>
      */
     #[ORM\OneToMany(targetEntity: TrailRunningParticipant::class, mappedBy: 'user')]
+    #[MaxDepth(1)]
     private Collection $trailRunningParticipants;
 
     public function __construct()
