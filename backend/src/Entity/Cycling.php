@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: CyclingRepository::class)]
 class Cycling
@@ -56,6 +57,7 @@ class Cycling
      * @var Collection<int, CyclingParticipant>
      */
     #[ORM\OneToMany(targetEntity: CyclingParticipant::class, mappedBy: 'cycling')]
+    #[MaxDepth(1)]
     private Collection $cyclingParticipants;
 
     public function __construct()
