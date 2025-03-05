@@ -20,49 +20,40 @@ class TrailRunning
     #[Groups(["trail_running:read", "trail_running_participant:read"])]
     private ?int $id = null;
     #[ORM\Column(length: 255)]
-    #[Groups(["trail_running:read"])]
+    #[Groups(["trail_running:read", "trail_running_basic:read"])]  // Add trail_running_basic:read
     private ?string $name = null;
-
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["trail_running:read"])]
+    #[Groups(["trail_running:read", "trail_running_basic:read"])]  // Add trail_running_basic:read
     private ?string $description = null;
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Groups(["trail_running:read"])]
+    #[Groups(["trail_running:read", "trail_running_basic:read"])]  // Add trail_running_basic:read
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column]
-    #[Groups(["trail_running:read"])]
+    #[Groups(["trail_running:read","trail_running_basic:read"])]
     private ?int $distance_km = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["trail_running:read"])]
+    #[Groups(["trail_running:read", "trail_running_basic:read"])]  // Add trail_running_basic:read
     private ?string $location = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["trail_running:read"])]
     private ?string $coordinates = null;
-
     #[ORM\Column]
     #[Groups(["trail_running:read"])]
     private ?int $unevenness = null;
-
     #[ORM\Column(nullable: true)]
     #[Groups(["trail_running:read"])]
     private ?int $entry_fee = null;
-
     #[ORM\Column]
     #[Groups(["trail_running:read"])]
     private ?int $available_slots = null;
-
     #[ORM\Column(length: 255)]
     #[Groups(["trail_running:read"])]
     private ?string $status = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["trail_running:read"])]
     private ?string $category = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["trail_running:read"])]
     private ?string $image = null;

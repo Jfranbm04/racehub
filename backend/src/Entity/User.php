@@ -24,8 +24,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups("user:read", 'user:new')]
+    #[Groups(["user:read", "user:new", "user_basic:read"])]  // Add user_basic:read
     private ?string $email = null;
+
 
     /**
      * @var list<string> The user roles
@@ -42,9 +43,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read', 'product:new'])]
+    #[Groups(["user:read", "user_basic:read"])]  // Add user_basic:read
     private ?string $name = null;
-
     #[ORM\Column]
     #[Groups(['user:read'])]
     private ?bool $banned = false;

@@ -22,7 +22,7 @@ class TrailRunningParticipant
      */
     #[ORM\ManyToOne(inversedBy: 'trailRunningParticipants')]
     #[MaxDepth(1)]
-    #[Groups(["trail_running_participant:read"])]
+    #[Groups(["trail_running_participant:read", "user_basic:read"])]
     private ?User $user = null;
 
     /**
@@ -30,7 +30,7 @@ class TrailRunningParticipant
      */
     #[ORM\ManyToOne(inversedBy: 'trailRunningParticipants')]
     #[MaxDepth(1)]
-    #[Groups("trail_running_participant:read")]
+    #[Groups(["trail_running_participant:read", "trail_running_basic:read"])]
     private ?TrailRunning $trailRunning = null;
 
     /**
