@@ -30,7 +30,7 @@ class TrailRunning
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column]
-    #[Groups(["trail_running:read","trail_running_basic:read"])]
+    #[Groups(["trail_running:read", "trail_running_basic:read"])]
     private ?int $distance_km = null;
 
     #[ORM\Column(length: 255)]
@@ -62,7 +62,7 @@ class TrailRunning
      * @var Collection<int, TrailRunningParticipant>
      */
     #[ORM\OneToMany(targetEntity: TrailRunningParticipant::class, mappedBy: 'trailRunning')]
-    #[MaxDepth(1)]
+    #[MaxDepth(2)]
     private Collection $trailRunningParticipants;
 
     public function __construct()

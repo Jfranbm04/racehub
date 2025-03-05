@@ -50,11 +50,11 @@ final class TrailRunningParticipantController extends AbstractController
     public function show(int $id, TrailRunningParticipantRepository $repository): JsonResponse
     {
         $participant = $repository->find($id);
-        
+
         if (!$participant) {
             return $this->json(['error' => 'Participant not found'], Response::HTTP_NOT_FOUND);
         }
-        
+
         return $this->json($participant, Response::HTTP_OK, [], [
             'groups' => [
                 'trail_running_participant:read',
