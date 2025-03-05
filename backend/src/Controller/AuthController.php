@@ -38,6 +38,7 @@ final class AuthController extends AbstractController
             $user->setEmail($request->request->get('email'));
             $user->setName($request->request->get('nombre'));
             $user->setBanned(0);
+            $user->setRoles(['ROLE_USER']);
             $user->setPassword($userPasswordHasher->hashPassword($user, $password));
 
             $entityManager->persist($user);
@@ -60,7 +61,7 @@ final class AuthController extends AbstractController
         ]);
     }
 
-    #[Route('/login/submit', name: 'app_login_submit', methods: ['POST'])]
+    #[Route('/login/submit', name: 'app_login', methods: ['POST'])]
     public function login(AuthenticationUtils $authenticationUtils): JsonResponse
     {
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -85,6 +86,21 @@ final class AuthController extends AbstractController
         ], Response::HTTP_OK, [], ['groups' => 'user:read']);
     }
 
+    #[Route(path: '/login', name: 'app_login_main')]
+    public function loginView(AuthenticationUtils $authenticationUtils): Response
+    {   
+         if ($this->getUser()) {
+            return $this->redirectToRoute('app_main');
+        }
+
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
+        var_dump($this->getUser());
+        return $this->render('main/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+    }
+    
     #[Route('/logout', name: 'app_logout', methods: ['POST'])]
     public function logout(): JsonResponse
     {
