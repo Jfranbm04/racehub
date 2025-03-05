@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Security\LoginAuthenticator;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('api/auth')]
@@ -43,28 +42,28 @@ final class AuthController extends AbstractController
     }
 
     #[Route('/login', name: 'app_login', methods: ['POST'])]
-    public function login(AuthenticationUtils $authenticationUtils): JsonResponse
+    public function login(Request $request, UserRepository $userRepo, UserPasswordHasherInterface $userPassHash): JsonResponse
     {
-        $error = $authenticationUtils->getLastAuthenticationError();
-        
-        if ($error) {
+        if($this -> getUser()){
             return $this->json([
-                'error' => $error->getMessage()
+                'error' => 'User is already logged in'
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        $user = $this->getUser();
+        $checkUser = $userRepo -> findOneBy(['email' => $request -> get('email')]);
         
-        if (!$user) {
-            return $this->json([
-                'error' => 'Invalid credentials'
-            ], Response::HTTP_UNAUTHORIZED);
+        if(!isset($checkUser)){
+            return $this -> json(['error' => 'User or password invalid'], Response::HTTP_UNAUTHORIZED);
         }
 
-        return $this->json([
-            'user' => $user,
-            'message' => 'Logged in successfully'
-        ], Response::HTTP_OK, [], ['groups' => 'user:read']);
+        if($userPassHash -> isPasswordValid($checkUser, trim($request -> get('password')) )){
+            return $this->json([
+                'user' => $checkUser,
+                'message' => 'Logged in successfully'
+            ], Response::HTTP_OK, [], []);
+        }
+
+        return $this -> json(['error' => 'Something went wrong, if you see this message, contact support.'], Response::HTTP_I_AM_A_TEAPOT);
     }
 
     #[Route('/logout', name: 'app_logout', methods: ['POST'])]
