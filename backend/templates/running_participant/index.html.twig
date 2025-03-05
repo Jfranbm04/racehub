@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}RunningParticipant index{% endblock %}
+
+{% block body %}
+    <h1>RunningParticipant index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Time</th>
+                <th>Dorsal</th>
+                <th>Banned</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for running_participant in running_participants %}
+            <tr>
+                <td>{{ running_participant.id }}</td>
+                <td>{{ running_participant.time ? running_participant.time|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ running_participant.dorsal }}</td>
+                <td>{{ running_participant.banned ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('app_running_participant_show', {'id': running_participant.id}) }}">show</a>
+                    <a href="{{ path('app_running_participant_edit', {'id': running_participant.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_running_participant_new') }}">Create new</a>
+{% endblock %}

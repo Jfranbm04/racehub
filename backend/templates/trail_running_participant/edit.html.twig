@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit TrailRunningParticipant{% endblock %}
+
+{% block body %}
+    <h1>Edit TrailRunningParticipant</h1>
+
+    {{ include('trail_running_participant/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_trail_running_participant_index') }}">back to list</a>
+
+    {{ include('trail_running_participant/_delete_form.html.twig') }}
+{% endblock %}
