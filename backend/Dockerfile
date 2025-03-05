@@ -1,5 +1,5 @@
 # Usar la imagen oficial de PHP con Apache
-FROM php:8.2-apache
+FROM php:8.2-fpm
 
 # Instalar extensiones necesarias
 RUN apt-get update && apt-get install -y \
@@ -30,6 +30,6 @@ RUN php bin/console doctrine:migrations:migrate --no-interaction || true
 RUN chmod -R 777 /app/var
 
 # Exponer el puerto
-EXPOSE 8000
+EXPOSE 9000
 
 CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
