@@ -21,7 +21,7 @@ class RunningParticipant
      * Relación ManyToOne con User
      */
     #[ORM\ManyToOne(inversedBy: 'runningParticipants')]
-    #[MaxDepth(1)]
+    #[MaxDepth(1)] // Limita la profundidad de la serialización
     #[Groups(["running_participant:read"])]
     private ?User $user = null;
 
@@ -29,8 +29,8 @@ class RunningParticipant
      * Relación ManyToOne con Running
      */
     #[ORM\ManyToOne(inversedBy: 'runningParticipants')]
-    #[MaxDepth(1)] // Limita la profundidad de la serialización
-    #[Groups(["running_participant:read", "running:read"])]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["running_participant:read"])]  // Use a different group than "running:read"
     private ?Running $running = null;
 
     /**
@@ -67,7 +67,6 @@ class RunningParticipant
     public function setUser(?User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
 
@@ -79,7 +78,6 @@ class RunningParticipant
     public function setRunning(?Running $running): static
     {
         $this->running = $running;
-
         return $this;
     }
 
@@ -91,7 +89,6 @@ class RunningParticipant
     public function setTime(?\DateTimeInterface $time): static
     {
         $this->time = $time;
-
         return $this;
     }
 
@@ -103,7 +100,6 @@ class RunningParticipant
     public function setDorsal(int $dorsal): static
     {
         $this->dorsal = $dorsal;
-
         return $this;
     }
 
@@ -115,7 +111,6 @@ class RunningParticipant
     public function setBanned(bool $banned): static
     {
         $this->banned = $banned;
-
         return $this;
     }
 }
