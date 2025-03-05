@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Security\LoginAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,18 +18,17 @@ use Symfony\Component\Serializer\SerializerInterface;
 final class AuthController extends AbstractController
 {
     #[Route('/register', name: 'app_register', methods: ['POST'])]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
+    public function register(Request $request, UserPasswordHasherInterface $userPassHash, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
-        try {
-            $user = $serializer->deserialize($request->getContent(), User::class, 'json');
-            $content = json_decode($request->getContent(), true);
+        try{
+            $user = new User();
+            $user -> setName($request -> get('name'));
+            $user -> setEmail($request -> get('email'));
+            $user -> setPassword($userPassHash -> hashPassword($user, $request -> get('password')));
 
-            if (!isset($content['password'])) {
+            if($request -> get('password') == null){
                 return $this->json(['error' => 'Password is required'], Response::HTTP_BAD_REQUEST);
             }
-
-            // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $content['password']));
 
             $entityManager->persist($user);
             $entityManager->flush();
@@ -70,7 +70,7 @@ final class AuthController extends AbstractController
     #[Route('/logout', name: 'app_logout', methods: ['POST'])]
     public function logout(): JsonResponse
     {
-        // The actual logout is handled by the security system
+
         return $this->json([
             'message' => 'Logged out successfully'
         ], Response::HTTP_OK);
