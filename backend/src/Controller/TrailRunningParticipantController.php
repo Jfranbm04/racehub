@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/trailrunning/participant')]
+#[Route('/api/trailrunning/participant')]
 final class TrailRunningParticipantController extends AbstractController
 {
     #[Route(name: 'app_trail_running_participant_index', methods: ['GET'])]
