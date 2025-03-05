@@ -20,7 +20,11 @@ final class TrailRunningParticipantController extends AbstractController
     {
         $participants = $trailRunningParticipantRepository->findAll();
         return $this->json($participants, Response::HTTP_OK, [], [
-            'groups' => 'trail_running_participant:read',
+            'groups' => [
+                'trail_running_participant:read',
+                'user_basic:read',
+                'trail_running_basic:read'
+            ],
             'circular_reference_handler' => function ($object) {
                 return $object->getId();
             }
