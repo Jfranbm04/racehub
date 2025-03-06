@@ -90,13 +90,42 @@ final class TrailRunningParticipantController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_trail_running_participant_edit', methods: ['PUT'])]
-    public function edit(Request $request, TrailRunningParticipant $participant, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
+    public function edit(Request $request, TrailRunningParticipant $participant, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
-            $updatedParticipant = $serializer->deserialize($request->getContent(), TrailRunningParticipant::class, 'json', ['object_to_populate' => $participant]);
+            $data = json_decode($request->getContent(), true);
+
+            if (isset($data['user'])) {
+                $user = $entityManager->getReference('App\Entity\User', $data['user']);
+                $participant->setUser($user);
+            }
+            if (isset($data['trailRunning'])) {
+                $trailRunning = $entityManager->getReference('App\Entity\TrailRunning', $data['trailRunning']);
+                $participant->setTrailRunning($trailRunning);
+            }
+            
+            if (isset($data['dorsal'])) {
+                $participant->setDorsal($data['dorsal']);
+            }
+            if (isset($data['banned'])) {
+                $participant->setBanned($data['banned']);
+            }
+            if (isset($data['time'])) {
+                $participant->setTime(new \DateTime($data['time']));
+            }
+
             $entityManager->flush();
 
-            return $this->json($updatedParticipant, Response::HTTP_OK, [], ['groups' => 'trail_running_participant:read']);
+            return $this->json($participant, Response::HTTP_OK, [], [
+                'groups' => [
+                    'trail_running_participant:read',
+                    'user_basic:read',
+                    'trail_running_basic:read'
+                ],
+                'circular_reference_handler' => function ($object) {
+                    return $object->getId();
+                }
+            ]);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
