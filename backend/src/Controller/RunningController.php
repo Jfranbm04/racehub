@@ -68,7 +68,7 @@ final class RunningController extends AbstractController
         }
     }
 
-    #[Route('/new', name: 'app_running_start', methods: ['POST'])]
+    #[Route('/new_s', name: 'app_running_start', methods: ['POST'])]
     public function new_s(Running $running, EntityManagerInterface $entityManager): Response
     {
         $running = new Running();
@@ -92,7 +92,7 @@ final class RunningController extends AbstractController
     }
 
 
-    #[Route('/{id}/running_s', name: 'app_running_status', methods: ['PUT'])]
+    #[Route('/{id}/edit_s', name: 'app_running_status', methods: ['PUT'])]
     public function running_s(Request $request, Running $running, EntityManagerInterface $entityManager): Response
     {
         $running->setName($request->request->get('name'));
@@ -112,7 +112,7 @@ final class RunningController extends AbstractController
         return $this->render('main/index.html.twig');
     }
 
-    #[Route('/{id}/delete', name: 'app_running_delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'app_running_delete', methods: ['DELETE'])]
     public function delete_s(Running $running, EntityManagerInterface $entityManager): Response
     {
         $entityManager->remove($running);
