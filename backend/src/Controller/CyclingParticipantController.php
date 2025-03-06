@@ -15,6 +15,14 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/api/cycling_participant')]
 final class CyclingParticipantController extends AbstractController
 {
+
+    #[Route(name: 'app_cycling_participant_index', methods: ['GET'])]
+    public function index(CyclingParticipantRepository $cyclingParticipantRepository): JsonResponse
+    {
+        $participants = $cyclingParticipantRepository->findAll();
+        return $this->json($participants, Response::HTTP_OK, [], ['groups' => 'cycling_participant:read']);
+    }
+
     #[Route('/new', name: 'app_cycling_participant_new', methods: ['POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
