@@ -20,11 +20,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups("user:read", 'user:new')]
+    #[Groups("user:read")]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups(["user:read", "user:new", "user_basic:read"])]  // Add user_basic:read
+    #[Groups(["user:read", "user_basic:read"])]  // Add user_basic:read
     private ?string $email = null;
 
 
@@ -32,7 +32,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var list<string> The user roles
      */
     #[ORM\Column]
-    #[Groups("user:read", 'user:new')]
+    #[Groups("user:read")]
     private array $roles = [];
 
     /**
