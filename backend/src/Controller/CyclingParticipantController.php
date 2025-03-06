@@ -15,7 +15,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/api/cycling_participant')]
 final class CyclingParticipantController extends AbstractController
 {
-    #[Route('', name: 'app_cycling_participant_index', methods: ['GET'])]
+    #[Route(name: 'app_cycling_participant_index', methods: ['GET'])]
     public function index(CyclingParticipantRepository $cyclingParticipantRepository): JsonResponse
     {
         $participants = $cyclingParticipantRepository->findAll();

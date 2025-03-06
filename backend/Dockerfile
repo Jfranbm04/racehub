@@ -31,6 +31,7 @@ COPY . .
 RUN composer install
 RUN composer require symfony/orm-pack doctrine/doctrine-bundle
 RUN composer require doctrine/dbal
+RUN composer require nelmio/cors-bundle 
 
 # Establecer permisos para el directorio var
 RUN chmod -R 777 /app/var
