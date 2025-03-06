@@ -22,14 +22,15 @@ RUN composer install
 RUN composer require symfony/orm-pack doctrine/doctrine-bundle
 RUN composer require doctrine/dbal
 
-# Ejecutar migraciones al construir la imagen
-RUN php bin/console doctrine:migrations:diff || true
-RUN php bin/console doctrine:migrations:migrate --no-interaction || true
-
 # Establecer permisos para el directorio var
 RUN chmod -R 777 /app/var
+
+# Copiar el entrypoint y darle permisos de ejecución
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Exponer el puerto
 EXPOSE 9000
 
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+# Usar el script como punto de entrada
+# ENTRYPOINT ["/entrypoint.sh"]

@@ -1,19 +1,20 @@
 services:
   api:
     build:
-      context: ./backend/
+      context: ./backend
       dockerfile: Dockerfile
     expose:
       - "9000"
     volumes:
       - ./backend:/var/www/html
     depends_on:
-      - database
+      - basedatos
     networks:
       - network_racehub
     environment:
       - APP_ENV=dev
       - APP_DEBUG=1
+    command: ["/entrypoint.sh"]
 
   proxy:
     build:
@@ -29,7 +30,7 @@ services:
     networks:
       - network_racehub
 
-  database:
+  basedatos:
     image: mysql:8.0
     env_file:
       - .env
@@ -37,18 +38,25 @@ services:
       - db_data:/var/lib/mysql  # Persistencia de datos de MySQL
     ports:
       - "3306:3306"  # Puerto de MySQL
+    networks:
+      - network_racehub
+    environment:
+      - TZ=UTC
+
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    ports:
+    ports: 
       - "8080:80"  # Acceso a PHPMyAdmin en http://localhost:8080
     environment:
-      PMA_HOST: database  
+      PMA_HOST: basedatos 
       PMA_PORT: 3306
     env_file:
       - .env
     depends_on:
-      - database
+      - basedatos
+    networks:
+      - network_racehub
 
 networks:
   network_racehub:
