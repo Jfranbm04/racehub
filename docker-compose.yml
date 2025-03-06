@@ -43,7 +43,6 @@ services:
     environment:
       - TZ=UTC
 
-
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports: 
