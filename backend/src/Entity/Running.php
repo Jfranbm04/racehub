@@ -23,9 +23,17 @@ class Running
     #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?string $name = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
+    private ?string $description = null;
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?\DateTimeInterface $date = null;
+
+    #[ORM\Column]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
+    private ?int $distance_km = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(["running:read", "running_participant:read", "user:read"])]
@@ -83,6 +91,18 @@ class Running
         return $this;
     }
 
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
     public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
@@ -95,6 +115,17 @@ class Running
         return $this;
     }
 
+    public function getDistanceKm(): ?int
+    {
+        return $this->distance_km;
+    }
+
+    public function setDistanceKm(int $distance_km): static
+    {
+        $this->distance_km = $distance_km;
+
+        return $this;
+    }
     public function getLocation(): ?string
     {
         return $this->location;
