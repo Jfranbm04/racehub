@@ -19,12 +19,12 @@ final class UserController extends AbstractController
     #[Route(name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepo, Request $request, EntityManagerInterface $entMngr): JsonResponse
     {
-        try{
-            $users = $userRepo -> findAll();
-            return $this -> json($users, Response::HTTP_OK, [], ['groups' => 'user:read']);
+        try {
+            $users = $userRepo->findAll();
+            return $this->json($users, Response::HTTP_OK, [], ['groups' => 'user:read']);
         }
-        catch(\Exception $e){
-            return $this -> json(['error' => $e -> getMessage()], Response::HTTP_BAD_REQUEST);
+        catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -39,13 +39,13 @@ final class UserController extends AbstractController
             $user -> setEmail($data['email']);
             $user -> setPassword($userPassHash -> hashPassword($user, $data['password']));
 
-            $entMngr -> persist($user);
-            $entMngr -> flush();
+            $entMngr->persist($user);
+            $entMngr->flush();
 
-            return $this -> json($user, Response::HTTP_CREATED, [], ['groups' => 'user:read']);
+            return $this->json($user, Response::HTTP_CREATED, [], ['groups' => 'user:read']);
         }
-        catch(\Exception $e){
-            return $this -> json(['error' => $e -> getMessage()], Response::HTTP_BAD_REQUEST);
+        catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 

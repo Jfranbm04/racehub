@@ -12,21 +12,32 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/cycling/participant')]
+#[Route('/api/cycling_participant')]
 final class CyclingParticipantController extends AbstractController
 {
-    #[Route(name: 'app_cycling_participant_index', methods: ['GET'])]
-    public function index(CyclingParticipantRepository $cyclingParticipantRepository): JsonResponse
-    {
-        $participants = $cyclingParticipantRepository->findAll();
-        return $this->json($participants, Response::HTTP_OK, [], ['groups' => 'cycling_participant:read']);
-    }
-
     #[Route('/new', name: 'app_cycling_participant_new', methods: ['POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
         try {
-            $participant = $serializer->deserialize($request->getContent(), CyclingParticipant::class, 'json');
+            $data = json_decode($request->getContent(), true);
+
+            // Create new participant
+            $participant = new CyclingParticipant();
+
+            // Get existing entities
+            $user = $entityManager->getReference('App\Entity\User', $data['user']);
+            $cycling = $entityManager->getReference('App\Entity\Cycling', $data['cycling']);
+
+            // Set the relationships
+            $participant->setUser($user);
+            $participant->setCycling($cycling);
+            $participant->setDorsal($data['dorsal']);
+            $participant->setBanned($data['banned']);
+
+            if (isset($data['time'])) {
+                $participant->setTime(new \DateTime($data['time']));
+            }
+
             $entityManager->persist($participant);
             $entityManager->flush();
 
@@ -43,13 +54,32 @@ final class CyclingParticipantController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_cycling_participant_edit', methods: ['PUT'])]
-    public function edit(Request $request, CyclingParticipant $participant, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
+    public function edit(Request $request, CyclingParticipant $participant, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
-            $updatedParticipant = $serializer->deserialize($request->getContent(), CyclingParticipant::class, 'json', ['object_to_populate' => $participant]);
+            $data = json_decode($request->getContent(), true);
+
+            if (isset($data['user'])) {
+                $user = $entityManager->getReference('App\Entity\User', $data['user']);
+                $participant->setUser($user);
+            }
+            if (isset($data['cycling'])) {
+                $cycling = $entityManager->getReference('App\Entity\Cycling', $data['cycling']);
+                $participant->setCycling($cycling);
+            }
+            if (isset($data['dorsal'])) {
+                $participant->setDorsal($data['dorsal']);
+            }
+            if (isset($data['banned'])) {
+                $participant->setBanned($data['banned']);
+            }
+            if (isset($data['time'])) {
+                $participant->setTime(new \DateTime($data['time']));
+            }
+
             $entityManager->flush();
 
-            return $this->json($updatedParticipant, Response::HTTP_OK, [], ['groups' => 'cycling_participant:read']);
+            return $this->json($participant, Response::HTTP_OK, [], ['groups' => 'cycling_participant:read']);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
