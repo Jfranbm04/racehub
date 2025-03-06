@@ -16,55 +16,55 @@ class Cycling
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups("cycling:read")]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups("cycling:read")]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups("cycling:read")]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Groups("cycling:read")]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column]
-    #[Groups("cycling:read")]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?int $distance_km = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups("cycling:read")]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $location = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups("cycling:read")]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $coordinates = null;
 
     #[ORM\Column]
-    #[Groups("cycling:read")]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?int $unevenness = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups("cycling:read")]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?int $entry_fee = null;
 
     #[ORM\Column]
-    #[Groups("cycling:read")]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?int $available_slots = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups("cycling:read")]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $status = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups("cycling:read")]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $category = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups("cycling:read")]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $image = null;
 
     /**
@@ -72,6 +72,7 @@ class Cycling
      */
     #[ORM\OneToMany(targetEntity: CyclingParticipant::class, mappedBy: 'cycling')]
     #[MaxDepth(1)]
+    #[Groups("cycling:read")]
     private Collection $cyclingParticipants;
 
     public function __construct()

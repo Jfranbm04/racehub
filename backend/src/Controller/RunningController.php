@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/running')]
+#[Route('/api/running')]
 final class RunningController extends AbstractController
 {
     #[Route(name: 'app_running_index', methods: ['GET'])]
