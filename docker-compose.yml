@@ -1,0 +1,61 @@
+services:
+  database:
+    image: mysql:8.0
+    env_file:
+      - .env
+    volumes:
+      - ./dockerinit.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql # Persistencia de datos de MySQL
+    ports:
+      - "3306:3306" # Puerto de MySQL
+    networks:
+      - network_racehub
+  api:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - database
+    command: [ "sh", "-c", "composer install && composer show doctrine/dbal && php -S 0.0.0.0:8000 -t public" ]
+    networks:
+      - network_racehub
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80" # Acceso a PHPMyAdmin en http://localhost:8080
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+    env_file:
+      - .env
+    depends_on:
+      - database
+    networks:
+      - network_racehub
+  # nginx-proxy:
+  #   build:
+  #     context: ./nginx
+  #     dockerfile: Dockerfile-nginx
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx/certs:/etc/nginx/certs
+  #   depends_on:
+  #     - api
+  #     - phpmyadmin
+  #     # - frontend
+  #   networks:
+  #     - network_racehub
+
+networks:
+  network_racehub:
+    driver: bridge
+
+volumes:
+  db_data: # Volumen para persistir los datos de la base de datos
