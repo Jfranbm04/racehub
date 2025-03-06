@@ -13,12 +13,16 @@ RUN mkdir -p /var/log/nginx
 
 # Set proper permissions
 RUN chown -R nginx:nginx /var/log/nginx
+RUN chown -R nginx:nginx /var/www/html
 
 # Copy Nginx configuration
 COPY default.conf /etc/nginx/conf.d/default.conf
 
-# Expose port 80
+# Create cache directories and set permissions
+RUN mkdir -p /var/cache/nginx && \
+    chown -R nginx:nginx /var/cache/nginx && \
+    chmod -R 755 /var/cache/nginx
+
 EXPOSE 80
 
-# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]

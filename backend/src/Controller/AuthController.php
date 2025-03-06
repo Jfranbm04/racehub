@@ -11,12 +11,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('api/auth')]
+#[Route('/api/auth')]
 final class AuthController extends AbstractController
 {
-    #[Route('/register', name: 'app_register', methods: ['POST'])]
+    #[Route('/register', name: 'api_register', methods: ['POST'])]
     public function register(Request $request, UserPasswordHasherInterface $userPassHash, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
@@ -43,7 +42,7 @@ final class AuthController extends AbstractController
         }
     }
 
-    #[Route('/login', name: 'app_login', methods: ['POST'])]
+    #[Route('/login', name: 'api_login', methods: ['POST'])]
     public function login(Request $request, UserRepository $userRepo, UserPasswordHasherInterface $userPassHash): JsonResponse
     {
         if ($this->getUser()) {
@@ -69,7 +68,7 @@ final class AuthController extends AbstractController
         return $this->json(['error' => 'Something went wrong, if you see this message, contact support.'], Response::HTTP_I_AM_A_TEAPOT);
     }
 
-    #[Route('/logout', name: 'app_logout', methods: ['POST'])]
+    #[Route('/logout', name: 'api_logout', methods: ['POST'])]
     public function logout(): JsonResponse
     {
 

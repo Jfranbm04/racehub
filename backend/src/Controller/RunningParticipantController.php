@@ -14,6 +14,22 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/api/running_participant')]
 final class RunningParticipantController extends AbstractController
 {
+    #[Route('', name: 'app_running_participant_index', methods: ['GET'])]
+    public function index(RunningParticipantRepository $runningParticipantRepository): JsonResponse
+    {
+        $participants = $runningParticipantRepository->findAll();
+        return $this->json($participants, Response::HTTP_OK, [], [
+            'groups' => [
+                'running_participant:read',
+                'user:read',
+                'running:read'
+            ],
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ]);
+    }
+
     #[Route('/new', name: 'app_running_participant_new', methods: ['POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -40,7 +56,91 @@ final class RunningParticipantController extends AbstractController
             $entityManager->persist($participant);
             $entityManager->flush();
 
-            return $this->json($participant, Response::HTTP_CREATED, [], ['groups' => 'running_participant:read']);
+            return $this->json($participant, Response::HTTP_CREATED, [], [
+                'groups' => [
+                    'running_participant:read',
+                    'user:read',
+                    'running:read'
+                ],
+                'circular_reference_handler' => function ($object) {
+                    return $object->getId();
+                }
+            ]);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    #[Route('/{id}', name: 'app_running_participant_show', methods: ['GET'])]
+    public function show(int $id, RunningParticipantRepository $repository): JsonResponse
+    {
+        $participant = $repository->find($id);
+
+        if (!$participant) {
+            return $this->json(['error' => 'Participant not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json($participant, Response::HTTP_OK, [], [
+            'groups' => [
+                'running_participant:read',
+                'user:read',
+                'running:read'
+            ],
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'app_running_participant_edit', methods: ['PUT'])]
+    public function edit(Request $request, RunningParticipant $participant, EntityManagerInterface $entityManager): JsonResponse
+    {
+        try {
+            $data = json_decode($request->getContent(), true);
+
+            if (isset($data['user'])) {
+                $user = $entityManager->getReference('App\Entity\User', $data['user']);
+                $participant->setUser($user);
+            }
+            if (isset($data['running'])) {
+                $running = $entityManager->getReference('App\Entity\Running', $data['running']);
+                $participant->setRunning($running);
+            }
+            if (isset($data['dorsal'])) {
+                $participant->setDorsal($data['dorsal']);
+            }
+            if (isset($data['banned'])) {
+                $participant->setBanned($data['banned']);
+            }
+            if (isset($data['time'])) {
+                $participant->setTime(new \DateTime($data['time']));
+            }
+
+            $entityManager->flush();
+
+            return $this->json($participant, Response::HTTP_OK, [], [
+                'groups' => [
+                    'running_participant:read',
+                    'user:read',
+                    'running:read'
+                ],
+                'circular_reference_handler' => function ($object) {
+                    return $object->getId();
+                }
+            ]);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    #[Route('/{id}', name: 'app_running_participant_delete', methods: ['DELETE'])]
+    public function delete(RunningParticipant $participant, EntityManagerInterface $entityManager): JsonResponse
+    {
+        try {
+            $entityManager->remove($participant);
+            $entityManager->flush();
+
+            return $this->json(null, Response::HTTP_NO_CONTENT);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
