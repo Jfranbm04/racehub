@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,25 +11,25 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('api/auth')]
 final class AuthController extends AbstractController
 {
     #[Route('/register', name: 'app_register', methods: ['POST'])]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
+    public function register(Request $request, UserPasswordHasherInterface $userPassHash, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
-            $user = $serializer->deserialize($request->getContent(), User::class, 'json');
-            $content = json_decode($request->getContent(), true);
+            $data = json_decode($request->getContent(), true);
 
-            if (!isset($content['password'])) {
+            $user = new User();
+            $user->setName($data['name']);
+            $user->setEmail($data['email']);
+            $user->setPassword($userPassHash->hashPassword($user, $data['password']));
+
+            if (!isset($data['password'])) {
                 return $this->json(['error' => 'Password is required'], Response::HTTP_BAD_REQUEST);
             }
-
-            // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $content['password']));
 
             $entityManager->persist($user);
             $entityManager->flush();
@@ -43,34 +44,35 @@ final class AuthController extends AbstractController
     }
 
     #[Route('/login', name: 'app_login', methods: ['POST'])]
-    public function login(AuthenticationUtils $authenticationUtils): JsonResponse
+    public function login(Request $request, UserRepository $userRepo, UserPasswordHasherInterface $userPassHash): JsonResponse
     {
-        $error = $authenticationUtils->getLastAuthenticationError();
-        
-        if ($error) {
+        if ($this->getUser()) {
             return $this->json([
-                'error' => $error->getMessage()
+                'error' => 'User is already logged in'
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        $user = $this->getUser();
-        
-        if (!$user) {
-            return $this->json([
-                'error' => 'Invalid credentials'
-            ], Response::HTTP_UNAUTHORIZED);
+        $data = json_decode($request->getContent(), true);
+
+        $checkUser = $userRepo->findOneBy(['email' => $data['email']]);
+
+        if (!isset($checkUser)) {
+            return $this->json(['error' => 'User or password invalid'], Response::HTTP_UNAUTHORIZED);
         }
 
-        return $this->json([
-            'user' => $user,
-            'message' => 'Logged in successfully'
-        ], Response::HTTP_OK, [], ['groups' => 'user:read']);
+        if ($userPassHash->isPasswordValid($checkUser, trim($data['password']))) {
+            return $this->json([
+                'user' => $checkUser,
+                'message' => 'Logged in successfully'
+            ], Response::HTTP_OK, [], ['groups' => 'user:read']);
+        }
+        return $this->json(['error' => 'Something went wrong, if you see this message, contact support.'], Response::HTTP_I_AM_A_TEAPOT);
     }
 
     #[Route('/logout', name: 'app_logout', methods: ['POST'])]
     public function logout(): JsonResponse
     {
-        // The actual logout is handled by the security system
+
         return $this->json([
             'message' => 'Logged out successfully'
         ], Response::HTTP_OK);

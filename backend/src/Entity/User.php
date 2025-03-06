@@ -20,18 +20,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups("user:read", 'user:new')]
+    #[Groups(["user:read", "user:new", "cycling:read", "cycling_participant:read", "running:read", "running_participant:read", "trail_running:read", "trail_running_participant:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups("user:read", 'user:new')]
+    #[Groups(["user:read", "user:new", "user_basic:read", "cycling:read", "cycling_participant:read", "running:read", "running_participant:read", "trail_running:read", "trail_running_participant:read"])]
     private ?string $email = null;
+
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
-    #[Groups("user:read", 'user:new')]
+    #[Groups(["user:read", "user:new", "cycling:read", "cycling_participant:read", "running:read", "running_participant:read", "trail_running:read", "trail_running_participant:read"])]
     private array $roles = [];
 
     /**
@@ -42,11 +43,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read', 'product:new'])]
+    #[Groups(["user:read", "user_basic:read", "cycling:read", "cycling_participant:read", "running:read", "running_participant:read", "trail_running:read", "trail_running_participant:read"])]  // Add user_basic:read
     private ?string $name = null;
-
     #[ORM\Column]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', "cycling:read", "cycling_participant:read", "running:read", "running_participant:read", "trail_running:read", "trail_running_participant:read"])]
     private ?bool $banned = false;
 
     /**
