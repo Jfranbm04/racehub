@@ -9,8 +9,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
+use App\Security\LoginAuthenticator;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/auth')]
@@ -52,14 +54,6 @@ final class AuthController extends AbstractController
             return $this->redirectToRoute('app_register');
         }
     }
-    #[Route('/login', name: 'app_login', methods: ['GET'])]
-    public function showLogin(AuthenticationUtils $authenticationUtils): Response
-    {
-        return $this->render('main/login.html.twig', [
-            'error' => $authenticationUtils->getLastAuthenticationError(),
-            'last_username' => $authenticationUtils->getLastUsername(),
-        ]);
-    }
 
     #[Route('/login/submit', name: 'app_login', methods: ['POST'])]
     public function login(AuthenticationUtils $authenticationUtils): JsonResponse
@@ -86,20 +80,51 @@ final class AuthController extends AbstractController
         ], Response::HTTP_OK, [], ['groups' => 'user:read']);
     }
 
-    #[Route(path: '/login', name: 'app_login_main')]
-    public function loginView(AuthenticationUtils $authenticationUtils): Response
+    #[Route('/login', name: 'app_login', methods: ['GET'])]
+    public function showLogin(AuthenticationUtils $authenticationUtils): Response
+    {
+        return $this->render('main/login.html.twig', [
+            'error' => $authenticationUtils->getLastAuthenticationError(),
+            'last_username' => $authenticationUtils->getLastUsername(),
+        ]);
+    }
+
+
+    #[Route('/login_view', name: 'app_login_view', methods: ['GET', 'POST'])]
+    public function loginView(Request $request, AuthenticationUtils $authenticationUtils, UserAuthenticatorInterface $userAuthenticator, LoginAuthenticator $loginAuthenticator): Response
     {   
-         if ($this->getUser()) {
+        if ($this->getUser()) {
             return $this->redirectToRoute('app_main');
         }
 
-        // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
-        return $this->render('main/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+
+        if ($request->isMethod('POST')) {
+            $credentials = [
+                'username' => $request->request->get('_username'),
+                'password' => $request->request->get('_password'),
+            ];
+
+            $user = $userAuthenticator->authenticateUser(
+                new User($credentials['username']),
+                $loginAuthenticator,
+                $request
+            );
+
+            if ($user) {
+                return $this->redirectToRoute('app_test');
+            } else {
+                $error = 'Invalid credentials';
+            }
+        }
+
+        return $this->render('main/login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error,
+        ]);
     }
-    
+
     #[Route('/logout', name: 'app_logout', methods: ['POST'])]
     public function logout(): JsonResponse
     {

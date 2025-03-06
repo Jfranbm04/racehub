@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Login{% endblock %}
 
 {% block body %}
 <div class="container mt-5">
@@ -11,7 +11,7 @@
                     <h3 class="text-center">Login</h3>
                 </div>
                 <div class="card-body">
-                    <form action="{{ path('app_login_main') }}" method="post">
+                    <form action="{{ path('app_login_view') }}" method="post">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="email" name="_username" required>
