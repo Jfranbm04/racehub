@@ -17,15 +17,17 @@ use Symfony\Component\Serializer\SerializerInterface;
 final class AuthController extends AbstractController
 {
     #[Route('/register', name: 'app_register', methods: ['POST'])]
-    public function register(Request $request, UserPasswordHasherInterface $userPassHash, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
+    public function register(Request $request, UserPasswordHasherInterface $userPassHash, EntityManagerInterface $entityManager): JsonResponse
     {
-        try{
-            $user = new User();
-            $user -> setName($request -> get('name'));
-            $user -> setEmail($request -> get('email'));
-            $user -> setPassword($userPassHash -> hashPassword($user, $request -> get('password')));
+        try {
+            $data = json_decode($request->getContent(), true);
 
-            if($request -> get('password') == null){
+            $user = new User();
+            $user->setName($data['name']);
+            $user->setEmail($data['email']);
+            $user->setPassword($userPassHash->hashPassword($user, $data['password']));
+
+            if (!isset($data['password'])) {
                 return $this->json(['error' => 'Password is required'], Response::HTTP_BAD_REQUEST);
             }
 
@@ -44,26 +46,27 @@ final class AuthController extends AbstractController
     #[Route('/login', name: 'app_login', methods: ['POST'])]
     public function login(Request $request, UserRepository $userRepo, UserPasswordHasherInterface $userPassHash): JsonResponse
     {
-        if($this -> getUser()){
+        if ($this->getUser()) {
             return $this->json([
                 'error' => 'User is already logged in'
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        $checkUser = $userRepo -> findOneBy(['email' => $request -> get('email')]);
-        
-        if(!isset($checkUser)){
-            return $this -> json(['error' => 'User or password invalid'], Response::HTTP_UNAUTHORIZED);
+        $data = json_decode($request->getContent(), true);
+
+        $checkUser = $userRepo->findOneBy(['email' => $data['email']]);
+
+        if (!isset($checkUser)) {
+            return $this->json(['error' => 'User or password invalid'], Response::HTTP_UNAUTHORIZED);
         }
 
-        if($userPassHash -> isPasswordValid($checkUser, trim($request -> get('password')) )){
+        if ($userPassHash->isPasswordValid($checkUser, trim($data['password']))) {
             return $this->json([
                 'user' => $checkUser,
                 'message' => 'Logged in successfully'
-            ], Response::HTTP_OK, [], []);
+            ], Response::HTTP_OK, [], ['groups' => 'user:read']);
         }
-
-        return $this -> json(['error' => 'Something went wrong, if you see this message, contact support.'], Response::HTTP_I_AM_A_TEAPOT);
+        return $this->json(['error' => 'Something went wrong, if you see this message, contact support.'], Response::HTTP_I_AM_A_TEAPOT);
     }
 
     #[Route('/logout', name: 'app_logout', methods: ['POST'])]
