@@ -32,10 +32,28 @@ final class TrailRunningParticipantController extends AbstractController
     }
 
     #[Route('/new', name: 'app_trail_running_participant_new', methods: ['POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
+    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
-            $participant = $serializer->deserialize($request->getContent(), TrailRunningParticipant::class, 'json');
+            $data = json_decode($request->getContent(), true);
+
+            // Create new participant
+            $participant = new TrailRunningParticipant();
+
+            // Get existing entities
+            $user = $entityManager->getReference('App\Entity\User', $data['user']);
+            $trailRunning = $entityManager->getReference('App\Entity\TrailRunning', $data['trailRunning']);
+
+            // Set the relationships
+            $participant->setUser($user);
+            $participant->setTrailRunning($trailRunning);
+            $participant->setDorsal($data['dorsal']);
+            $participant->setBanned($data['banned']);
+
+            if (isset($data['time'])) {
+                $participant->setTime(new \DateTime($data['time']));
+            }
+
             $entityManager->persist($participant);
             $entityManager->flush();
 
