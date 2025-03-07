@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -45,6 +46,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     #[Groups(["user:read", "user_basic:read", "cycling:read", "cycling_participant:read", "running:read", "running_participant:read", "trail_running:read", "trail_running_participant:read"])]  // Add user_basic:read
     private ?string $name = null;
+    
     #[ORM\Column]
     #[Groups(['user:read', "cycling:read", "cycling_participant:read", "running:read", "running_participant:read", "trail_running:read", "trail_running_participant:read"])]
     private ?bool $banned = false;
@@ -69,6 +71,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: TrailRunningParticipant::class, mappedBy: 'user')]
     #[Groups("user:read")]
     private Collection $trailRunningParticipants;
+
+    #[ORM\Column]
+    private ?int $age = null;
+
+    #[ORM\Column(length: 1)]
+    private ?string $gender = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $image = null;
 
     public function __construct()
     {
@@ -262,6 +273,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $trailRunningParticipant->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAge(): ?int
+    {
+        return $this->age;
+    }
+
+    public function setAge(int $age): static
+    {
+        $this->age = $age;
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): static
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): static
+    {
+        $this->image = $image;
 
         return $this;
     }

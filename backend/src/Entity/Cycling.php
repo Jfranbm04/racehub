@@ -75,6 +75,9 @@ class Cycling
     #[Groups("cycling:read")]
     private Collection $cyclingParticipants;
 
+    #[ORM\Column(length: 1)]
+    private ?string $gender = null;
+
     public function __construct()
     {
         $this->cyclingParticipants = new ArrayCollection();
@@ -255,6 +258,18 @@ class Cycling
                 $cyclingParticipant->setCycling(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): static
+    {
+        $this->gender = $gender;
 
         return $this;
     }

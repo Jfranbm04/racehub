@@ -66,6 +66,9 @@ class TrailRunning
     #[Groups(["trail_running:read"])]
     private Collection $trailRunningParticipants;
 
+    #[ORM\Column(length: 1)]
+    private ?string $gender = null;
+
     public function __construct()
     {
         $this->trailRunningParticipants = new ArrayCollection();
@@ -249,6 +252,18 @@ class TrailRunning
                 $trailRunningParticipant->setTrailRunning(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): static
+    {
+        $this->gender = $gender;
 
         return $this;
     }
