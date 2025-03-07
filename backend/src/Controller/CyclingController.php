@@ -97,27 +97,6 @@ final class CyclingController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_cycling_start', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $cycling = new Cycling();
-        $form = $this->createForm(CyclingType::class, $cycling);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $cycling->setStatus('open');
-            $entityManager->persist($cycling);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_cycling_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('cycling/new.html.twig', [
-            'cycling' => $cycling,
-            'form' => $form,
-        ]);
-    }
-
     #[Route('/{id}/edit', name: 'app_cycling_edit', methods: ['GET', 'POST'])]
     public function edit_s(Request $request, Cycling $cycling, EntityManagerInterface $entityManager): Response
     {
