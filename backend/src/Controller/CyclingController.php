@@ -69,6 +69,8 @@ final class CyclingController extends AbstractController
         }
     }
 
+    //-------METODOS SYMFONY----------
+
     #[Route('/new_s', name: 'app_cycling_start', methods: ['POST'])]
     public function new_s(Cycling $cycling, EntityManagerInterface $entityManager): Response
     {

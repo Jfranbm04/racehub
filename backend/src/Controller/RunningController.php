@@ -68,6 +68,8 @@ final class RunningController extends AbstractController
         }
     }
 
+    //-------METODOS SYMFONY----------
+
     #[Route('/new_s', name: 'app_running_start', methods: ['POST'])]
     public function new_s(Running $running, EntityManagerInterface $entityManager): Response
     {
