@@ -1,176 +1,177 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil - RaceHub</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #2c3e50;
-            --secondary: #3498db;
-            --accent: #e74c3c;
-            --light: #ecf0f1;
-            --dark: #1b2631;
-            --text-color: #333333;
-        }
+    {% block stylesheets %}
+        {{ parent() }}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <style>
+            :root {
+                --primary: #2c3e50;
+                --secondary: #3498db;
+                --accent: #e74c3c;
+                --light: #ecf0f1;
+                --dark: #1b2631;
+                --text-color: #333333;
+            }
 
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--primary), var(--dark));
-            color: var(--text-color);
-        }
+            body {
+                margin: 0;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, var(--primary), var(--dark));
+                color: var(--text-color);
+            }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+            }
 
-        header {
-            background: var(--light);
-            padding: 20px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+            header {
+                background: var(--light);
+                padding: 20px;
+                border-radius: 10px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
 
-        header h1 {
-            margin: 0;
-            font-size: 24px;
-            color: var(--primary);
-        }
+            header h1 {
+                margin: 0;
+                font-size: 24px;
+                color: var(--primary);
+            }
 
-        .back-button {
-            background: var(--secondary);
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
+            .back-button {
+                background: var(--secondary);
+                border: none;
+                color: white;
+                padding: 10px 20px;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: transform 0.2s ease;
+                box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+            }
 
-        .back-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
-        }
+            .back-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+            }
 
-        .profile-section, .events-section {
-            background: var(--light);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+            .profile-section, .events-section {
+                background: var(--light);
+                border-radius: 12px;
+                padding: 20px;
+                margin-top: 20px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
 
-        .profile-section h2, .events-section h2 {
-            margin-bottom: 20px;
-            color: var(--primary);
-        }
+            .profile-section h2, .events-section h2 {
+                margin-bottom: 20px;
+                color: var(--primary);
+            }
 
-        .profile-info {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-        }
-
-        .profile-info img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .profile-info .description {
-            max-width: 600px;
-        }
-
-        .profile-info .description p {
-            font-size: 16px;
-            line-height: 1.5;
-        }
-
-        .event-item {
-            background: var(--primary);
-            color: white;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .event-item a {
-            color: white;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .event-item:hover {
-            background: var(--accent);
-        }
-
-        .event-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .event-actions button {
-            background: var(--secondary);
-            border: none;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
-        }
-
-        .event-actions button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
-        }
-
-        footer {
-            background: var(--light);
-            text-align: center;
-            padding: 10px;
-            border-radius: 12px;
-            margin-top: 20px;
-            color: var(--primary);
-        }
-
-        @media (max-width: 768px) {
             .profile-info {
-                flex-direction: column;
-                align-items: flex-start;
-                text-align: center;
+                display: flex;
+                align-items: center;
+                gap: 30px;
             }
 
             .profile-info img {
-                margin-bottom: 15px;
+                width: 150px;
+                height: 150px;
+                border-radius: 50%;
+                object-fit: cover;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             }
 
             .profile-info .description {
-                max-width: 100%;
+                max-width: 600px;
             }
-        }
-    </style>
-</head>
-<body>
+
+            .profile-info .description p {
+                font-size: 16px;
+                line-height: 1.5;
+            }
+
+            .event-item {
+                background: var(--primary);
+                color: white;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 10px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .event-item a {
+                color: white;
+                font-weight: bold;
+                text-decoration: none;
+            }
+
+            .event-item:hover {
+                background: var(--accent);
+            }
+
+            .event-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .event-actions button {
+                background: var(--secondary);
+                border: none;
+                color: white;
+                padding: 12px 25px;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: transform 0.2s ease;
+                box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+            }
+
+            .event-actions button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+            }
+
+            footer {
+                background: var(--light);
+                text-align: center;
+                padding: 10px;
+                border-radius: 12px;
+                margin-top: 20px;
+                color: var(--primary);
+            }
+
+            @media (max-width: 768px) {
+                .profile-info {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    text-align: center;
+                }
+
+                .profile-info img {
+                    margin-bottom: 15px;
+                }
+
+                .profile-info .description {
+                    max-width: 100%;
+                }
+            }
+        </style>
+        {% endblock %}
+{% block body %}
     <div class="container">
         <header>
             <h1>Bienvenido, Juan Pérez</h1>
@@ -226,4 +227,4 @@
         </footer>
     </div>
 </body>
-</html>
+{% endblock %}
