@@ -76,15 +76,40 @@ final class UserController extends AbstractController
         try{
             $data = json_decode($request->getContent(), true);
 
-            if(!$userPassHash -> isPasswordValid($user, trim($data['oldpassword']))){
-                return $this -> json(false, Response::HTTP_OK);
+            if(isset($data['name'])) {
+                $user -> setName($data['name']);
             }
 
-            $user -> setName($data['name']);
-            $user -> setEmail($data['email']);
-            $user -> setPassword($userPassHash -> hashPassword($user, $data['newpassword']));
-            $user -> setRoles($data['role']);
-            $user -> setBanned($data['banned']);
+            if(isset($data['email'])) {
+                $user -> setEmail($data['email']);
+            }
+
+            if(isset($data['role'])) {
+                $user -> setRoles($data['role']);
+            }
+
+            if(isset($data['banned'])) {
+                $user -> setBanned($data['banned']);
+            }
+
+            if(isset($data['age'])) {
+                $user -> setAge($data['age']);
+            }
+
+            if(isset($data['gender'])) {
+                $user -> setGender($data['gender']);
+            }
+
+            if(isset($data['image'])) {
+                $user -> setImage($data['image']);
+            }
+
+            if(isset($data['oldpassword']) && isset($data['newpassword'])) {
+                if(!$userPassHash -> isPasswordValid($user, trim($data['oldpassword']))){
+                    return $this -> json(false, Response::HTTP_OK);
+                }
+                $user -> setPassword($userPassHash -> hashPassword($user, $data['newpassword']));
+            }
 
             $entMngr -> persist($user);
             $entMngr -> flush();
