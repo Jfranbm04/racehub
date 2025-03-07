@@ -73,7 +73,7 @@ final class RunningController extends AbstractController
             return $this->json($updatedRunning, Response::HTTP_OK, [], ['groups' => 'running:read']);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
+        } 
     }
 
     #[Route('/{id}', name: 'app_running_delete', methods: ['DELETE'])]
@@ -92,21 +92,21 @@ final class RunningController extends AbstractController
     //-------METODOS SYMFONY----------
 
     #[Route('/new_s', name: 'app_running_start', methods: ['POST'])]
-    public function new_s(Running $running, EntityManagerInterface $entityManager): Response
+    public function new_s(Running $running, EntityManagerInterface $entityManager, Request $request): Response
     {
         $running = new Running();
 
-        $running->setName('Running 1');
-        $running->setDescription('Running 1 description');
-        $running->setDate(new \DateTime());
-        $running->setDistanceKm(10);
-        $running->setLocation('Running 1 location');
-        $running->setCoordinates('0,0');
-        $running->setEntryFee(0);
-        $running->setAvailableSlots(100);
-        $running->setCategory('Running 1 category');
-        $running->setImage(0);
-        $running->setStatus('started');
+        $running->setName($request->request->get('name'));
+        $running->setDescription($request->request->get('description'));
+        $running->setDate(new \DateTime($request->request->get('date')));
+        $running->setDistanceKm($request->request->get('distance_km'));
+        $running->setLocation($request->request->get('location'));
+        $running->setCoordinates($request->request->get('coordinates'));
+        $running->setEntryFee($request->request->get('entry_fee'));
+        $running->setAvailableSlots($request->request->get('available_slots')); 
+        $running->setCategory($request->request->get('category'));
+        $running->setImage($request->request->get('image'));
+        $running->setStatus('open');        
 
         $entityManager->persist($running);
         $entityManager->flush();
