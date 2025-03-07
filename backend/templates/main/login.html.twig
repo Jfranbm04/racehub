@@ -52,6 +52,10 @@
 {% endblock %}#}
 
  {% block body %}
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Madimi+One&family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+
  <style>
     body, html {
         height: 100%;
@@ -59,7 +63,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        font-family: Arial, sans-serif;
+        font-family: "Lexend", Arial, sans-serif;
         flex-direction: column; /* Esto asegura que los elementos se apilen verticalmente */
     }
 
@@ -69,7 +73,7 @@
         margin-bottom: 1em;
     }
 
-    #btnIniciarSesion {
+    #btnIniciarSesion, #btnAtras {
         font-size: 18px;
         background-color: #4CAF50;
         color: white;
@@ -78,6 +82,18 @@
         border: none;
         cursor: pointer;
         width: 50%;
+    }
+
+    #btnAtras {
+        top: 0;
+        left: 0;
+        width: 50px;
+        height: 50px;
+        margin: 1rem;
+
+        position:absolute;
+        display: block;
+        font-weight: bold;
     }
 
     .recuadro {
@@ -112,6 +128,15 @@
     }
 </style>
 
+<div>
+    <button id="btnAtras">&lt;</button>
+</div>
+
+<script>
+    document.querySelector("#btnAtras").addEventListener("click", () => {
+        location.href = location.origin
+    })
+</script>
 
 <h1 id="txtInicio">Iniciar Sesión</h1>
 
