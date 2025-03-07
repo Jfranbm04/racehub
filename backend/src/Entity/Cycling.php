@@ -76,6 +76,7 @@ class Cycling
     private Collection $cyclingParticipants;
 
     #[ORM\Column(length: 1)]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $gender = null;
 
     public function __construct()

@@ -73,13 +73,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $trailRunningParticipants;
 
     #[ORM\Column]
-    private ?int $age = null;
+    #[Groups(["user:read", "user:new", "cycling:read", "cycling_participant:read", "running:read", "running_participant:read", "trail_running:read", "trail_running_participant:read"])]
+    private ?int $age = 0;
 
     #[ORM\Column(length: 1)]
-    private ?string $gender = null;
+    #[Groups(["user:read", "user:new", "cycling:read", "cycling_participant:read", "running:read", "running_participant:read", "trail_running:read", "trail_running_participant:read"])]
+    private ?string $gender = 'M';
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $image = null;
+    #[Groups(["user:read", "user:new", "cycling:read", "cycling_participant:read", "running:read", "running_participant:read", "trail_running:read", "trail_running_participant:read"])]
+    private ?string $image = 'default.png';
 
     public function __construct()
     {
