@@ -23,20 +23,6 @@ final class CyclingController extends AbstractController
         return $this->json($cyclings, Response::HTTP_OK, [], ['groups' => 'cycling:read']);
     }
 
-    #[Route('/new', name: 'app_cycling_new', methods: ['POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
-    {
-        try {
-            $cycling = $serializer->deserialize($request->getContent(), Cycling::class, 'json');
-            $entityManager->persist($cycling);
-            $entityManager->flush();
-
-            return $this->json($cycling, Response::HTTP_CREATED, [], ['groups' => 'cycling:read']);
-        } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
-    }
-
     #[Route('/{id}', name: 'app_cycling_show', methods: ['GET'])]
     public function show(Cycling $cycling): JsonResponse
     {
@@ -88,31 +74,23 @@ final class CyclingController extends AbstractController
     }
 
     #[Route('/new', name: 'app_cycling_start', methods: ['GET', 'POST'])]
-    public function new_s(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Crear una nueva instancia de la entidad Cycling
         $cycling = new Cycling();
-
-        // Crear el formulario
         $form = $this->createForm(CyclingType::class, $cycling);
-
-        // Manejar la solicitud
         $form->handleRequest($request);
 
-        // Si el formulario fue enviado y es válido
         if ($form->isSubmitted() && $form->isValid()) {
-            // Guardar la nueva entidad en la base de datos
+            $cycling->setStatus('open');
             $entityManager->persist($cycling);
             $entityManager->flush();
 
-            // Redirigir al usuario a otra página (por ejemplo, la lista de carreras)
-            return $this->redirectToRoute('app_cycling_index');
+            return $this->redirectToRoute('app_cycling_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        // Mostrar el formulario de creación
         return $this->render('cycling/new.html.twig', [
-            'form' => $form->createView(), 
-            'button_label' => 'Crear', // Define el texto del botón para la creación
+            'cycling' => $cycling,
+            'form' => $form,
         ]);
     }
 

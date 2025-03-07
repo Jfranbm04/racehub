@@ -21,21 +21,7 @@ final class TrailRunningController extends AbstractController
         $trailRunnings = $trailRunningRepository->findAll();
         return $this->json($trailRunnings, Response::HTTP_OK, [], ['groups' => 'trail_running:read']);
     }
-
-    #[Route('/new', name: 'app_trail_running_new', methods: ['POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
-    {
-        try {
-            $trailRunning = $serializer->deserialize($request->getContent(), TrailRunning::class, 'json');
-            $entityManager->persist($trailRunning);
-            $entityManager->flush();
-
-            return $this->json($trailRunning, Response::HTTP_CREATED, [], ['groups' => 'trail_running:read']);
-        } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
-    }
-
+    
     #[Route('/{id}', name: 'app_trail_running_show', methods: ['GET'])]
     public function show(TrailRunning $trailRunning): JsonResponse
     {
