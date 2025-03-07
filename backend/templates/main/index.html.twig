@@ -77,7 +77,7 @@
             margin-right: 3rem;
         }
 
-        nav a {
+        nav li a {
             font-family: "Madimi One";
             color: whitesmoke;
             text-decoration: none;
@@ -85,7 +85,7 @@
             transition: .2s;
         }
 
-        nav a::after {
+        nav li a::after {
             content: "";
             width: 0px;
             height: 2px;
@@ -94,16 +94,18 @@
             transition: .2s;
         }
 
-        nav a:hover::after {
+        nav li a:hover::after {
             width: 100%;
         }
 
-        nav a:hover {
+        nav li a:hover {
             font-weight: bold;
             font-size: 1.45rem;
         }
 
-        nav button {
+        nav .btn {
+            text-decoration: none;
+            color: black;
             font-family: "Madimi One";
             font-size: 1rem;
             margin: 0 .5rem;
@@ -114,7 +116,7 @@
             transition: .2s;
         }
 
-        nav button:hover {
+        nav .btn:hover {
             border-color: var(--primary-color);
             background-color: var(--secondary-color);
             color: whitesmoke;
@@ -127,12 +129,33 @@
             flex-flow: row;
             font-weight: normal;
             height: 100vh;
+            width: 100%;
             overflow: hidden;
             justify-content: space-evenly;
             align-items: center;
         }
 
         .hero_left {
+            position: relative;
+            overflow: hidden !important;
+            width: 100%;
+            height: 100%;
+            background-color: var(--secondary-color);
+        }
+
+        .hero_left .backgrounds {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            background-size: cover;
+            background-image:
+                linear-gradient(to bottom, rgba(0, 31, 61, 0.75), var(--secondary-color)),
+                url("{{ asset('images/bike_racing.jpg') }}");
+            background-blend-mode: multiply;
+            transition: opacity.6s;
+        }
+
+        .hero_left .content {
             height: 100%;
             color: whitesmoke;
             text-align: justify;
@@ -141,23 +164,18 @@
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr 1fr;
             justify-content: center;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: right;
             padding: 0 5rem;
-            background-image:
-                linear-gradient(to bottom, rgba(0, 31, 61, 0.75), var(--secondary-color)),
-                url("{{ asset('images/bike_racing.jpg') }}");
-            background-blend-mode: multiply;
         }
 
-        .hero_left > h1 {
+        .hero_left > .content > h1 {
+            z-index: 1;
             align-self: self-end;
             margin-bottom: 1rem;
             font-size: 2rem;
         }
 
-        .hero_left > p {
+        .hero_left > .content > p {
+            z-index: 1;
             font-size: 1rem;
             font-weight: lighter;
         }
@@ -181,7 +199,9 @@
         .companyInfo {
             display: flex;
             flex-flow: row;
+            text-align: center;
         }
+
 
         .companyInfo > div {
             flex-basis: 33%;
@@ -236,12 +256,15 @@
     <!-- Banner principal -->
     <header class="hero">
         <div class="hero_left">
-            <div class="logo">
-                {# Actualizado: resources/images → images #}
-                <img src="{{ asset('images/bike.png') }}" alt="Logo">
+            <div class="backgrounds"></div>
+            <div class="content">
+                <div class="logo">
+                    {# Actualizado: resources/images → images #}
+                    <img src="{{ asset('images/bike.png') }}" alt="Logo">
+                </div>
+                <h1>¡Bienvenido a RaceHub!</h1>
+                <p>Descubre las mejores carreras y eventos deportivos...</p>
             </div>
-            <h1>¡Bienvenido a RaceHub!</h1>
-            <p>Descubre las mejores carreras y eventos deportivos...</p>
         </div>
     </header>
 
@@ -249,19 +272,19 @@
     <main>
         <div class="companyInfo">
             <div>
-                <img src="{{ asset('images/book.png') }}" alt="Información">
-                <h3>Eventos Exclusivos</h3>
-                <p>Participa en eventos únicos...</p>
+                <img src="{{ asset('images/running-run.svg') }}" alt="Información">
+                <h3>Running</h3><br/>
+                <p>Los deportes de running son perfectos para todos los niveles de habilidad.</p>
             </div>
             <div>
-                <img src="{{ asset('images/clipboard.png') }}" alt="Organización">
-                <h3>Organización Profesional</h3>
-                <p>Todos nuestros eventos...</p>
+                <img src="{{ asset('images/icon-bike.svg') }}" alt="Organización">
+                <h3>Cycling</h3><br/>
+                <p>Eventos de ciclismo de montaña y de ruta para todos los niveles.</p>
             </div>
             <div>
-                <img src="{{ asset('images/megaphone.png') }}" alt="Comunidad">
-                <h3>Únete a Nuestra Comunidad</h3>
-                <p>Conéctate con otros atletas...</p>
+                <img src="{{ asset('images/trail-running-shoe.svg') }}" alt="Comunidad">
+                <h3>Trail running</h3><br/>
+                <p>Explora senderos y caminos desafiantes con nuestros eventos de trail running.</p>
             </div>
         </div>
     </main>
@@ -272,4 +295,32 @@
         <div style="text-align: center;">RaceHub (C) 2025. All rights reserved</div>
         <div></div>
     </footer>
+
+    <script>
+    let index = 0;
+    let backgroundUrls = [
+        "{{ asset('images/bike_racing.jpg') }}",     
+        "{{ asset('images/marathon.jpg') }}",     
+        "{{ asset('images/trailrunning.jpg') }}"     
+    ]
+    function changeBackground(){
+        index = (index+1)%backgroundUrls.length
+        let currentBackground = backgroundUrls[index]
+        let backgroundDiv = document.querySelector(".backgrounds");
+
+        backgroundDiv.style.opacity = 0;
+
+        setTimeout(() => {
+        backgroundDiv.style.backgroundImage = `
+                linear-gradient(to bottom, rgba(0, 31, 61, 0.75), var(--secondary-color)),
+                url('${currentBackground}')
+        `           
+        backgroundDiv.style.opacity = 1;
+        }, 600)
+
+    }
+
+    setInterval(changeBackground, 8000)
+
+    </script>
 {% endblock %}
