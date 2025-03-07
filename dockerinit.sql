@@ -79,12 +79,38 @@ CREATE TABLE `running_participant` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
   `running_id` int(11) NOT NULL,
+  `time` bigint(20) DEFAULT NULL,
+  `dorsal` int(11) NOT NULL,
+  `banned` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `IDX_229F0410A76ED395` (`user_id`),
+  KEY `IDX_229F041083E27A5E` (`running_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table structure for table `running_participant`
+CREATE TABLE `running_participant` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `running_id` int(11) NOT NULL,
   `time` datetime DEFAULT NULL,
   `dorsal` int(11) NOT NULL,
   `banned` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_229F0410A76ED395` (`user_id`),
   KEY `IDX_229F041083E27A5E` (`running_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table structure for table `cycling_participant`
+CREATE TABLE `cycling_participant` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `cycling_id` int(11) DEFAULT NULL,
+  `time` bigint(20) DEFAULT NULL,
+  `dorsal` int(11) NOT NULL,
+  `banned` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `IDX_6FD84039A76ED395` (`user_id`),
+  KEY `IDX_6FD84039A1206764` (`cycling_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table structure for table `trail_running`
@@ -110,7 +136,7 @@ CREATE TABLE `trail_running_participant` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
   `trail_running_id` int(11) DEFAULT NULL,
-  `time` datetime DEFAULT NULL,
+  `time` bigint(20) DEFAULT NULL,
   `dorsal` int(11) NOT NULL,
   `banned` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
@@ -161,6 +187,11 @@ INSERT INTO `trail_running` (`id`, `name`, `description`, `date`, `distance_km`,
 (3, 'Ultra Trail Marathon', 'Challenging ultra trail marathon', '2024-08-10 06:00:00', 50, 'Pyrenees', '42.642508,1.012573', 2500, 50, 75, 'open', 'advanced', 'ultra-trail.jpg');
 
 INSERT INTO `trail_running_participant` (`id`, `user_id`, `trail_running_id`, `time`, `dorsal`, `banned`) VALUES
+(1, 1, 1, 1718450400000, 101, 0),
+(2, 2, 1, 1718451100000, 102, 0),
+(3, 1, 2, 1721894100000, 201, 0),
+(4, 2, 3, 1723392600000, 301, 0),
+(5, 3, 2, 1721892300000, 202, 0);
 (1, 1, 1, '2024-06-15 11:30:00', 101, 0),
 (2, 2, 1, '2024-06-15 11:45:00', 102, 0),
 (3, 1, 2, '2024-07-20 11:15:00', 201, 0),
