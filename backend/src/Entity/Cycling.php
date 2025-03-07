@@ -69,6 +69,10 @@ class Cycling
     #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $image = null;
 
+    #[ORM\Column(length: 1)]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
+    private ?string $gender = null;
+
     /**
      * @var Collection<int, CyclingParticipant>
      */
@@ -257,6 +261,18 @@ class Cycling
                 $cyclingParticipant->setCycling(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): static
+    {
+        $this->gender = $gender;
 
         return $this;
     }

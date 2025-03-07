@@ -1,0 +1,999 @@
+# Importar este archivo a https://editor.swagger.io/ para visualizar la API.
+
+openapi: 3.0.0
+info:
+  title: RaceHub - OpenAPI 3.0
+  description: |-
+    Este documento lista y da ejemplos de los endpoints, que parametros requieren y cuáles devuelve el servidor
+  version: 0.0.99
+
+servers:
+  - url: https://cambiar.a.la.ip/del/servidor
+  
+tags:
+  - name: User
+    description: Interactuar con la info del usuario
+  - name: Auth
+    description: Inicio de sesión y registro del usuario
+  - name: Cycling
+    description: Acceso a las carreras Cycling
+  - name: CyclingParticipant
+    description: Usuarios que participan en una carrera Cycling
+  - name: Running
+    description: Acceso a las carreras Running
+  - name: RunningParticipant
+    description: Usuarios que participan en una carrera Running
+  - name: TrailRunning
+    description: Acceso a las carreras TrailRunning
+  - name: TrailRunningParticipant
+    description: Usuarios que participan en una carrera TrailRunning
+    
+paths:
+  /api/user:
+    get:
+      tags:
+        - User 
+      summary: Devuelve todos los usuarios
+      description: Devuelve todos los usuarios
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /api/user/{id}:
+    get:
+      tags:
+        - User
+      summary: Devuelve el usuario con el id especificado
+      description: Devuelve el usuario con el id especificado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /api/user/{id}/edit:
+    put:
+      tags:
+        - User
+      summary: Actualiza el usuario con el id especificado y lo devuelve
+      description: Actualiza el usuario con el id especificado y lo devuelve
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: Usuario actualizado
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Inicia sesión
+      description: Inicia sesión
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Sesión iniciada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+
+  /api/auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Cierra sesión
+      description: Cierra sesión
+      responses:
+        '200':
+          description: Sesión cerrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /api/cycling:
+    get:
+      tags:
+        - Cycling
+      summary: Devuelve todas las carreras
+      description: Devuelve todas las carreras
+      responses:
+        '200':
+          description: Lista de carreras
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CyclingRace'
+
+  /api/cycling/{id}:
+    get:
+      tags:
+        - Cycling
+      summary: Devuelve la carrera con el id especificado
+      description: Devuelve la carrera con el id especificado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Carrera encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CyclingRace'
+
+  /api/cycling_participant:
+    get:
+      tags:
+        - CyclingParticipant
+      summary: Muestra todos los participantes de la carrera
+      description: Muestra todos los participantes de la carrera
+      responses:
+        '200':
+          description: Lista de participantes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CyclingParticipant'
+
+  /api/cycling_participant/{id}:
+    get:
+      tags:
+        - CyclingParticipant
+      summary: Muestra el participante con el id especificado
+      description: Muestra el participante con el id especificado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Participante encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CyclingParticipant'
+    delete:
+      tags:
+        - CyclingParticipant
+      summary: Elimina el participante con el id especificado
+      description: Elimina el participante con el id especificado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID del objeto participante a eliminar
+      responses:
+        '200':
+          description: Participante eliminado
+
+  /api/cycling_participant/new:
+    post:
+      tags:
+        - CyclingParticipant
+      summary: Crea un nuevo participante con los datos especificados y lo devuelve
+      description: Crea un nuevo participante con los datos especificados y lo devuelve
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CyclingParticipantRequest'
+      responses:
+        '200':
+          description: Participante creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CyclingParticipant'
+
+  /api/cycling_participant/{id}/edit:
+    put:
+      tags:
+        - CyclingParticipant
+      summary: Actualiza el participante con el id especificado y lo devuelve
+      description: Actualiza el participante con el id especificado y lo devuelve
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CyclingParticipantPutRequest'
+      responses:
+        '200':
+          description: Participante actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CyclingParticipant'
+
+  /api/running:
+    get:
+      tags:
+        - Running
+      summary: Devuelve todas las carreras
+      description: Devuelve todas las carreras
+      responses:
+        '200':
+          description: Lista de carreras
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RunningRace'
+
+  /api/running/{id}:
+    get:
+      tags:
+        - Running
+      summary: Devuelve la carrera con el id especificado
+      description: Devuelve la carrera con el id especificado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Carrera encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunningRace'
+
+  /api/running_participant:
+    get:
+      tags:
+        - RunningParticipant
+      summary: Muestra todos los participantes de la carrera
+      description: Muestra todos los participantes de la carrera
+      responses:
+        '200':
+          description: Lista de participantes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RunningParticipant'
+
+  /api/running_participant/{id}:
+    get:
+      tags:
+        - RunningParticipant
+      summary: Muestra el participante con el id especificado
+      description: Muestra el participante con el id especificado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Participante encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunningParticipant'
+    delete:
+      tags:
+        - RunningParticipant
+      summary: Elimina el participante con el id especificado
+      description: Elimina el participante con el id especificado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID del objeto participante a eliminar
+      responses:
+        '200':
+          description: Participante eliminado
+
+  /api/running_participant/new:
+    post:
+      tags:
+        - RunningParticipant
+      summary: Crea un nuevo participante con los datos especificados y lo devuelve
+      description: Crea un nuevo participante con los datos especificados y lo devuelve
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunningParticipantRequest'
+      responses:
+        '200':
+          description: Participante creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunningParticipant'
+
+  /api/running_participant/{id}/edit:
+    put:
+      tags:
+        - RunningParticipant
+      summary: Actualiza el participante con el id especificado y lo devuelve
+      description: Actualiza el participante con el id especificado y lo devuelve
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunningParticipantPutRequest'
+      responses:
+        '200':
+          description: Participante actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunningParticipant'
+
+  /api/trailrunning:
+    get:
+      tags:
+        - TrailRunning
+      summary: Devuelve todas las carreras
+      description: Devuelve todas las carreras
+      responses:
+        '200':
+          description: Lista de carreras
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrailRunningRace'
+
+  /api/trailrunning/{id}:
+    get:
+      tags:
+        - TrailRunning
+      summary: Crea una nueva carrera con los datos especificados y lo devuelve
+      description: Crea una nueva carrera con los datos especificados y lo devuelve
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Carrera creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrailRunningRace'
+
+  /api/trailrunning_participant:
+    get:
+      tags:
+        - TrailRunningParticipant
+      summary: Muestra todos los participantes de la carrera
+      description: Muestra todos los participantes de la carrera
+      responses:
+        '200':
+          description: Lista de participantes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrailRunningParticipant'
+
+  /api/trailrunning_participant/{id}:
+    get:
+      tags:
+        - TrailRunningParticipant
+      summary: Muestra el participante con el id especificado
+      description: Muestra el participante con el id especificado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Participante encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrailRunningParticipant'
+    delete:
+      tags:
+        - TrailRunningParticipant
+      summary: Elimina el participante con el id especificado
+      description: Elimina el participante con el id especificado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID del objeto participante a eliminar
+      responses:
+        '200':
+          description: Participante eliminado
+
+  /api/trailrunning_participant/new:
+    post:
+      tags:
+        - TrailRunningParticipant
+      summary: Crea un nuevo participante con los datos especificados y lo devuelve
+      description: Crea un nuevo participante con los datos especificados y lo devuelve
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrailRunningParticipantRequest'
+      responses:
+        '200':
+          description: Participante creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrailRunningParticipant'
+
+  /api/trailrunning_participant/{id}/edit:
+    put:
+      tags:
+        - TrailRunningParticipant
+      summary: Actualiza el participante con el id especificado y lo devuelve
+      description: Actualiza el participante con el id especificado y lo devuelve
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrailRunningParticipantPutRequest'
+      responses:
+        '200':
+          description: Participante actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrailRunningParticipant'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+        password:
+          type: string
+        banned:
+          type: boolean
+        cyclingParticipants:
+          type: array
+          items:
+            $ref: '#/components/schemas/CyclingParticipant'
+        runningParticipants:
+          type: array
+          items:
+            $ref: '#/components/schemas/RunningParticipant'
+        trailRunningParticipants:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrailRunningParticipant'
+        age:
+          type: integer
+        gender:
+          type: string
+        image:
+          type: string
+  
+    UserShort:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+        password:
+          type: string
+        banned:
+          type: boolean
+        age:
+          type: integer
+        gender:
+          type: string
+        image:
+          type: string
+
+    UserUpdateRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+        oldpassword:
+          type: string
+        newpassword:
+          type: string
+        banned:
+          type: boolean
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    LoginResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+
+    CyclingRace:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+          format: date-time
+        distance_km:
+          type: number
+        location:
+          type: string
+        coordinates:
+          type: string
+        unevenness:
+          type: number
+        entry_fee:
+          type: number
+        available_slots:
+          type: integer
+        status:
+          type: string
+        category:
+          type: string
+        image:
+          type: string
+        gender:
+          type: string
+        cyclingParticipants:
+          type: array
+          items:
+            $ref: '#/components/schemas/CyclingParticipantShort'
+    
+    CyclingRaceShort:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+          format: date-time
+        distance_km:
+          type: number
+        location:
+          type: string
+        coordinates:
+          type: string
+        unevenness:
+          type: number
+        entry_fee:
+          type: number
+        available_slots:
+          type: integer
+        status:
+          type: string
+        category:
+          type: string
+        image:
+          type: string
+        gender:
+          type: string
+
+    CyclingParticipant:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          $ref: '#/components/schemas/UserShort'
+        cycling:
+          $ref: '#/components/schemas/CyclingRaceShort'
+        time:
+          type: string
+        dorsal:
+          type: integer
+        banned:
+          type: boolean
+    
+    CyclingParticipantShort:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          $ref: '#/components/schemas/UserShort'
+        time:
+          type: string
+        dorsal:
+          type: integer
+        banned:
+          type: boolean
+
+    CyclingParticipantRequest:
+      type: object
+      properties:
+        user:
+          type: integer
+        cycling:
+          type: integer
+        time:
+          type: string
+          
+    CyclingParticipantPutRequest:
+      type: object
+      properties:
+        user:
+          type: integer
+        cycling:
+          type: integer
+        time:
+          type: string
+        dorsal: 
+          type: integer
+        banned:
+          type: boolean
+
+    RunningRace:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+          format: date-time
+        distance_km:
+          type: number
+        location:
+          type: string
+        coordinates:
+          type: string
+        unevenness:
+          type: number
+        entry_fee:
+          type: number
+        available_slots:
+          type: integer
+        status:
+          type: string
+        category:
+          type: string
+        image:
+          type: string
+        gender:
+          type: string
+        runningParticipants:
+          type: array
+          items:
+            $ref: '#/components/schemas/RunningParticipantShort'
+
+    RunningRaceShort:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+          format: date-time
+        distance_km:
+          type: number
+        location:
+          type: string
+        coordinates:
+          type: string
+        unevenness:
+          type: number
+        entry_fee:
+          type: number
+        available_slots:
+          type: integer
+        status:
+          type: string
+        category:
+          type: string
+        image:
+          type: string
+        gender:
+          type: string
+
+    RunningParticipant:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          $ref: '#/components/schemas/UserShort'
+        running:
+          $ref: '#/components/schemas/RunningRaceShort'
+        time:
+          type: string
+        dorsal:
+          type: integer
+        banned:
+          type: boolean
+
+    RunningParticipantShort:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          $ref: '#/components/schemas/UserShort'
+        time:
+          type: string
+        dorsal:
+          type: integer
+        banned:
+          type: boolean
+
+    RunningParticipantRequest:
+      type: object
+      properties:
+        user:
+          type: integer
+        running:
+          type: integer
+        time:
+          type: string
+          
+    RunningParticipantPutRequest:
+      type: object
+      properties:
+        user:
+          type: integer
+        running:
+          type: integer
+        time:
+          type: string
+        dorsal:
+          type: integer
+        banned:
+          type: boolean
+
+    TrailRunningRace:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+          format: date-time
+        distance_km:
+          type: number
+        location:
+          type: string
+        coordinates:
+          type: string
+        unevenness:
+          type: number
+        entry_fee:
+          type: number
+        available_slots:
+          type: integer
+        status:
+          type: string
+        category:
+          type: string
+        image:
+          type: string
+        gender:
+          type: string
+        trailRunningParticipants:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrailRunningParticipantShort'
+
+    TrailRunningRaceShort:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+          format: date-time
+        distance_km:
+          type: number
+        location:
+          type: string
+        coordinates:
+          type: string
+        unevenness:
+          type: number
+        entry_fee:
+          type: number
+        available_slots:
+          type: integer
+        status:
+          type: string
+        category:
+          type: string
+        image:
+          type: string
+        gender:
+          type: string
+
+    TrailRunningParticipant:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          $ref: '#/components/schemas/UserShort'
+        trailrunning:
+          $ref: '#/components/schemas/TrailRunningRaceShort'
+        time:
+          type: string
+        dorsal:
+          type: integer
+        banned:
+          type: boolean
+
+    TrailRunningParticipantShort:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          $ref: '#/components/schemas/UserShort'
+        time:
+          type: string
+        dorsal:
+          type: integer
+        banned:
+          type: boolean
+
+    TrailRunningParticipantRequest:
+      type: object
+      properties:
+        user:
+          type: integer
+        trailrunning:
+          type: integer
+        time:
+          type: string
+          
+    TrailRunningParticipantPutRequest:
+      type: object
+      properties:
+        user:
+          type: integer
+        trailrunning:
+          type: integer
+        time:
+          type: string
+        dorsal:
+          type: integer
+        banned:
+          type: boolean
