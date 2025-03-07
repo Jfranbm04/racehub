@@ -56,10 +56,6 @@ final class RunningParticipantController extends AbstractController
             $participant->setDorsal($data['dorsal']);
             $participant->setBanned($data['banned']);
 
-            if (isset($data['time'])) {
-                $participant->setTime(new \DateTime($data['time']));
-            }
-
             $entityManager->persist($participant);
             $entityManager->flush();
 
@@ -118,9 +114,6 @@ final class RunningParticipantController extends AbstractController
             }
             if (isset($data['banned'])) {
                 $participant->setBanned($data['banned']);
-            }
-            if (isset($data['time'])) {
-                $participant->setTime(new \DateTime($data['time']));
             }
 
             $entityManager->flush();
