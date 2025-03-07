@@ -40,7 +40,7 @@ class RunningParticipant
      */
     #[ORM\Column(type: Types::BIGINT)]
     #[Groups(["running_participant:read", "user:read", "running:read"])]
-    private ?string $time = null;
+    private ?string $time = '0';
 
     /**
      * Propiedad dorsal
@@ -54,7 +54,7 @@ class RunningParticipant
      */
     #[ORM\Column]
     #[Groups(["running_participant:read", "user:read", "running:read"])]
-    private ?bool $banned = null;
+    private ?bool $banned = false;
 
     public function getId(): ?int
     {

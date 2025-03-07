@@ -36,17 +36,20 @@ final class CyclingParticipantController extends AbstractController
             $participant->setCycling($cycling);
 
             //Set random dorsal
+            $dorsals = $cycling -> getCyclingParticipants() -> map(function ($participant){
+                return $participant -> getDorsal();
+            }) -> toArray();
 
-
-            /* for(int i = 0; i < nums.size(); i++){
-                if(i == 90000){
-                    GUI.launchMessage(2, "Nombre no disponible", "El nombre de usuario indicado no se\nencuentra disponible, inténtelo con uno distinto.");
+            // This code is shit but fuck it we ball
+            $dors = rand(1, $cycling -> getAvailableSlots() * 2);
+            for($i = 0; $i < sizeof($dorsals); $i++){
+                if($dors == $dorsals[$i]){
+                    $dors = rand(1, $cycling -> getAvailableSlots() * 2);
+                    $i = 0;
                 }
-                if(ran.equals(nums.get(i))){
-                    ran = String.valueOf(r.nextInt(99999));
-                    i = 0;
-                }
-            } */
+                break;
+            }
+            $participant -> setDorsal($dors);
 
             $entityManager->persist($participant);
             $entityManager->flush();

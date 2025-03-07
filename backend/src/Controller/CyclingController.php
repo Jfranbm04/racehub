@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
 use App\Form\CyclingType;
@@ -67,7 +67,7 @@ final class CyclingController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_cycling_delete', methods: ['DELETE'])]
-    public function delete(Request $request, Cycling $cycling, EntityManagerInterface $entityManager): JsonResponse
+    public function delete(Cycling $cycling, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
             $entityManager->remove($cycling);
@@ -79,72 +79,54 @@ final class CyclingController extends AbstractController
         }
     }
 
-    #[Route('/new_s', name: 'app_cycling_start', methods: ['POST'])]
-    public function new_s(Cycling $cycling, EntityManagerInterface $entityManager): Response
+    //-------METODOS SYMFONY----------
+
+    #[Route('', name: 'app_cycling_index', methods: ['GET'])]
+    public function index_s(CyclingRepository $cyclingRepository): Response
     {
-        $cycling = new Cycling();
+        return $this->render('cycling/index.html.twig', [
+            'cyclings' => $cyclingRepository->findAll(),
+        ]);
+    }
 
-        $cycling->setName('Cycling 1');
-        $cycling->setDescription('Cycling 1 description');
-        $cycling->setDate(new \DateTime());
-        $cycling->setDistanceKm(0);
-        $cycling->setLocation('Cycling 1 location');
-        $cycling->setCoordinates('0,0');
-        $cycling->setUnevenness(0);
-        $cycling->setEntryFee(0);
-        $cycling->setAvailableSlots(0);  
-        $cycling->setStatus(0);
-        $cycling->setCategory('Cycling 1 category');      
-        $cycling->setStatus('In progress');
-        $cycling->setImage('Cycling 1 image url');
-
-        $entityManager->persist($cycling);
-        $entityManager->flush();
-
+    #[Route('/{id}', name: 'app_cycling_show', methods: ['GET'])]
+    public function show_s(Cycling $cycling): Response
+    {
         return $this->render('cycling/show.html.twig', [
             'cycling' => $cycling,
         ]);
     }
 
-    #[Route('/{id}/edit_s', name: 'app_cycling_edit', methods: ['PUT'])]
+    #[Route('/{id}/edit', name: 'app_cycling_edit', methods: ['GET', 'POST'])]
     public function edit_s(Request $request, Cycling $cycling, EntityManagerInterface $entityManager): Response
     {
-        $cycling->setName($request->request->get('name'));
-        $cycling->setDescription($request->request->get('description'));
-        $cycling->setDate(new \DateTime($request->request->get('date')));
-        $cycling->setDistanceKm($request->request->get('distance_km'));
-        $cycling->setLocation($request->request->get('location'));
-        $cycling->setCoordinates($request->request->get('coordinates'));
-        $cycling->setUnevenness($request->request->get('unevenness'));
-        $cycling->setEntryFee($request->request->get('entry_fee'));
-        $cycling->setAvailableSlots($request->request->get('available_slots'));
-        $cycling->setStatus($request->request->get('status'));
-        $cycling->setCategory($request->request->get('category'));
-        $cycling->setImage($request->request->get('image'));
+        $form = $this->createForm(CyclingType::class, $cycling);
+        $form->handleRequest($request);
 
-        $entityManager->persist($cycling);
-        $entityManager->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            return $this->redirectToRoute('app_cycling_index');
+        }
 
-        return $this->redirectToRoute('app_cycling_show', ['id' => $cycling->getId()]);
+        return $this->render('cycling/edit.html.twig', [
+            'form' => $form->createView(),
+            'cycling' => $cycling,
+        ]);
     }
 
-    #[Route('/{id}', name: 'app_cycling_delete', methods: ['DELETE'])]
-    public function delete_s(Cycling $cycling, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/delete', name: 'app_cycling_delete', methods: ['POST'])]
+    public function delete_s(Request $request, Cycling $cycling, EntityManagerInterface $entityManager): Response
     {
+        // Eliminar todos los participantes asociados a esta carrera
+        foreach ($cycling->getCyclingParticipants() as $participant) {
+            $entityManager->remove($participant);
+        }
+
+        // Ahora puedes eliminar la carrera
         $entityManager->remove($cycling);
         $entityManager->flush();
 
         return $this->redirectToRoute('app_cycling_index');
     }
-#[Route('/{id}/status', name: 'app_cycling_status', methods: ['POST'])]
-    public function updateStatus(Request $request, Cycling $cycling, EntityManagerInterface $entityManager): Response
-    {
-        $newStatus = $request->request->get('status');
-        if ($newStatus) {
-            $cycling->setStatus($newStatus);
-            $entityManager->flush();
-        }
 
-        return $this->redirectToRoute('app_cycling_index');
-    }
 }

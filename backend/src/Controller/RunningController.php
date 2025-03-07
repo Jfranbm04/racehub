@@ -111,7 +111,7 @@ final class RunningController extends AbstractController
             return $this->json($updatedRunning, Response::HTTP_OK, [], ['groups' => 'running:read']);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
+        } 
     }
 
     #[Route('/{id}/edit_s', name: 'app_running_edit', methods: ['PUT'])]
@@ -149,6 +149,31 @@ final class RunningController extends AbstractController
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
+
+
+    #[Route('/new_s', name: 'app_running_start', methods: ['POST'])]
+    public function new_s(Running $running, EntityManagerInterface $entityManager): Response
+    {
+        $running = new Running();
+
+        $running->setName('Running 1');
+        $running->setDescription('Running 1 description');
+        $running->setDate(new \DateTime());
+        $running->setDistanceKm(10);
+        $running->setLocation('Running 1 location');
+        $running->setCoordinates('0,0');
+        $running->setEntryFee(0);
+        $running->setAvailableSlots(100);
+        $running->setCategory('Running 1 category');
+        $running->setImage(0);
+        $running->setStatus('started');
+
+        $entityManager->persist($running);
+        $entityManager->flush();
+
+        return $this->render('main/index.html.twig');
+    }
+
 
     #[Route('/{id}/edit_s', name: 'app_running_status', methods: ['PUT'])]
     public function running_s(Request $request, Running $running, EntityManagerInterface $entityManager): Response
