@@ -1,0 +1,9 @@
+api_platform:
+  title: Hello API Platform
+  version: 1.0.0
+  mapping:
+    paths: ["%kernel.project_dir%/src/Entity"]
+  defaults:
+    stateless: true
+    cache_headers:
+      vary: ["Content-Type", "Authorization", "Origin"]
