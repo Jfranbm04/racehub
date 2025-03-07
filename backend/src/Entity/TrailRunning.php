@@ -68,6 +68,10 @@ class TrailRunning
     #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
     private ?string $image = null;
 
+    #[ORM\Column(length: 1)]
+    #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
+    private ?string $gender = null;
+
     /**
      * @var Collection<int, TrailRunningParticipant>
      */
@@ -75,10 +79,6 @@ class TrailRunning
     #[MaxDepth(2)]
     #[Groups(["trail_running:read"])]
     private Collection $trailRunningParticipants;
-
-    #[ORM\Column(length: 1)]
-    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
-    private ?string $gender = null;
 
     public function __construct()
     {

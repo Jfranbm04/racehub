@@ -61,6 +61,11 @@ class Running
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?string $image = null;
+
+    #[ORM\Column(length: 1)]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
+    private ?string $gender = null;
+
     /**
      * Relación OneToMany con RunningParticipant
      */
@@ -68,10 +73,6 @@ class Running
     #[MaxDepth(1)]
     #[Groups(["running:read"])]
     private Collection $runningParticipants;
-
-    #[ORM\Column(length: 1)]
-    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
-    private ?string $gender = null;
 
     public function __construct()
     {
