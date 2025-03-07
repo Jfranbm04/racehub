@@ -29,6 +29,13 @@ final class RunningParticipantController extends AbstractController
             }
         ]);
     }
+    #[Route('/index_s', name: 'app_running_participant_index_s', methods: ['GET'])]
+    public function index_s(RunningParticipantRepository $runningParticipantRepository): Response
+    {
+        return $this->render('running_participant/index.html.twig', [
+            'running_participants' => $runningParticipantRepository->findAll(),
+        ]);
+    }
 
     #[Route('/new', name: 'app_running_participant_new', methods: ['POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
@@ -48,10 +55,6 @@ final class RunningParticipantController extends AbstractController
             $participant->setRunning($running);
             $participant->setDorsal($data['dorsal']);
             $participant->setBanned($data['banned']);
-
-            if (isset($data['time'])) {
-                $participant->setTime(new \DateTime($data['time']));
-            }
 
             $entityManager->persist($participant);
             $entityManager->flush();
@@ -111,9 +114,6 @@ final class RunningParticipantController extends AbstractController
             }
             if (isset($data['banned'])) {
                 $participant->setBanned($data['banned']);
-            }
-            if (isset($data['time'])) {
-                $participant->setTime(new \DateTime($data['time']));
             }
 
             $entityManager->flush();

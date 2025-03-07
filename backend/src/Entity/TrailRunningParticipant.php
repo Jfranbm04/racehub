@@ -36,9 +36,9 @@ class TrailRunningParticipant
     /**
      * Propiedad time
      */
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::BIGINT)]
     #[Groups(["trail_running_participant:read", "user:read", "trail_running:read"])]
-    private ?\DateTimeInterface $time = null;
+    private ?string $time = null;
 
     /**
      * Propiedad dorsal
@@ -83,12 +83,12 @@ class TrailRunningParticipant
         return $this;
     }
 
-    public function getTime(): ?\DateTimeInterface
+    public function getTime(): ?string
     {
         return $this->time;
     }
 
-    public function setTime(?\DateTimeInterface $time): static
+    public function setTime(?string $time): static
     {
         $this->time = $time;
 

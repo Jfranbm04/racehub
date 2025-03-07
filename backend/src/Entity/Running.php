@@ -61,6 +61,11 @@ class Running
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?string $image = null;
+
+    #[ORM\Column(length: 1)]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
+    private ?string $gender = null;
+
     /**
      * Relación OneToMany con RunningParticipant
      */
@@ -235,6 +240,18 @@ class Running
                 $runningParticipant->setRunning(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): static
+    {
+        $this->gender = $gender;
 
         return $this;
     }
