@@ -13,6 +13,11 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        protected_api_endpoints:
+            pattern: ^/api/(running_participant|cycling_participant|trailrunning_participant)/(new|\d+)$
+            stateless: true
+            provider: app_user_provider
+            jwt: ~
         api_login:
             pattern: ^/api2/auth/login
             stateless: true
@@ -20,7 +25,7 @@ security:
                 check_path: /api2/auth/login_check
                 username_path: email
                 password_path: password
-                success_handler: lexik_jwt_authentication.handler.authentication_success
+                success_handler: app.jwt_authentication_success_handler
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
         api2:
             pattern: ^/api2
@@ -44,13 +49,13 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/api2/auth/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api/running_participant/new$, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/running_participant/\d+$, methods: [DELETE], roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/cycling_participant/new$, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/cycling_participant/\d+$, methods: [DELETE], roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/trailrunning_participant/new$, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/trailrunning_participant/\d+$, methods: [DELETE], roles: IS_AUTHENTICATED_FULLY }
+        # - { path: ^/api2/auth/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/running_participant/new$, roles: ROLE_USER }
+        - { path: ^/api/running_participant/\d+$, methods: [DELETE], roles: ROLE_USER }
+        - { path: ^/api/cycling_participant/new$, roles: ROLE_USER }
+        - { path: ^/api/cycling_participant/\d+$, methods: [DELETE], roles: ROLE_USER }
+        - { path: ^/api/trailrunning_participant/new$, roles: ROLE_USER }
+        - { path: ^/api/trailrunning_participant/\d+$, methods: [DELETE], roles: ROLE_USER }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 
