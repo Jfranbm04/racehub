@@ -21,6 +21,14 @@ final class RunningController extends AbstractController
         $runnings = $runningRepository->findAll();
         return $this->json($runnings, Response::HTTP_OK, [], ['groups' => 'running:read']);
     }
+    #[Route('/index_s', name: 'app_running_index_s', methods: ['GET'])]
+    public function index_s(EntityManagerInterface $entityManager, RunningRepository $runningRepository): Response
+    {
+        $runnings = $runningRepository->findAll();
+        return $this->render('running/index.html.twig', [
+            'runnings' => $runnings,
+        ]);
+    }
 
     #[Route('/new', name: 'app_running_new', methods: ['POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
@@ -68,6 +76,7 @@ final class RunningController extends AbstractController
         }
     }
 
+
     #[Route('/new_s', name: 'app_running_start', methods: ['POST'])]
     public function new_s(Running $running, EntityManagerInterface $entityManager): Response
     {
@@ -105,7 +114,7 @@ final class RunningController extends AbstractController
         $running->setAvailableSlots($request->request->get('available_slots'));
         $running->setCategory($request->request->get('category'));
         $running->setImage($request->request->get('image'));
-        
+
         $entityManager->persist($running);
         $entityManager->flush();
 
