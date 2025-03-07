@@ -1,11 +1,9 @@
-# Importar este archivo a https://editor.swagger.io/ para visualizar la API.
-
 openapi: 3.0.0
 info:
   title: RaceHub - OpenAPI 3.0
   description: |-
     Este documento lista y da ejemplos de los endpoints, que parametros requieren y cuáles devuelve el servidor
-  version: 0.0.99
+  version: 0.0.110
 
 servers:
   - url: https://cambiar.a.la.ip/del/servidor
@@ -70,7 +68,7 @@ paths:
       tags:
         - User
       summary: Actualiza el usuario con el id especificado y lo devuelve
-      description: Actualiza el usuario con el id especificado y lo devuelve
+      description: Todos los campos son opcionales, solo se cambiarán aquellos campos que se envíen, por ejemplo, al recibir 'email', 'name' y 'banned' solo actualizará esos campos.<br> 'oldpassword' y 'newpassword' son necesarios juntos para cambiar la contraseña.
       parameters:
         - name: id
           in: path
@@ -589,13 +587,17 @@ components:
     UserUpdateRequest:
       type: object
       properties:
+        name:
+          type: string
         email:
           type: string
         roles:
           type: array
           items:
             type: string
-        name:
+        age:
+          type: integer
+        gender:
           type: string
         oldpassword:
           type: string
@@ -733,8 +735,6 @@ components:
           type: integer
         cycling:
           type: integer
-        time:
-          type: string
           
     CyclingParticipantPutRequest:
       type: object
@@ -857,8 +857,6 @@ components:
           type: integer
         running:
           type: integer
-        time:
-          type: string
           
     RunningParticipantPutRequest:
       type: object
@@ -981,8 +979,6 @@ components:
           type: integer
         trailrunning:
           type: integer
-        time:
-          type: string
           
     TrailRunningParticipantPutRequest:
       type: object
