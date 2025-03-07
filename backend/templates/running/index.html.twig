@@ -111,6 +111,26 @@
             height: auto;
             border-radius: 4px;
         }
+        .status-select {
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid var(--secondary);
+            margin-right: 5px;
+        }
+
+        .btn-status {
+            background: var(--secondary);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-status:hover {
+            background: var(--primary);
+        }
     </style>
 {% endblock %}
 
@@ -153,9 +173,9 @@
                                 <td>{{ event.availableSlots }}</td>
                                 <td>
                                     <span class="status-badge" style="background-color: 
-                                        {% if event.status == 'started' %}#2ecc71;
-                                        {% elseif event.status == 'pending' %}#f1c40f;
-                                        {% elseif event.status == 'finished' %}#e74c3c;
+                                        {% if event.status == 'open' %}#2ecc71;
+                                        {% elseif event.status == 'closed' %}#f1c40f;
+                                        {% elseif event.status == 'completed' %}#e74c3c;
                                         {% else %}#95a5a6;
                                         {% endif %}">
                                         {{ event.status|capitalize }}
@@ -178,6 +198,16 @@
                                     <a href="{{ path('app_running_edit', {'id': event.id}) }}">
                                         <i class="fas fa-edit"></i> Editar
                                     </a>
+                                    <form action="{{ path('app_running_status', {'id': event.id}) }}" method="POST" style="display: inline;">
+                                        <select name="status" class="status-select">
+                                            <option value="open" {% if event.status == 'open' %}selected{% endif %}>Open</option>
+                                            <option value="closed" {% if event.status == 'closed' %}selected{% endif %}>Closed</option>
+                                            <option value="completed" {% if event.status == 'completed' %}selected{% endif %}>Completed</option>
+                                        </select>
+                                        <button type="submit" class="btn-status">
+                                            <i class="fas fa-save"></i> Update Status
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         {% endfor %}

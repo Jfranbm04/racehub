@@ -50,6 +50,19 @@ final class RunningController extends AbstractController
         return $this->json($running, Response::HTTP_OK, [], ['groups' => 'running:read']);
     }
 
+    #[Route('/{id}/status', name: 'app_running_status', methods: ['POST'])]
+    public function updateStatus(Request $request, Running $running, EntityManagerInterface $entityManager): Response
+    {
+        $newStatus = $request->request->get('status');
+        if (in_array($newStatus, ['open', 'closed', 'completed'])) {
+            $running->setStatus($newStatus);
+            $entityManager->flush();
+            $this->addFlash('success', 'Status updated successfully');
+        }
+
+        return $this->redirectToRoute('app_running_index');
+    }
+
     #[Route('/{id}/edit', name: 'app_running_edit', methods: ['PUT'])]
     public function edit(Request $request, Running $running, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
