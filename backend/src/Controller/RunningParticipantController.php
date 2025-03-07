@@ -109,6 +109,9 @@ final class RunningParticipantController extends AbstractController
                 $running = $entityManager->getReference('App\Entity\Running', $data['running']);
                 $participant->setRunning($running);
             }
+            if (isset($data['time'])) {
+                $participant->setBanned($data['time']);
+            }
             if (isset($data['dorsal'])) {
                 $participant->setDorsal($data['dorsal']);
             }
