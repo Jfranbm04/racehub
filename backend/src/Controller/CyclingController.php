@@ -12,28 +12,39 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
+use App\Form\CyclingType;
+
 #[Route('api/cycling')]
 final class CyclingController extends AbstractController
 {
     #[Route(name: 'app_cycling_index', methods: ['GET'])]
-    public function index(CyclingRepository $cyclRepo, SerializerInterface $serializer): JsonResponse
+    public function index(CyclingRepository $cyclRepo, SerializerInterface $serializer): Response
     {
         $cyclings = $cyclRepo->findAll();
-        return $this->json($cyclings, Response::HTTP_OK, [], ['groups' => 'cycling:read']);
+        return $this->render('cycling/index.html.twig', [
+            'cyclings' => $cyclings
+        ]);
     }
 
-    #[Route('/new', name: 'app_cycling_new', methods: ['POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
+    #[Route('/new', name: 'app_cycling_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        try {
-            $cycling = $serializer->deserialize($request->getContent(), Cycling::class, 'json');
+        $cycling = new Cycling();
+        $form = $this->createForm(CyclingType::class, $cycling);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $cycling->setStatus('open');
             $entityManager->persist($cycling);
             $entityManager->flush();
 
-            return $this->json($cycling, Response::HTTP_CREATED, [], ['groups' => 'cycling:read']);
-        } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return $this->redirectToRoute('app_cycling_index', [], Response::HTTP_SEE_OTHER);
         }
+
+        return $this->render('cycling/new.html.twig', [
+            'cycling' => $cycling,
+            'form' => $form,
+        ]);
     }
 
     #[Route('/{id}', name: 'app_cycling_show', methods: ['GET'])]
@@ -125,5 +136,15 @@ final class CyclingController extends AbstractController
 
         return $this->redirectToRoute('app_cycling_index');
     }
+#[Route('/{id}/status', name: 'app_cycling_status', methods: ['POST'])]
+    public function updateStatus(Request $request, Cycling $cycling, EntityManagerInterface $entityManager): Response
+    {
+        $newStatus = $request->request->get('status');
+        if ($newStatus) {
+            $cycling->setStatus($newStatus);
+            $entityManager->flush();
+        }
 
+        return $this->redirectToRoute('app_cycling_index');
+    }
 }
