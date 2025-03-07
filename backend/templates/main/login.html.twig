@@ -57,6 +57,12 @@
  <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Madimi+One&family=Lexend:wght@100..900&display=swap" rel="stylesheet">
 
  <style>
+    body {
+        background-image: url("{{ asset('images/fondo_login_register.jpg')}}");
+        background-size: cover;
+        background-blend-mode: multiply;
+    }
+
     body, html {
         height: 100%;
         margin: 0;
@@ -65,8 +71,8 @@
         align-items: center;
         font-family: "Lexend", Arial, sans-serif;
         flex-direction: column; /* Esto asegura que los elementos se apilen verticalmente */
-        background: url("{{ asset('images/fondo_login_register.jpg')}}");
-    }
+        }
+
 
     #txtInicio {
         text-align: center;

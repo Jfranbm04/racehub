@@ -4,6 +4,13 @@
 
 {% block body %}
 <style>
+
+    body {
+        background-image: url("{{ asset('images/fondo_login_register.jpg')}}");
+        background-size: cover;
+        background-blend-mode: multiply;
+    }
+
     body, html {
         height: 100%;
         margin: 0;
@@ -12,7 +19,7 @@
         align-items: center;
         font-family: Arial, sans-serif;
         flex-direction: column; /* Asegura que los elementos se apilen verticalmente */
-        background: url("{{ asset('images/fondo_login_register.jpg')}}");
+
     }
 
     #txtInicio {
