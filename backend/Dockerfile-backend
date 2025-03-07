@@ -5,17 +5,22 @@ RUN apt-get update && apt-get install -y \
     git \
     unzip \
     libicu-dev \
+    openssl \
+    acl \
     && docker-php-ext-install pdo pdo_mysql
 
-# Instalar Composer
+# Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
 COPY . .
 # Instalar dependencias con Composer
-RUN composer require symfony/orm-pack doctrine/doctrine-bundle doctrine/dbal api \
-    && composer install --no-dev --optimize-autoloader \
+# RUN composer require symfony/orm-pack doctrine/doctrine-bundle doctrine/dbal api \
+#     && composer install --no-dev --optimize-autoloader \
+#     && php bin/console cache:clear --no-warmup || true
+
+RUN composer install --no-dev --optimize-autoloader \
     && php bin/console cache:clear --no-warmup || true
 # RUN rm -rf /var/lib/api/lists/*
 # Ejecutar migraciones en una sola capa
@@ -26,6 +31,13 @@ RUN php bin/console doctrine:migrations:diff --no-interaction || true \
     && mkdir -p var/cache && chmod 777 var/cache
 # Establecer permisos para el directorio var
 RUN chmod -R 777 /app/var
-# Exponer el puerto
+
+# Copy and set permissions for entrypoint
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+# Expose port
 EXPOSE 8000
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+# CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+# Use the entrypoint script
+ENTRYPOINT ["/app/entrypoint.sh"]

@@ -4,7 +4,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./dockerinit.sql:/docker-entrypoint-initdb.d/init.sql
+      # - ./dockerinit.sql:/docker-entrypoint-initdb.d/init.sql
       - db_data:/var/lib/mysql # Persistencia de datos de MySQL
     ports:
       - "3306:3306" # Puerto de MySQL
@@ -20,7 +20,7 @@ services:
       - ./backend:/app
     depends_on:
       - database
-    command: [ "sh", "-c", "composer install && composer show doctrine/dbal && php -S 0.0.0.0:8000 -t public" ]
+    # command: [ "sh", "-c", "composer install && composer show doctrine/dbal && php -S 0.0.0.0:8000 -t public" ]
     networks:
       - network_racehub
 
