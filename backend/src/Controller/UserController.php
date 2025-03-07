@@ -9,62 +9,90 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/user')]
+
+#[Route('api/user')]
 final class UserController extends AbstractController
 {
     #[Route(name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): JsonResponse
+    public function index(UserRepository $userRepo, Request $request, EntityManagerInterface $entMngr): JsonResponse
     {
-        $users = $userRepository->findAll();
-        return $this->json($users, Response::HTTP_OK, [], ['groups' => 'user:read']);
+        try {
+            $users = $userRepo->findAll();
+            return $this->json($users, Response::HTTP_OK, [], ['groups' => 'user:read']);
+        }
+        catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
     }
 
     #[Route('/new', name: 'app_user_new', methods: ['POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
+    public function new(Request $request, EntityManagerInterface $entMngr, UserPasswordHasherInterface $userPassHash): JsonResponse
     {
-        try {
-            $user = $serializer->deserialize($request->getContent(), User::class, 'json');
-            $entityManager->persist($user);
-            $entityManager->flush();
+        try{
+            $data = json_decode($request->getContent(), true);
+            $user = new User();
+
+            $user -> setName($data['name']);
+            $user -> setEmail($data['email']);
+            $user -> setPassword($userPassHash -> hashPassword($user, $data['password']));
+
+            $entMngr->persist($user);
+            $entMngr->flush();
 
             return $this->json($user, Response::HTTP_CREATED, [], ['groups' => 'user:read']);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
-    #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
-    public function show(User $user): JsonResponse
+    #[Route('/{id}', name: 'app_user_show', methods: ['GET', 'DELETE'])]
+    public function show(User $user, Request $request, EntityManagerInterface $entMngr): JsonResponse
     {
-        return $this->json($user, Response::HTTP_OK, [], ['groups' => 'user:read']);
+        try{
+            if($request -> isMethod('GET')){
+                return $this->json($user, Response::HTTP_OK, [], ['groups' => 'user:read']);
+            }
+            else if($request -> isMethod('DELETE')){
+                $entMngr -> remove($user);
+                $entMngr -> flush();
+
+                return $this -> json(['message' => 'Usuario eliminado'], Response::HTTP_OK);
+            }
+
+            return $this->json(['error' => 'Something went wrong, if you see this message, contact support.'], Response::HTTP_I_AM_A_TEAPOT);
+        }
+        catch(\Exception $e){
+            return $this -> json(['error' => $e -> getMessage()], Response::HTTP_BAD_REQUEST);
+        }
     }
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['PUT'])]
-    public function edit(Request $request, User $user, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
+    public function edit(User $user, Request $request, EntityManagerInterface $entMngr, UserPasswordHasherInterface $userPassHash): JsonResponse
     {
-        try {
-            $updatedUser = $serializer->deserialize($request->getContent(), User::class, 'json', ['object_to_populate' => $user]);
-            $entityManager->flush();
+        try{
+            $data = json_decode($request->getContent(), true);
 
-            return $this->json($updatedUser, Response::HTTP_OK, [], ['groups' => 'user:read']);
-        } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            if(!$userPassHash -> isPasswordValid($user, trim($data['oldpassword']))){
+                return $this -> json(false, Response::HTTP_OK);
+            }
+
+            $user -> setName($data['name']);
+            $user -> setEmail($data['email']);
+            $user -> setPassword($userPassHash -> hashPassword($user, $data['newpassword']));
+            $user -> setRoles($data['role']);
+            $user -> setBanned($data['banned']);
+
+            $entMngr -> persist($user);
+            $entMngr -> flush();
+
+            return $this -> json(true, Response::HTTP_OK, [], ['groups' => 'user:read']);
         }
-    }
-
-    #[Route('/{id}', name: 'app_user_delete', methods: ['DELETE'])]
-    public function delete(User $user, EntityManagerInterface $entityManager): JsonResponse
-    {
-        try {
-            $entityManager->remove($user);
-            $entityManager->flush();
-
-            return $this->json(null, Response::HTTP_NO_CONTENT);
-        } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        catch(\Exception $e){
+            return $this -> json(['error' => $e -> getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 }

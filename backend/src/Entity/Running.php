@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: RunningRepository::class)]
 class Running
@@ -14,45 +16,62 @@ class Running
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?int $distance_km = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?string $location = null;
-
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?string $coordinates = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?int $entry_fee = null;
 
     #[ORM\Column]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?int $available_slots = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?string $status = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?string $category = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?string $image = null;
 
+    #[ORM\Column(length: 1)]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
+    private ?string $gender = null;
+
     /**
-     * @var Collection<int, RunningParticipant>
+     * Relación OneToMany con RunningParticipant
      */
-    #[ORM\OneToMany(targetEntity: RunningParticipant::class, mappedBy: 'running')]
+    #[ORM\OneToMany(mappedBy: 'running', targetEntity: RunningParticipant::class)]
+    #[MaxDepth(1)]
+    #[Groups(["running:read"])]
     private Collection $runningParticipants;
 
     public function __construct()
@@ -112,7 +131,6 @@ class Running
 
         return $this;
     }
-
     public function getLocation(): ?string
     {
         return $this->location;
@@ -124,7 +142,6 @@ class Running
 
         return $this;
     }
-
     public function getCoordinates(): ?string
     {
         return $this->coordinates;
@@ -142,7 +159,7 @@ class Running
         return $this->entry_fee;
     }
 
-    public function setEntryFee(int $entry_fee): static
+    public function setEntryFee(?int $entry_fee): static
     {
         $this->entry_fee = $entry_fee;
 
@@ -223,6 +240,18 @@ class Running
                 $runningParticipant->setRunning(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): static
+    {
+        $this->gender = $gender;
 
         return $this;
     }

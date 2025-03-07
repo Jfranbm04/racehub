@@ -7,7 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
-
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 
 #[ORM\Entity(repositoryClass: TrailRunningRepository::class)]
@@ -16,48 +17,67 @@ class TrailRunning
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column]
+    #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
     private ?int $distance_km = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
     private ?string $location = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
     private ?string $coordinates = null;
 
     #[ORM\Column]
+    #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
     private ?int $unevenness = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
     private ?int $entry_fee = null;
 
     #[ORM\Column]
+    #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
     private ?int $available_slots = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
     private ?string $status = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
     private ?string $category = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
     private ?string $image = null;
+
+    #[ORM\Column(length: 1)]
+    #[Groups(["trail_running:read", "trail_running_participant:read", "user:read"])]
+    private ?string $gender = null;
 
     /**
      * @var Collection<int, TrailRunningParticipant>
      */
     #[ORM\OneToMany(targetEntity: TrailRunningParticipant::class, mappedBy: 'trailRunning')]
+    #[MaxDepth(2)]
+    #[Groups(["trail_running:read"])]
     private Collection $trailRunningParticipants;
 
     public function __construct()
@@ -243,6 +263,18 @@ class TrailRunning
                 $trailRunningParticipant->setTrailRunning(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): static
+    {
+        $this->gender = $gender;
 
         return $this;
     }

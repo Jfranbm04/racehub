@@ -1,20 +1,326 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello MainController!{% endblock %}
+{% block title %}RaceHub - Inicio{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="shortcut icon" href="{{ asset('resources/images/marathon_runner.png') }}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Madimi+One&family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: rgb(0, 255, 170);
+            --secondary-color: rgb(0, 31, 61);
+            --button-color: rgba(200, 255, 0, 0.8);
+            --button-active-color: rgba(150, 200, 0, 0.8);
+            --accent-color: rgba(0, 0, 30, 0.2);
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Lexend", Arial, Helvetica, sans-serif;
+            display: flex;
+            flex-flow: column;
+            min-height: 100vh;
+            background-color: rgb(238, 238, 238);
+        }
+
+        nav {
+            z-index: 1;
+            top: 0;
+            position: sticky;
+            display: flex;
+            flex-flow: row;
+            background-color: var(--secondary-color);
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            height: 4em;
+        }
+
+        nav > div {
+            flex-basis: 33%;
+            display: flex;
+            flex-flow: row;
+            justify-content: center;
+        }
+
+        nav > div:nth-child(1) {
+            justify-content: left;
+        }
+
+        nav > div:nth-child(3) {
+            justify-content: right;
+        }
+
+        .nav_logo {
+            font-size: 1.7rem;
+            font-weight: bolder;
+            color: whitesmoke;
+            font-family: "Madimi One";
+            letter-spacing: .6rem;
+        }
+
+        nav ul {
+            display: flex;
+            flex-flow: row;
+            list-style: none;
+        }
+
+        nav li {
+            margin-right: 3rem;
+        }
+
+        nav li a {
+            font-family: "Madimi One";
+            color: whitesmoke;
+            text-decoration: none;
+            font-size: 1.4rem;
+            transition: .2s;
+        }
+
+        nav li a::after {
+            content: "";
+            width: 0px;
+            height: 2px;
+            display: block;
+            background: whitesmoke;
+            transition: .2s;
+        }
+
+        nav li a:hover::after {
+            width: 100%;
+        }
+
+        nav li a:hover {
+            font-weight: bold;
+            font-size: 1.45rem;
+        }
+
+        nav .btn {
+            text-decoration: none;
+            color: black;
+            font-family: "Madimi One";
+            font-size: 1rem;
+            margin: 0 .5rem;
+            padding: .5rem 1rem;
+            background-color: var(--primary-color);
+            border: 2px solid var(--secondary-color);
+            border-radius: 2rem;
+            transition: .2s;
+        }
+
+        nav .btn:hover {
+            border-color: var(--primary-color);
+            background-color: var(--secondary-color);
+            color: whitesmoke;
+            cursor: pointer;
+        }
+
+        header {
+            font-size: .7rem;
+            display: flex;
+            flex-flow: row;
+            font-weight: normal;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        .hero_left {
+            position: relative;
+            overflow: hidden !important;
+            width: 100%;
+            height: 100%;
+            background-color: var(--secondary-color);
+        }
+
+        .hero_left .backgrounds {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            background-size: cover;
+            background-image:
+                linear-gradient(to bottom, rgba(0, 31, 61, 0.75), var(--secondary-color)),
+                url("{{ asset('images/bike_racing.jpg') }}");
+            background-blend-mode: multiply;
+            transition: opacity.6s;
+        }
+
+        .hero_left .content {
+            height: 100%;
+            color: whitesmoke;
+            text-align: justify;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            justify-content: center;
+            padding: 0 5rem;
+        }
+
+        .hero_left > .content > h1 {
+            z-index: 1;
+            align-self: self-end;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .hero_left > .content > p {
+            z-index: 1;
+            font-size: 1rem;
+            font-weight: lighter;
+        }
+
+        .logo img {
+            filter: brightness(.7);
+            height: 40rem;
+            margin-bottom: 1rem;
+        }
+
+        main {
+            padding: 5rem 0;
+        }
+
+        main img {
+            height: 50px;
+            width: 50px;
+            margin-bottom: 10px;
+        }
+
+        .companyInfo {
+            display: flex;
+            flex-flow: row;
+            text-align: center;
+        }
+
+
+        .companyInfo > div {
+            flex-basis: 33%;
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 0 2rem;
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            line-height: 1.2rem;
+            transition: .2s;
+            box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 1px 1px;
+            background-color: whitesmoke;
+        }
+
+        .companyInfo > div:hover {
+            transform: translateY(-10px);
+            box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 3px 3px;
+        }
+
+        footer {
+            background-color: var(--secondary-color);
+            display: flex;
+            flex-flow: row;
+            color: white;
+        }
+
+        footer > div {
+            padding: 1rem;
+            flex-basis: 33%;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <!-- Barra de navegación -->
+    <nav>
+        <div>
+            <ul>
+                <li><a href="#">HOME</a></li>
+                <li><a href="#">RACES</a></li>
+                <li><a href="#">ABOUT US</a></li>
+            </ul>
+        </div>
+        <div class="nav_logo">RACEHUB</div>
+        <div>
+            <a href="{{ path('app_register_view') }}" class="btn btn-outline-primary">Registrarse</a>
+            <a href="{{ path('app_login_view') }}" class="btn btn-primary">Iniciar Sesión</a>
+        </div>
+    </nav>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <!-- Banner principal -->
+    <header class="hero">
+        <div class="hero_left">
+            <div class="backgrounds"></div>
+            <div class="content">
+                <div class="logo">
+                    {# Actualizado: resources/images → images #}
+                    <img src="{{ asset('images/bike.png') }}" alt="Logo">
+                </div>
+                <h1>¡Bienvenido a RaceHub!</h1>
+                <p>Descubre las mejores carreras y eventos deportivos...</p>
+            </div>
+        </div>
+    </header>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/juanf/OneDrive/Escritorio/01-symfony/RaceHub/src/Controller/MainController.php</code></li>
-        <li>Your template at <code>C:/Users/juanf/OneDrive/Escritorio/01-symfony/RaceHub/templates/main/index.html.twig</code></li>
-    </ul>
-</div>
+    <!-- Sección de información -->
+    <main>
+        <div class="companyInfo">
+            <div>
+                <img src="{{ asset('images/running-run.svg') }}" alt="Información">
+                <h3>Running</h3><br/>
+                <p>Los deportes de running son perfectos para todos los niveles de habilidad.</p>
+            </div>
+            <div>
+                <img src="{{ asset('images/icon-bike.svg') }}" alt="Organización">
+                <h3>Cycling</h3><br/>
+                <p>Eventos de ciclismo de montaña y de ruta para todos los niveles.</p>
+            </div>
+            <div>
+                <img src="{{ asset('images/trail-running-shoe.svg') }}" alt="Comunidad">
+                <h3>Trail running</h3><br/>
+                <p>Explora senderos y caminos desafiantes con nuestros eventos de trail running.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer>
+        <div>1234, Street name. City</div>
+        <div style="text-align: center;">RaceHub (C) 2025. All rights reserved</div>
+        <div></div>
+    </footer>
+
+    <script>
+    let index = 0;
+    let backgroundUrls = [
+        "{{ asset('images/bike_racing.jpg') }}",     
+        "{{ asset('images/marathon.jpg') }}",     
+        "{{ asset('images/trailrunning.jpg') }}"     
+    ]
+    function changeBackground(){
+        index = (index+1)%backgroundUrls.length
+        let currentBackground = backgroundUrls[index]
+        let backgroundDiv = document.querySelector(".backgrounds");
+
+        backgroundDiv.style.opacity = 0;
+
+        setTimeout(() => {
+        backgroundDiv.style.backgroundImage = `
+                linear-gradient(to bottom, rgba(0, 31, 61, 0.75), var(--secondary-color)),
+                url('${currentBackground}')
+        `           
+        backgroundDiv.style.opacity = 1;
+        }, 600)
+
+    }
+
+    setInterval(changeBackground, 8000)
+
+    </script>
 {% endblock %}

@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: CyclingRepository::class)]
 class Cycling
@@ -14,48 +16,67 @@ class Cycling
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?int $distance_km = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $location = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $coordinates = null;
 
     #[ORM\Column]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?int $unevenness = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?int $entry_fee = null;
 
     #[ORM\Column]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?int $available_slots = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $status = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $category = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $image = null;
+
+    #[ORM\Column(length: 1)]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
+    private ?string $gender = null;
 
     /**
      * @var Collection<int, CyclingParticipant>
      */
     #[ORM\OneToMany(targetEntity: CyclingParticipant::class, mappedBy: 'cycling')]
+    #[MaxDepth(1)]
+    #[Groups("cycling:read")]
     private Collection $cyclingParticipants;
 
     public function __construct()
@@ -238,6 +259,18 @@ class Cycling
                 $cyclingParticipant->setCycling(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): static
+    {
+        $this->gender = $gender;
 
         return $this;
     }

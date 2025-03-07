@@ -1,0 +1,186 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panel de Administración - RaceHub{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50; /* Azul oscuro */
+            --secondary: #3498db; /* Azul claro */
+            --accent: #e74c3c; /* Rojo */
+            --light: #ecf0f1; /* Gris claro */
+            --dark: #1b2631; /* Negro azulado */
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+        }
+
+        .admin-container {
+            display: grid;
+            grid-template-areas: 
+                "header"
+                "main"
+                "footer";
+            grid-template-rows: auto 1fr auto;
+            min-height: 100vh;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        header {
+            grid-area: header;
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        main {
+            grid-area: main;
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        footer {
+            grid-area: footer;
+            background: var(--light);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .sport-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-admin {
+            background: linear-gradient(135deg, var(--accent), #c0392b);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-admin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        .content-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 400px;
+        }
+
+        .back-button {
+            background: var(--secondary);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .sport-group {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="admin-container">
+        <header>
+            <h1 class="admin-title"><i class="fas fa-cogs"></i> Panel de Administración</h1>
+            <a href="/" class="back-button">
+                <i class="fas fa-arrow-left"></i> Volver al Inicio
+            </a>
+        </header>
+
+        <main>
+            <div class="button-container">
+                <div class="sport-group">
+                    <h3 class="sport-category">Eventos</h3>
+                    <a href="{{ path('app_running_index_s') }}" class="btn-admin">
+                        <i class="fas fa-running"></i> Running
+                    </a>
+                    {# <a href="{{ path('app_cycling_show_s') }}" class="btn-admin">
+                        <i class="fas fa-bicycle"></i> Cycling
+                    </a>
+                    <a href="{{ path('app_trail_show_s') }}" class="btn-admin">
+                        <i class="fas fa-mountain"></i> Trail
+                    </a> #}
+                </div>
+
+                <div class="sport-group">
+                    <h3 class="sport-category">Participantes</h3>
+                    <a href="{{ path('app_running_participant_index_s') }}" class="btn-admin">
+                        <i class="fas fa-users"></i> Running
+                    </a>
+                    {# <a href="{{ path('app_cycling_participants') }}" class="btn-admin">
+                        <i class="fas fa-users"></i> Cycling
+                    </a>
+                    <a href="{{ path('app_trail_participants') }}" class="btn-admin">
+                        <i class="fas fa-users"></i> Trail
+                    </a> #}
+                </div>
+
+                <div class="sport-group">
+                    <h3 class="sport-category">Usuarios</h3>
+                    {# <a href="{{ path('app_users') }}" class="btn-admin">
+                        <i class="fas fa-user-cog"></i> Gestionar Usuarios
+                    </a> #}
+                </div>
+            </div>
+
+            
+        </main>
+
+        <footer>
+            <p>&copy; 2025 RaceHub - Todos los derechos reservados</p>
+        </footer>
+    </div>
+{% endblock %}
