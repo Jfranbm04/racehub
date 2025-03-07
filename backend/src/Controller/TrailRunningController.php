@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\TrailRunning;
+use App\Form\TrailRunningType;
 use App\Repository\TrailRunningRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,29 +12,42 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 #[Route('api/trailrunning')]
 final class TrailRunningController extends AbstractController
 {
     #[Route(name: 'app_trail_running_index', methods: ['GET'])]
-    public function index(TrailRunningRepository $trailRunningRepository): JsonResponse
+    public function index(TrailRunningRepository $trailRunningRepository): Response
     {
         $trailRunnings = $trailRunningRepository->findAll();
-        return $this->json($trailRunnings, Response::HTTP_OK, [], ['groups' => 'trail_running:read']);
+
+        return $this->render('trail_running/index.html.twig', [
+            'trail_runnings' => $trailRunnings
+        ]);
     }
 
-    #[Route('/new', name: 'app_trail_running_new', methods: ['POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
+    #[Route('/new', name: 'app_trail_running_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        try {
-            $trailRunning = $serializer->deserialize($request->getContent(), TrailRunning::class, 'json');
+        $trailRunning = new TrailRunning();
+        $form = $this->createForm(TrailRunningType::class, $trailRunning);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $trailRunning->setStatus('open');
             $entityManager->persist($trailRunning);
             $entityManager->flush();
 
-            return $this->json($trailRunning, Response::HTTP_CREATED, [], ['groups' => 'trail_running:read']);
-        } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return $this->redirectToRoute('app_trail_running_index', [], Response::HTTP_SEE_OTHER);
         }
+
+        return $this->render('trail_running/new.html.twig', [
+            'trail_running' => $trailRunning,
+            'form' => $form,
+        ]);
     }
 
     #[Route('/{id}', name: 'app_trail_running_show', methods: ['GET'])]
