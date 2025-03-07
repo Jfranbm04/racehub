@@ -150,6 +150,32 @@ final class RunningController extends AbstractController
         }
     }
 
+    //-------METODOS SYMFONY----------
+
+    #[Route('/new_s', name: 'app_running_start', methods: ['POST'])]
+    public function new_s(Running $running, EntityManagerInterface $entityManager, Request $request): Response
+    {
+        $running = new Running();
+
+        $running->setName($request->request->get('name'));
+        $running->setDescription($request->request->get('description'));
+        $running->setDate(new \DateTime($request->request->get('date')));
+        $running->setDistanceKm($request->request->get('distance_km'));
+        $running->setLocation($request->request->get('location'));
+        $running->setCoordinates($request->request->get('coordinates'));
+        $running->setEntryFee($request->request->get('entry_fee'));
+        $running->setAvailableSlots($request->request->get('available_slots'));
+        $running->setCategory($request->request->get('category'));
+        $running->setImage($request->request->get('image'));
+        $running->setStatus('open');
+
+        $entityManager->persist($running);
+        $entityManager->flush();
+
+        return $this->render('main/index.html.twig');
+    }
+
+
     #[Route('/{id}/edit_s', name: 'app_running_status', methods: ['PUT'])]
     public function running_s(Request $request, Running $running, EntityManagerInterface $entityManager): Response
     {
