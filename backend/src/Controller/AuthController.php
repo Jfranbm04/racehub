@@ -33,10 +33,9 @@ final class AuthController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->json([
-                'message' => 'User registered successfully',
-                'user' => $user
-            ], Response::HTTP_CREATED, [], ['groups' => 'user:read']);
+            return $this->render('main/login.html.twig', [
+                'message' => 'Registration successful! Please login.'
+            ]);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }

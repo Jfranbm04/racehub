@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\TrailRunning;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -23,9 +24,15 @@ class TrailRunningType extends AbstractType
             ->add('unevenness')
             ->add('entry_fee')
             ->add('available_slots')
-            ->add('status')
             ->add('category')
             ->add('image')
+            ->add('gender', ChoiceType::class, [
+                'choices' => [
+                    'Male' => 'm',
+                    'Female' => 'f'
+                ],
+                'required' => true
+            ])
         ;
     }
 
