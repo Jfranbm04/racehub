@@ -2,9 +2,10 @@
 
 {% block title %}Login{% endblock %}
 
-{% block body %}
+{#{% block body %}
+    <h1 id="txtInicio">Iniciar Sesión</h1>
     <form method="post">
-    {# action="{{ path('login_s') }}"  #}
+    {# action="{{ path('login_s') }}"  }
         {% if error %}
         <div class="alert alert-danger">
             {{ error.messageKey|trans(error.messageData, 'security') }}
@@ -43,41 +44,142 @@
             name="_csrf_token"
             value="{{ csrf_token('authenticate') }}"
         />
-
-        <button class="btn btn-lg btn-primary" type="submit">Iniciar sesion :)</button>
-    </form>
-{% endblock %}
-
-{# {% block body %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="text-center">Login</h3>
-                </div>
-                <div class="card-body">
-                    <form action="{{ path('app_login_view') }}" method="post">
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="_username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="_password" required>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">Iniciar sesión</button>
-                        </div>
-                        <div class="text-center mt-3">
-                            <a href="{{ path('app_register') }}" class="btn btn-outline-secondary">Registrarse</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
+        <div class="form-group">
+            <a href="{{ path('app_register') }}">¿No tienes cuenta? Regístrate</a>
         </div>
-    </div>
+        <input type="submit" value="Iniciar sesión" id="btnLogin">
+    </form>
+{% endblock %}#}
+
+ {% block body %}
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Madimi+One&family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+
+ <style>
+    body {
+        background-image: url("{{ asset('images/fondo_login_register.jpg')}}");
+        background-size: cover;
+        background-blend-mode: multiply;
+    }
+
+    body, html {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: "Lexend", Arial, sans-serif;
+        flex-direction: column; /* Esto asegura que los elementos se apilen verticalmente */
+        }
+
+
+    #txtInicio {
+        text-align: center;
+        font-size: 30px;
+        margin-bottom: 1em;
+    }
+
+    #btnIniciarSesion, #btnAtras {
+        font-size: 18px;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        cursor: pointer;
+        width: 50%;
+    }
+
+    #btnAtras {
+        top: 0;
+        left: 0;
+        width: 50px;
+        height: 50px;
+        margin: 1rem;
+
+        position:absolute;
+        display: block;
+        font-weight: bold;
+    }
+
+    .recuadro {
+        padding: 20px;
+        border: 1px solid black;
+        border-radius: 5px;
+        text-align: center;
+        max-width: 400px;
+        font: 18px/1.5 sans-serif;
+        background-color: #f2f2f2;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+        text-align: left;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 5px;
+        box-sizing: border-box;
+    }
+
+    .form-group a {
+        display: inline-block;
+        margin-top: 5px;
+    }
+</style>
+
+<div>
+    <button id="btnAtras">&lt;</button>
 </div>
-{% endblock %} #}
+
+<script>
+    document.querySelector("#btnAtras").addEventListener("click", () => {
+        location.href = location.origin
+    })
+</script>
+
+<h1 id="txtInicio">Iniciar Sesión</h1>
+
+<div class="recuadro">
+    <form method="post">
+        {% if error %}
+        <div class="alert alert-danger">
+            {{ error.messageKey|trans(error.messageData, 'security') }}
+        </div>
+        {% endif %} 
+        
+        {% if app.user %}
+        <div class="mb-3">
+            Estás conectado como {{ app.user.userIdentifier }},
+            <a href="{{ path('app_logout') }}">Cerrar sesión</a>
+        </div>
+        {% endif %}
+    
+        <div class="form-group">
+            <label for="email">Correo:</label>
+            <input type="email" name="email" id="email" value="{{ last_username }}" autocomplete="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Contraseña:</label>
+            <input type="password" name="password" id="password" autocomplete="current-password" required>
+        </div>
+    
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+    
+        <div class="form-group">
+            <a href="{{ path('app_register') }}">No tengo una cuenta. Registrarme</a>
+        </div>
+        
+        <input type="submit" value="Iniciar sesión" id="btnIniciarSesion">
+    </form>
+</div>
+{% endblock %} 
 
 
