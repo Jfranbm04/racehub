@@ -41,14 +41,27 @@ final class TrailRunningParticipantController extends AbstractController
             $participant = new TrailRunningParticipant();
 
             // Get existing entities
-            $user = $entityManager->getReference('App\Entity\User', $data['user']);
             $trailRunning = $entityManager->getReference('App\Entity\TrailRunning', $data['trailRunning']);
 
             // Set the relationships
-            $participant->setUser($user);
+            $participant->setUser($entityManager->getReference('App\Entity\User', $data['user']));
             $participant->setTrailRunning($trailRunning);
-            $participant->setDorsal($data['dorsal']);
-            $participant->setBanned($data['banned']);
+
+            //Set random dorsal
+            $dorsals = $trailRunning -> gettrailRunningParticipants() -> map(function ($participant){
+                return $participant -> getDorsal();
+            }) -> toArray();
+
+            // This code is shit but fuck it we ball
+            $dors = rand(1, $trailRunning -> getAvailableSlots() * 2);
+            for($i = 0; $i < sizeof($dorsals); $i++){
+                if($dors == $dorsals[$i]){
+                    $dors = rand(1, $trailRunning -> getAvailableSlots() * 2);
+                    $i = 0;
+                }
+                break;
+            }
+            $participant -> setDorsal($dors);
 
             $entityManager->persist($participant);
             $entityManager->flush();
@@ -99,7 +112,9 @@ final class TrailRunningParticipantController extends AbstractController
                 $trailRunning = $entityManager->getReference('App\Entity\TrailRunning', $data['trailRunning']);
                 $participant->setTrailRunning($trailRunning);
             }
-            
+            if (isset($data['time'])) {
+                $participant->setBanned($data['time']);
+            }
             if (isset($data['dorsal'])) {
                 $participant->setDorsal($data['dorsal']);
             }

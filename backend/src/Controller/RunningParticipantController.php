@@ -47,14 +47,27 @@ final class RunningParticipantController extends AbstractController
             $participant = new RunningParticipant();
 
             // Get existing entities
-            $user = $entityManager->getReference('App\Entity\User', $data['user']);
             $running = $entityManager->getReference('App\Entity\Running', $data['running']);
 
             // Set the relationships
-            $participant->setUser($user);
+            $participant->setUser($entityManager->getReference('App\Entity\User', $data['user']));
             $participant->setRunning($running);
-            $participant->setDorsal($data['dorsal']);
-            $participant->setBanned($data['banned']);
+
+            //Set random dorsal
+            $dorsals = $running -> getrunningParticipants() -> map(function ($participant){
+                return $participant -> getDorsal();
+            }) -> toArray();
+
+            // This code is shit but fuck it we ball
+            $dors = rand(1, $running -> getAvailableSlots() * 2);
+            for($i = 0; $i < sizeof($dorsals); $i++){
+                if($dors == $dorsals[$i]){
+                    $dors = rand(1, $running -> getAvailableSlots() * 2);
+                    $i = 0;
+                }
+                break;
+            }
+            $participant -> setDorsal($dors);
 
             $entityManager->persist($participant);
             $entityManager->flush();
@@ -108,6 +121,9 @@ final class RunningParticipantController extends AbstractController
             if (isset($data['running'])) {
                 $running = $entityManager->getReference('App\Entity\Running', $data['running']);
                 $participant->setRunning($running);
+            }
+            if (isset($data['time'])) {
+                $participant->setBanned($data['time']);
             }
             if (isset($data['dorsal'])) {
                 $participant->setDorsal($data['dorsal']);
