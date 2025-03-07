@@ -16,7 +16,7 @@ class TrailRunningParticipant
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["trail_running_participant:read", "user:read"])]
+    #[Groups(["trail_running_participant:read", "user:read", "trail_running:read"])]
     private ?int $id = null;
 
     /**
@@ -24,7 +24,7 @@ class TrailRunningParticipant
      */
     #[ORM\ManyToOne(inversedBy: 'trailRunningParticipants')]
     #[MaxDepth(1)]
-    #[Groups(["trail_running_participant:read", "user_basic:read"])]
+    #[Groups(["trail_running_participant:read", "user_basic:read", "trail_running:read"])]
     private ?User $user = null;
 
     /**
@@ -32,28 +32,28 @@ class TrailRunningParticipant
      */
     #[ORM\ManyToOne(inversedBy: 'trailRunningParticipants')]
     #[MaxDepth(1)]
-    #[Groups(["trail_running_participant:read", "trail_running_basic:read"])]
+    #[Groups(["trail_running_participant:read", "trail_running_basic:read", "user:read"])]
     private ?TrailRunning $trailRunning = null;
 
     /**
      * Propiedad time
      */
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Groups(["trail_running_participant:read", "user:read"])]
+    #[Groups(["trail_running_participant:read", "user:read", "trail_running:read"])]
     private ?\DateTimeInterface $time = null;
 
     /**
      * Propiedad dorsal
      */
     #[ORM\Column]
-    #[Groups(["trail_running_participant:read", "user:read"])]
+    #[Groups(["trail_running_participant:read", "user:read", "trail_running:read"])]
     private ?int $dorsal = null;
 
     /**
      * Propiedad banned
      */
     #[ORM\Column]
-    #[Groups(["trail_running_participant:read", "user:read"])]
+    #[Groups(["trail_running_participant:read", "user:read", "trail_running:read"])]
     private ?bool $banned = null;
 
     public function getId(): ?int

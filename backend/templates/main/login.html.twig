@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+    <form method="post">
+        {% if error %}
+        <div class="alert alert-danger">
+            {{ error.messageKey|trans(error.messageData, 'security') }}
+        </div>
+        {% endif %} {% if app.user %}
+        <div class="mb-3">
+            You are logged in as {{ app.user.userIdentifier }},
+            <a href="{{ path('app_logout') }}">Logout</a>
+        </div>
+        {% endif %}
+
+        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+        <label for="inputEmail">Email</label>
+        <input
+            type="email"
+            value="{{ last_username }}"
+            name="email"
+            id="inputEmail"
+            class="form-control"
+            autocomplete="email"
+            required
+            autofocus
+        />
+        <label for="inputPassword">Password</label>
+        <input
+            type="password"
+            name="password"
+            id="inputPassword"
+            class="form-control"
+            autocomplete="current-password"
+            required
+        />
+
+        <input
+            type="hidden"
+            name="_csrf_token"
+            value="{{ csrf_token('authenticate') }}"
+        />
+
+        <button class="btn btn-lg btn-primary" type="submit">Iniciar sesion :)</button>
+    </form>
+{% endblock %}
+
+{# {% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">Login</h3>
+                </div>
+                <div class="card-body">
+                    <form action="{{ path('app_login_view') }}" method="post">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="_username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="_password" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{{ path('app_register') }}" class="btn btn-outline-secondary">Registrarse</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} #}
+
+

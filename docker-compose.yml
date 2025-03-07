@@ -1,15 +1,4 @@
 services:
-  database:
-    image: mysql:8.0
-    env_file:
-      - .env
-    volumes:
-      # - ./dockerinit.sql:/docker-entrypoint-initdb.d/init.sql
-      - db_data:/var/lib/mysql # Persistencia de datos de MySQL
-    ports:
-      - "3306:3306" # Puerto de MySQL
-    networks:
-      - network_racehub
   api:
     build:
       context: ./backend/
@@ -24,6 +13,36 @@ services:
     networks:
       - network_racehub
 
+  nginx-proxy:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - api
+      - phpmyadmin
+      # - frontend
+    networks:
+      - network_racehub
+  database:
+    image: mysql:8.0
+    env_file:
+      - .env
+    volumes:
+      # - ./dockerinit.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql # Persistencia de datos de MySQL
+    ports:
+      - "3306:3306" # Puerto de MySQL
+    networks:
+      - network_racehub
+    environment:
+      - TZ=UTC
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports:
@@ -37,21 +56,6 @@ services:
       - database
     networks:
       - network_racehub
-  # nginx-proxy:
-  #   build:
-  #     context: ./nginx
-  #     dockerfile: Dockerfile-nginx
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   volumes:
-  #     - ./nginx/certs:/etc/nginx/certs
-  #   depends_on:
-  #     - api
-  #     - phpmyadmin
-  #     # - frontend
-  #   networks:
-  #     - network_racehub
 
 networks:
   network_racehub:

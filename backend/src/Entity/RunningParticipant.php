@@ -24,7 +24,7 @@ class RunningParticipant
      */
     #[ORM\ManyToOne(inversedBy: 'runningParticipants')]
     #[MaxDepth(1)] // Limita la profundidad de la serialización
-    #[Groups(["running_participant:read"])]
+    #[Groups(["running_participant:read", "running:read"])]
     private ?User $user = null;
 
     /**
@@ -32,7 +32,7 @@ class RunningParticipant
      */
     #[ORM\ManyToOne(inversedBy: 'runningParticipants')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["running_participant:read"])]  // Use a different group than "running:read"
+    #[Groups(["running_participant:read", "user:read"])]  // Use a different group than "running:read"
     private ?Running $running = null;
 
     /**

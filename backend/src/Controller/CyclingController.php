@@ -68,4 +68,63 @@ final class CyclingController extends AbstractController
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
+
+    #[Route('/new_s', name: 'app_cycling_start', methods: ['POST'])]
+    public function new_s(Cycling $cycling, EntityManagerInterface $entityManager): Response
+    {
+        $cycling = new Cycling();
+
+        $cycling->setName('Cycling 1');
+        $cycling->setDescription('Cycling 1 description');
+        $cycling->setDate(new \DateTime());
+        $cycling->setDistanceKm(0);
+        $cycling->setLocation('Cycling 1 location');
+        $cycling->setCoordinates('0,0');
+        $cycling->setUnevenness(0);
+        $cycling->setEntryFee(0);
+        $cycling->setAvailableSlots(0);  
+        $cycling->setStatus(0);
+        $cycling->setCategory('Cycling 1 category');      
+        $cycling->setStatus('In progress');
+        $cycling->setImage('Cycling 1 image url');
+
+        $entityManager->persist($cycling);
+        $entityManager->flush();
+
+        return $this->render('cycling/show.html.twig', [
+            'cycling' => $cycling,
+        ]);
+    }
+
+    #[Route('/{id}/edit_s', name: 'app_cycling_edit', methods: ['PUT'])]
+    public function edit_s(Request $request, Cycling $cycling, EntityManagerInterface $entityManager): Response
+    {
+        $cycling->setName($request->request->get('name'));
+        $cycling->setDescription($request->request->get('description'));
+        $cycling->setDate(new \DateTime($request->request->get('date')));
+        $cycling->setDistanceKm($request->request->get('distance_km'));
+        $cycling->setLocation($request->request->get('location'));
+        $cycling->setCoordinates($request->request->get('coordinates'));
+        $cycling->setUnevenness($request->request->get('unevenness'));
+        $cycling->setEntryFee($request->request->get('entry_fee'));
+        $cycling->setAvailableSlots($request->request->get('available_slots'));
+        $cycling->setStatus($request->request->get('status'));
+        $cycling->setCategory($request->request->get('category'));
+        $cycling->setImage($request->request->get('image'));
+
+        $entityManager->persist($cycling);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_cycling_show', ['id' => $cycling->getId()]);
+    }
+
+    #[Route('/{id}', name: 'app_cycling_delete', methods: ['DELETE'])]
+    public function delete_s(Cycling $cycling, EntityManagerInterface $entityManager): Response
+    {
+        $entityManager->remove($cycling);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_cycling_index');
+    }
+
 }

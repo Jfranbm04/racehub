@@ -16,7 +16,7 @@ class CyclingParticipant
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["cycling_participant:read", "user:read"])]
+    #[Groups(["cycling_participant:read", "user:read", "cycling:read"])]
     private ?int $id = null;
 
     /**
@@ -24,7 +24,7 @@ class CyclingParticipant
      */
     #[ORM\ManyToOne(inversedBy: 'cyclingParticipants')]
     #[MaxDepth(1)]
-    #[Groups(["cycling_participant:read"])] // Remove user:read to prevent circular reference
+    #[Groups(["cycling_participant:read", "cycling:read"])] // Remove user:read to prevent circular reference
     private ?User $user = null;
 
     /**
@@ -32,28 +32,28 @@ class CyclingParticipant
      */
     #[ORM\ManyToOne(inversedBy: 'cyclingParticipants')]
     #[MaxDepth(1)]
-    #[Groups("cycling_participant:read")]
+    #[Groups(["cycling_participant:read", "user:read"])]
     private ?Cycling $cycling = null;
 
     /**
      * Propiedad time
      */
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Groups(["cycling_participant:read", "user:read"])]
+    #[Groups(["cycling_participant:read", "user:read", "cycling:read"])]
     private ?\DateTimeInterface $time = null;
 
     /**
      * Propiedad dorsal
      */
     #[ORM\Column]
-    #[Groups(["cycling_participant:read", "user:read"])]
+    #[Groups(["cycling_participant:read", "user:read", "cycling:read"])]
     private ?int $dorsal = null;
 
     /**
      * Propiedad banned
      */
     #[ORM\Column]
-    #[Groups(["cycling_participant:read", "user:read"])]
+    #[Groups(["cycling_participant:read", "user:read", "cycling:read"])]
     private ?bool $banned = null;
 
     public function getId(): ?int
