@@ -8,7 +8,6 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Name</th>
                 <th>Description</th>
                 <th>Date</th>
@@ -27,7 +26,6 @@
         <tbody>
         {% for cycling in cyclings %}
             <tr>
-                <td>{{ cycling.id }}</td>
                 <td>{{ cycling.name }}</td>
                 <td>{{ cycling.description }}</td>
                 <td>{{ cycling.date ? cycling.date|date('Y-m-d H:i:s') : '' }}</td>
