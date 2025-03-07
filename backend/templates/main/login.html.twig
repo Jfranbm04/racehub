@@ -52,8 +52,17 @@
 {% endblock %}#}
 
  {% block body %}
- 
-<style>
+ <style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        flex-direction: column; /* Esto asegura que los elementos se apilen verticalmente */
+    }
+
     #txtInicio {
         text-align: center;
         font-size: 30px;
@@ -70,34 +79,39 @@
         cursor: pointer;
         width: 50%;
     }
+
     .recuadro {
         padding: 20px;
         border: 1px solid black;
         border-radius: 5px;
         text-align: center;
-        margin: 1em auto; 
-        max-width: 400px; 
-        font: 18px/1.5 sans-serif; 
+        max-width: 400px;
+        font: 18px/1.5 sans-serif;
         background-color: #f2f2f2;
     }
+
     .form-group {
         margin-bottom: 10px;
         text-align: left;
     }
+
     .form-group label {
         display: block;
         margin-bottom: 2px;
     }
+
     .form-group input {
         width: 100%;
         padding: 5px;
         box-sizing: border-box;
     }
+
     .form-group a {
         display: inline-block;
         margin-top: 5px;
     }
 </style>
+
 
 <h1 id="txtInicio">Iniciar Sesión</h1>
 
