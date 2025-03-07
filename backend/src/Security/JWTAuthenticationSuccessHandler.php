@@ -2,10 +2,13 @@
 
 namespace App\Security;
 
+use App\Entity\User;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessResponse;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
@@ -31,6 +34,15 @@ class JWTAuthenticationSuccessHandler implements AuthenticationSuccessHandlerInt
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): ?\Symfony\Component\HttpFoundation\Response
     {
         $user = $token->getUser();
+        
+        // Check if user is banned
+        if ($user instanceof User && $user->getBanned()) {
+            return new JsonResponse(
+                ['error' => 'Your account has been banned. Please contact the administrator.'],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+        
         $jwt = $this->jwtManager->create($user);
 
         // Normalize user data with groups
