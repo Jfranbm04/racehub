@@ -63,7 +63,7 @@ final class RunningParticipantController extends AbstractController
             $entityManager->persist($participant);
             $entityManager->flush();
 
-            return $this->json($participant, Response::HTTP_CREATED, [], [
+            return $this->json(true, Response::HTTP_CREATED, [], [
                 'groups' => [
                     'running_participant:read',
                     'user:read',
