@@ -71,6 +71,22 @@ final class CyclingController extends AbstractController
 
     //-------METODOS SYMFONY----------
 
+    #[Route('', name: 'app_cycling_index', methods: ['GET'])]
+    public function index_s(CyclingRepository $cyclingRepository): Response
+    {
+        return $this->render('cycling/index.html.twig', [
+            'cyclings' => $cyclingRepository->findAll(),
+        ]);
+    }
+
+    #[Route('/{id}', name: 'app_cycling_show', methods: ['GET'])]
+    public function show_s(Cycling $cycling): Response
+    {
+        return $this->render('cycling/show.html.twig', [
+            'cycling' => $cycling,
+        ]);
+    }
+
     #[Route('/new_s', name: 'app_cycling_start', methods: ['POST'])]
     public function new_s(Cycling $cycling, EntityManagerInterface $entityManager): Response
     {
