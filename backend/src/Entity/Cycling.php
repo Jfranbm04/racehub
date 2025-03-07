@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CyclingRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,6 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: CyclingRepository::class)]
+#[ApiResource]
 class Cycling
 {
     #[ORM\Id]
@@ -66,6 +68,10 @@ class Cycling
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
     private ?string $image = null;
+
+    #[ORM\Column(length: 1)]
+    #[Groups(["user:read", "cycling:read", "cycling_participant:read"])]
+    private ?string $gender = null;
 
     /**
      * @var Collection<int, CyclingParticipant>
@@ -255,6 +261,18 @@ class Cycling
                 $cyclingParticipant->setCycling(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): static
+    {
+        $this->gender = $gender;
 
         return $this;
     }

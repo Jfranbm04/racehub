@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\RunningRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,6 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: RunningRepository::class)]
+#[ApiResource]
 class Running
 {
     #[ORM\Id]
@@ -61,6 +63,11 @@ class Running
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["running:read", "running_participant:read", "user:read"])]
     private ?string $image = null;
+
+    #[ORM\Column(length: 1)]
+    #[Groups(["running:read", "running_participant:read", "user:read"])]
+    private ?string $gender = null;
+
     /**
      * Relación OneToMany con RunningParticipant
      */
@@ -235,6 +242,18 @@ class Running
                 $runningParticipant->setRunning(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): static
+    {
+        $this->gender = $gender;
 
         return $this;
     }

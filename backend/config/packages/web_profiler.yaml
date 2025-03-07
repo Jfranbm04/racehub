@@ -1,17 +1,18 @@
 when@dev:
     web_profiler:
-        toolbar: true
+        toolbar: false
         intercept_redirects: false
 
     framework:
         profiler:
             only_exceptions: false
-            collect_serializer_data: true
+            collect: false
+            collect_serializer_data: false
 
-when@test:
+when@prod:
     web_profiler:
         toolbar: false
         intercept_redirects: false
 
     framework:
-        profiler: { collect: false }
+        profiler: false

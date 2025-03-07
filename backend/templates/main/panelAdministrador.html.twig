@@ -1,180 +1,186 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+{% extends 'base.html.twig' %}
+
+{% block title %}Panel de Administración - RaceHub{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #2c3e50; /* Azul oscuro */
+            --secondary: #3498db; /* Azul claro */
+            --accent: #e74c3c; /* Rojo */
+            --light: #ecf0f1; /* Gris claro */
+            --dark: #1b2631; /* Negro azulado */
+        }
+
         body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    min-height: 100vh;
-    background-color: #005b80;
-}
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+        }
 
-.gridContainer {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(7, 1fr);
-    gap: 20px;
-    height: 100vh;
-    padding: 10px;
-}
+        .admin-container {
+            display: grid;
+            grid-template-areas: 
+                "header"
+                "main"
+                "footer";
+            grid-template-rows: auto 1fr auto;
+            min-height: 100vh;
+            padding: 20px;
+            gap: 20px;
+        }
 
-.btnVistas{
-    padding: 12px 25px;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #ff6b6b, #ff5252);
-    color: white;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(255, 82, 82, 0.3);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin: 30px;
-  
-}
+        header {
+            grid-area: header;
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.btnVistas:hover {
-    background: linear-gradient(135deg, #ff5252, #ff3838);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 82, 82, 0.4);
-}
+        main {
+            grid-area: main;
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
 
+        footer {
+            grid-area: footer;
+            background: var(--light);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
 
-header {
-    grid-column: 1 / -1;
-    grid-row: 1 / 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color:#001f3d;
-    padding: 15px;
-    z-index: 2;
-    color: orangered;
-}
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
 
-.panel-central {
-    grid-row: 2 / 6;
-    grid-column: 2/ 5;
-    background: #007f80;
-    color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    padding: 20px;
-    display: flex;
-   justify-content: center;
-   align-items: flex-start;
-}
+        .sport-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
 
-.footer {
-    grid-column: 1 / -1;
-    grid-row: 6/ 7;
-    background-color:black;
-    color: white;
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.infoPaginas{
-    background-color: aqua;
-    grid-row: 2 / 6;
-    grid-column: 2/ 5;
-}
+        .btn-admin {
+            background: linear-gradient(135deg, var(--accent), #c0392b);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+        }
 
-/* Añade estos estilos al CSS */
-.hr-header,
-.hr-footer {
-    grid-column: 1 / -1;
-    height: 2px;
-    background-color: #f6f6f6;
-    margin:-5px; /* Compensa el padding del gridContainer */
-    border: none;
-}
+        .btn-admin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
+        }
 
-.hr-header {
-    grid-row: 2 / 3;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+        .content-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 400px;
+        }
 
-.hr-footer {
-    grid-row: 6 ;
-    margin-bottom: 50px; /* Ajuste para alineación perfecta */
-}
+        .back-button {
+            background: var(--secondary);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
 
-/* Ajusta los grid-rows del panel central */
-.panel-central {
-    grid-row: 3 / 5; /* Ahora está entre los dos hr */
-}
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+        }
 
-/* Modifica el gridContainer */
-.gridContainer {
-    grid-template-rows: repeat(6, auto); /* Cambia a auto para mejor ajuste */
-}
-
-/* Ajustes responsive */
-@media (max-width: 768px) {
-    .hr-header,
-    .hr-footer {
-        margin: 0 -5px;
-    }
-    
-    .hr-header {
-        grid-row: 2 / 3;
-    }
-    
-    .hr-footer {
-        grid-row: 5 / 6;
-    }
-    
-    .panel-central {
-        grid-row: 3 / 5;
-    }
-}
-
-@media (max-width: 480px) {
-    .hr-header,
-    .hr-footer {
-        margin: 0;
-    }
-}
+        @media (max-width: 768px) {
+            .sport-group {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
     </style>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrador</title>
-</head>
-<body>
-    <main class="gridContainer">
+{% endblock %}
+
+{% block body %}
+    <div class="admin-container">
         <header>
-            <h1>Administrador</h1>
-            <div class="containerBotones">
-                <button class="btnVistas">Cycling</button>
-                <button class="btnVistas">Running</button>
-                <button class="btnVistas">Trail</button>
-            </div>
+            <h1 class="admin-title"><i class="fas fa-cogs"></i> Panel de Administración</h1>
+            <a href="/" class="back-button">
+                <i class="fas fa-arrow-left"></i> Volver al Inicio
+            </a>
         </header>
-        
-        <!-- HR debajo del header -->
-        <div class="hr-header"></div>
-        
-        <div class="panel-central">
-            <h2>Contenido Principal</h2>
-            
-            <div class="contenido-dinamico">
-                <!-- Aquí iría el contenido que cambia -->
+
+        <main>
+            <div class="button-container">
+                <div class="sport-group">
+                    <h3 class="sport-category">Eventos</h3>
+                    <a href="{{ path('app_running_index_s') }}" class="btn-admin">
+                        <i class="fas fa-running"></i> Running
+                    </a>
+                    {# <a href="{{ path('app_cycling_show_s') }}" class="btn-admin">
+                        <i class="fas fa-bicycle"></i> Cycling
+                    </a>
+                    <a href="{{ path('app_trail_show_s') }}" class="btn-admin">
+                        <i class="fas fa-mountain"></i> Trail
+                    </a> #}
+                </div>
+
+                <div class="sport-group">
+                    <h3 class="sport-category">Participantes</h3>
+                    <a href="{{ path('app_running_participant_index_s') }}" class="btn-admin">
+                        <i class="fas fa-users"></i> Running
+                    </a>
+                    {# <a href="{{ path('app_cycling_participants') }}" class="btn-admin">
+                        <i class="fas fa-users"></i> Cycling
+                    </a>
+                    <a href="{{ path('app_trail_participants') }}" class="btn-admin">
+                        <i class="fas fa-users"></i> Trail
+                    </a> #}
+                </div>
+
+                <div class="sport-group">
+                    <h3 class="sport-category">Usuarios</h3>
+                    {# <a href="{{ path('app_users') }}" class="btn-admin">
+                        <i class="fas fa-user-cog"></i> Gestionar Usuarios
+                    </a> #}
+                </div>
             </div>
-        </div>
-        
-        
-          <!-- HR encima del footer -->
-        <div class="hr-footer"></div>
-        <div class="footer">
-          
-            <p>Footer</p>
-        </div>
-    </main>
-</body>
-</html>
+
+            
+        </main>
+
+        <footer>
+            <p>&copy; 2025 RaceHub - Todos los derechos reservados</p>
+        </footer>
+    </div>
+{% endblock %}

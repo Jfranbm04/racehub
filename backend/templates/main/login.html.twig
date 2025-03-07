@@ -4,6 +4,7 @@
 
 {% block body %}
     <form method="post">
+    {# action="{{ path('login_s') }}"  #}
         {% if error %}
         <div class="alert alert-danger">
             {{ error.messageKey|trans(error.messageData, 'security') }}
@@ -43,7 +44,7 @@
             value="{{ csrf_token('authenticate') }}"
         />
 
-        <button class="btn btn-lg btn-primary" type="submit">Sign in</button>
+        <button class="btn btn-lg btn-primary" type="submit">Iniciar sesion :)</button>
     </form>
 {% endblock %}
 

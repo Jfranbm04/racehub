@@ -21,6 +21,14 @@ final class RunningController extends AbstractController
         $runnings = $runningRepository->findAll();
         return $this->json($runnings, Response::HTTP_OK, [], ['groups' => 'running:read']);
     }
+    #[Route('/index_s', name: 'app_running_index_s', methods: ['GET'])]
+    public function index_s(EntityManagerInterface $entityManager, RunningRepository $runningRepository): Response
+    {
+        $runnings = $runningRepository->findAll();
+        return $this->render('running/index.html.twig', [
+            'runnings' => $runnings,
+        ]);
+    }
 
     #[Route('/new', name: 'app_running_new', methods: ['POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
@@ -40,6 +48,19 @@ final class RunningController extends AbstractController
     public function show(Running $running): JsonResponse
     {
         return $this->json($running, Response::HTTP_OK, [], ['groups' => 'running:read']);
+    }
+
+    #[Route('/{id}/status', name: 'app_running_status', methods: ['POST'])]
+    public function updateStatus(Request $request, Running $running, EntityManagerInterface $entityManager): Response
+    {
+        $newStatus = $request->request->get('status');
+        if (in_array($newStatus, ['open', 'closed', 'completed'])) {
+            $running->setStatus($newStatus);
+            $entityManager->flush();
+            $this->addFlash('success', 'Status updated successfully');
+        }
+
+        return $this->redirectToRoute('app_running_index');
     }
 
     #[Route('/{id}/edit', name: 'app_running_edit', methods: ['PUT'])]
@@ -67,6 +88,7 @@ final class RunningController extends AbstractController
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
+
 
     #[Route('/new_s', name: 'app_running_start', methods: ['POST'])]
     public function new_s(Running $running, EntityManagerInterface $entityManager): Response
@@ -105,7 +127,7 @@ final class RunningController extends AbstractController
         $running->setAvailableSlots($request->request->get('available_slots'));
         $running->setCategory($request->request->get('category'));
         $running->setImage($request->request->get('image'));
-        
+
         $entityManager->persist($running);
         $entityManager->flush();
 
