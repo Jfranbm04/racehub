@@ -29,6 +29,13 @@ final class RunningParticipantController extends AbstractController
             }
         ]);
     }
+    #[Route('/index_s', name: 'app_running_participant_index_s', methods: ['GET'])]
+    public function index_s(RunningParticipantRepository $runningParticipantRepository): Response
+    {
+        return $this->render('running_participant/index.html.twig', [
+            'running_participants' => $runningParticipantRepository->findAll(),
+        ]);
+    }
 
     #[Route('/new', name: 'app_running_participant_new', methods: ['POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
