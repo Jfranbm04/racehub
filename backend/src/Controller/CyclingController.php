@@ -111,7 +111,7 @@ final class CyclingController extends AbstractController
 
         // Mostrar el formulario de creación
         return $this->render('cycling/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form->createView(), 
             'button_label' => 'Crear', // Define el texto del botón para la creación
         ]);
     }
@@ -135,16 +135,16 @@ final class CyclingController extends AbstractController
 
     #[Route('/{id}/delete', name: 'app_cycling_delete', methods: ['POST'])]
     public function delete_s(Request $request, Cycling $cycling, EntityManagerInterface $entityManager): Response
-{
-    // Eliminar todos los participantes asociados a esta carrera
-    foreach ($cycling->getCyclingParticipants() as $participant) {
-        $entityManager->remove($participant);
+    {
+        // Eliminar todos los participantes asociados a esta carrera
+        foreach ($cycling->getCyclingParticipants() as $participant) {
+            $entityManager->remove($participant);
+        }
+
+        // Ahora puedes eliminar la carrera
+        $entityManager->remove($cycling);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_cycling_index');
     }
-
-    // Ahora puedes eliminar la carrera
-    $entityManager->remove($cycling);
-    $entityManager->flush();
-
-    return $this->redirectToRoute('app_cycling_index');
-}
 }
