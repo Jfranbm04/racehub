@@ -30,16 +30,23 @@ final class CyclingParticipantController extends AbstractController
 
             // Create new participant
             $participant = new CyclingParticipant();
-
-            // Get existing entities
-            $user = $entityManager->getReference('App\Entity\User', $data['user']);
-            $cycling = $entityManager->getReference('App\Entity\Cycling', $data['cycling']);
-
             // Set the relationships
-            $participant->setUser($user);
+            $participant->setUser($entityManager->getReference('App\Entity\User', $data['user']));
+            $cycling = $entityManager->getReference('App\Entity\Cycling', $data['cycling']);
             $participant->setCycling($cycling);
-            $participant->setDorsal($data['dorsal']);
-            $participant->setBanned($data['banned']);
+
+            //Set random dorsal
+
+
+            /* for(int i = 0; i < nums.size(); i++){
+                if(i == 90000){
+                    GUI.launchMessage(2, "Nombre no disponible", "El nombre de usuario indicado no se\nencuentra disponible, inténtelo con uno distinto.");
+                }
+                if(ran.equals(nums.get(i))){
+                    ran = String.valueOf(r.nextInt(99999));
+                    i = 0;
+                }
+            } */
 
             $entityManager->persist($participant);
             $entityManager->flush();
@@ -63,12 +70,14 @@ final class CyclingParticipantController extends AbstractController
             $data = json_decode($request->getContent(), true);
 
             if (isset($data['user'])) {
-                $user = $entityManager->getReference('App\Entity\User', $data['user']);
-                $participant->setUser($user);
+                $participant->setUser($entityManager->getReference('App\Entity\User', $data['user']));
             }
             if (isset($data['cycling'])) {
-                $cycling = $entityManager->getReference('App\Entity\Cycling', $data['cycling']);
-                $participant->setCycling($cycling);
+
+                $participant->setCycling($entityManager->getReference('App\Entity\Cycling', $data['cycling']));
+            }
+            if (isset($data['time'])) {
+                $participant->setBanned($data['time']);
             }
             if (isset($data['dorsal'])) {
                 $participant->setDorsal($data['dorsal']);

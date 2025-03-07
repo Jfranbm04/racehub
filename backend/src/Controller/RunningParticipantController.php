@@ -59,7 +59,7 @@ final class RunningParticipantController extends AbstractController
             $entityManager->persist($participant);
             $entityManager->flush();
 
-            return $this->json($participant, Response::HTTP_CREATED, [], [
+            return $this->json(true, Response::HTTP_CREATED, [], [
                 'groups' => [
                     'running_participant:read',
                     'user:read',
@@ -108,6 +108,9 @@ final class RunningParticipantController extends AbstractController
             if (isset($data['running'])) {
                 $running = $entityManager->getReference('App\Entity\Running', $data['running']);
                 $participant->setRunning($running);
+            }
+            if (isset($data['time'])) {
+                $participant->setBanned($data['time']);
             }
             if (isset($data['dorsal'])) {
                 $participant->setDorsal($data['dorsal']);

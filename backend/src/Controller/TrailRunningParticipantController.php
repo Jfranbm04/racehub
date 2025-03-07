@@ -99,7 +99,9 @@ final class TrailRunningParticipantController extends AbstractController
                 $trailRunning = $entityManager->getReference('App\Entity\TrailRunning', $data['trailRunning']);
                 $participant->setTrailRunning($trailRunning);
             }
-            
+            if (isset($data['time'])) {
+                $participant->setBanned($data['time']);
+            }
             if (isset($data['dorsal'])) {
                 $participant->setDorsal($data['dorsal']);
             }
