@@ -3,8 +3,7 @@ info:
   title: RaceHub - OpenAPI 3.0
   description: |-
     Este documento lista y da ejemplos de los endpoints, que parametros requieren y cuáles devuelve el servidor
-  version: 0.0.110
-
+  version: 0.0.159
 servers:
   - url: https://cambiar.a.la.ip/del/servidor
   
@@ -62,6 +61,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+    delete:
+      tags:
+        - User
+      summary: Elimina el usuario con el id especificado
+      description: Elimina el usuario con el id especificado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID del objeto usuario a eliminar
+      responses:
+        '200':
+          description: Usuario eliminado
+          content:
+            application/json:
+              schema:
+                type: boolean
 
   /api/user/{id}/edit:
     put:
@@ -209,6 +227,10 @@ paths:
       responses:
         '200':
           description: Participante eliminado
+          content:
+            application/json:
+              schema:
+                type: boolean
 
   /api/cycling_participant/new:
     post:
@@ -342,6 +364,10 @@ paths:
       responses:
         '200':
           description: Participante eliminado
+          content:
+            application/json:
+              schema:
+                type: boolean
 
   /api/running_participant/new:
     post:
@@ -475,6 +501,10 @@ paths:
       responses:
         '200':
           description: Participante eliminado
+          content:
+            application/json:
+              schema:
+                type: boolean
 
   /api/trailrunning_participant/new:
     post:

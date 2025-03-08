@@ -60,7 +60,7 @@ final class UserController extends AbstractController
                 $entMngr -> remove($user);
                 $entMngr -> flush();
 
-                return $this -> json(['message' => 'Usuario eliminado'], Response::HTTP_OK);
+                return $this -> json(true, Response::HTTP_OK);
             }
 
             return $this->json(['error' => 'Something went wrong, if you see this message, contact support.'], Response::HTTP_I_AM_A_TEAPOT);
