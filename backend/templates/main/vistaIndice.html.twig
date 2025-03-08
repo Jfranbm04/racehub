@@ -1,8 +1,6 @@
-<!DOCTYPE html>
-<html lang="es">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil - RaceHub</title>
+{% extends 'base.html.twig' %}
+
+{% block title %}Mi Perfil - RaceHub{% endblock %}
     {% block stylesheets %}
         {{ parent() }}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -118,16 +116,29 @@
                 text-decoration: none;
             }
 
-            .event-item:hover {
-                background: var(--accent);
-            }
-
             .event-actions {
                 display: flex;
                 flex-direction: column;
                 gap: 10px;
             }
 
+            .event-actions a {
+                background: var(--secondary);
+                color: white;
+                padding: 12px 25px;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: transform 0.2s ease;
+                box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+                text-decoration: none;
+                text-align: center;
+            }
+
+            .event-actions a:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+            }
             .event-actions button {
                 background: var(--secondary);
                 border: none;
@@ -153,7 +164,23 @@
                 margin-top: 20px;
                 color: var(--primary);
             }
+            .btn-back {
+                background: var(--secondary);
+                color: white;
+                padding: 10px 20px;
+                border-radius: 8px;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.3s ease;
+            }
 
+            .btn-back:hover {
+                background: var(--primary);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            }
             @media (max-width: 768px) {
                 .profile-info {
                     flex-direction: column;
@@ -175,8 +202,8 @@
     <div class="container">
         <header>
             <h1>Bienvenido, Juan Pérez</h1>
-            <a href="/" class="back-button">
-                <i class="fas fa-arrow-left"></i> Cerrar Sesion
+            <a href="{{ path('app_logout') }}" class="btn-back">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
             </a>
         </header>
 
@@ -197,27 +224,27 @@
         <section class="events-section">
             <h2>Eventos Disponibles</h2>
             <div class="event-item">
-                <span><i class="fas fa-running"></i> Carrera 10k</span>
+                <span><i class="fas fa-running"></i> Running</span>
                 <div class="event-actions">
-                    <button><i class="fas fa-globe"></i> Inscribirse (Web)</button>
-                    <button><i class="fas fa-mobile-alt"></i> Inscribirse (Móvil)</button>
-                    <button><i class="fas fa-desktop"></i> Inscribirse (Escritorio)</button>
+                    <a href=""><i class="fas fa-globe"></i> Inscribirse (Web)</a>
+                    <a href=""><i class="fas fa-mobile-alt"></i> Inscribirse (Móvil)</a>
+                    <a href=""><i class="fas fa-desktop"></i> Inscribirse (Escritorio)</a>
                 </div>
             </div>
             <div class="event-item">
-                <span><i class="fas fa-bicycle"></i> Ciclo Ruta</span>
+                <span><i class="fas fa-bicycle"></i> Cycling</span>
                 <div class="event-actions">
-                    <button><i class="fas fa-globe"></i> Inscribirse (Web)</button>
-                    <button><i class="fas fa-mobile-alt"></i> Inscribirse (Móvil)</button>
-                    <button><i class="fas fa-desktop"></i> Inscribirse (Escritorio)</button>
+                    <a href=""><i class="fas fa-globe"></i> Inscribirse (Web)</a>
+                    <a href=""><i class="fas fa-mobile-alt"></i> Inscribirse (Móvil)</a>
+                    <a href=""><i class="fas fa-desktop"></i> Inscribirse (Escritorio)</a>
                 </div>
             </div>
             <div class="event-item">
-                <span><i class="fas fa-mountain"></i> Carrera de Montaña</span>
+                <span><i class="fas fa-mountain"></i> Trailrunning</span>
                 <div class="event-actions">
-                    <button><i class="fas fa-globe"></i> Inscribirse (Web)</button>
-                    <button><i class="fas fa-mobile-alt"></i> Inscribirse (Móvil)</button>
-                    <button><i class="fas fa-desktop"></i> Inscribirse (Escritorio)</button>
+                    <a href=""><i class="fas fa-globe"></i> Inscribirse (Web)</a>
+                    <a href=""><i class="fas fa-mobile-alt"></i> Inscribirse (Móvil)</a>
+                    <a href=""><i class="fas fa-desktop"></i> Inscribirse (Escritorio)</a>
                 </div>
             </div>
         </section>

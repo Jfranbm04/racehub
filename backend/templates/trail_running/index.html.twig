@@ -131,7 +131,12 @@
 		background: var(--primary);
 	}
 </style>{% endblock %}{% block body %}
-<div class="admin-container">
+	<div style="margin-top: 20px;">
+			<a href="{{ path('app_admin') }}" class="btn-primary">
+				<i class="fas fa-arrow-left"></i> Volver
+			</a>
+		</div>
+	<div class="admin-container">
 	<header>
 		<h1 class="admin-title">
 			<i class="fas fa-calendar-alt"></i>
@@ -177,11 +182,11 @@
 						<td>{{ trail_running.availableSlots }}</td>
 						<td>
 							<span class="status-badge" style="background-color:
-									                        {% if trail_running.status == 'open' %}#2ecc71;
-									                        {% elseif trail_running.status == 'closed' %}#f1c40f;
-									                        {% elseif trail_running.status == 'completed' %}#e74c3c;
-									                        {% else %}#95a5a6;
-									                        {% endif %}">
+								{% if trail_running.status == 'open' %}#2ecc71;
+								{% elseif trail_running.status == 'closed' %}#f1c40f;
+								{% elseif trail_running.status == 'completed' %}#e74c3c;
+								{% else %}#95a5a6;
+								{% endif %}">
 								{{ trail_running.status|capitalize }}
 							</span>
 						</td>
