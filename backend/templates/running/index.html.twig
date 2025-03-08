@@ -135,6 +135,11 @@
 {% endblock %}
 
 {% block body %}
+    <div style="margin-top: 20px;">
+        <a href="{{ path('app_admin') }}" class="btn-primary">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
     <div class="admin-container">
         <header>
             <h1 class="admin-title"><i class="fas fa-calendar-alt"></i> Eventos de Running</h1>
@@ -169,7 +174,7 @@
                                 <td>{{ event.date|date('d/m/Y H:i') }}</td>
                                 <td>{{ event.location }}</td>
                                 <td>{{ event.distanceKm }} km</td>
-                                <td>{{ event.entryFee ? '$' ~ event.entryFee : 'Gratis' }}</td>
+                                <td>{{ event.entryFee ? event.entryFee ~ '€'  : 'Gratis' }}</td>
                                 <td>{{ event.availableSlots }}</td>
                                 <td>
                                     <span class="status-badge" style="background-color: 
@@ -198,7 +203,7 @@
                                     <a href="{{ path('app_running_edit', {'id': event.id}) }}">
                                         <i class="fas fa-edit"></i> Editar
                                     </a>
-                                    <form action="{{ path('app_running_status', {'id': event.id}) }}" method="POST" style="display: inline;">
+                                    {# <form action="{{ path('app_running_status', {'id': event.id}) }}" method="POST" style="display: inline;">
                                         <select name="status" class="status-select">
                                             <option value="open" {% if event.status == 'open' %}selected{% endif %}>Open</option>
                                             <option value="closed" {% if event.status == 'closed' %}selected{% endif %}>Closed</option>
@@ -207,7 +212,7 @@
                                         <button type="submit" class="btn-status">
                                             <i class="fas fa-save"></i> Update Status
                                         </button>
-                                    </form>
+                                    </form> #}
                                 </td>
                             </tr>
                         {% endfor %}

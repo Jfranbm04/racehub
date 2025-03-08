@@ -127,98 +127,104 @@
 {% endblock %}
 
 {% block body %}
-<div class="admin-container">
-    <header>
-        <h1 class="admin-title">
-            <i class="fas fa-bicycle"></i>
-            Eventos de Cycling
-        </h1>
-        <a href="{{ path('app_cycling_new') }}" class="btn-primary">
-            <i class="fas fa-plus"></i>
-            Nuevo Evento
+    <div style="margin-top: 20px;">
+        <a href="{{ path('app_admin') }}" class="btn-primary">
+            <i class="fas fa-arrow-left"></i> Volver
         </a>
-    </header>
+    </div>
+    <div class="admin-container">
+        <header>
+            <h1 class="admin-title">
+                <i class="fas fa-bicycle"></i>
+                Eventos de Cycling
+            </h1>
+            <a href="{{ path('app_cycling_new') }}" class="btn-primary">
+                <i class="fas fa-plus"></i>
+                Nuevo Evento
+            </a>
+        </header>
 
-    <main>
-        <table class="event-table">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Date</th>
-                    <th>Distance_km</th>
-                    <th>Location</th>
-                    <th>Coordinates</th>
-                    <th>Unevenness</th>
-                    <th>Entry_fee</th>
-                    <th>Available_slots</th>
-                    <th>Status</th>
-                    <th>Category</th>
-                    <th>Image</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for cycling in cyclings %}
+        <main>
+            <table class="event-table">
+                <thead>
                     <tr>
-                        <td>{{ cycling.id }}</td>
-                        <td>{{ cycling.name }}</td>
-                        <td>{{ cycling.description }}</td>
-                        <td>{{ cycling.date ? cycling.date|date('Y-m-d H:i:s') : '' }}</td>
-                        <td>{{ cycling.distanceKm }}</td>
-                        <td>{{ cycling.location }}</td>
-                        <td>{{ cycling.coordinates }}</td>
-                        <td>{{ cycling.unevenness }}</td>
-                        <td>{{ cycling.entryFee }}</td>
-                        <td>{{ cycling.availableSlots }}</td>
-                        <td>
-                            <span class="status-badge" style="background-color:
-                                {% if cycling.status == 'open' %}#2ecc71;
-                                {% elseif cycling.status == 'closed' %}#f1c40f;
-                                {% elseif cycling.status == 'completed' %}#e74c3c;
-                                {% else %}#95a5a6;
-                                {% endif %}">
-                                {{ cycling.status|capitalize }}
-                            </span>
-                        </td>
-                        <td>{{ cycling.category ?: 'N/A' }}</td>
-                        <td>
-                            {% if cycling.image %}
-                                <img src="{{ asset('uploads/' ~ cycling.image) }}" alt="{{ cycling.name }}" class="image-thumbnail">
-                            {% else %}
-                                <span>Sin imagen</span>
-                            {% endif %}
-                        </td>
-                        <td class="action-buttons">
-                            <a href="{{ path('app_cycling_show', {'id': cycling.id}) }}">
-                                <i class="fas fa-eye"></i>
-                                Ver
-                            </a>
-                            <a href="{{ path('app_cycling_edit', {'id': cycling.id}) }}">
-                                <i class="fas fa-edit"></i>
-                                Editar
-                            </a>
-                            <form action="{{ path('app_cycling_status', {'id': cycling.id}) }}" method="POST" style="display: inline;">
-                                <select name="status" class="status-select">
-                                    <option value="open" {% if cycling.status == 'open' %} selected {% endif %}>Open</option>
-                                    <option value="closed" {% if cycling.status == 'closed' %} selected {% endif %}>Closed</option>
-                                    <option value="completed" {% if cycling.status == 'completed' %} selected {% endif %}>Completed</option>
-                                </select>
-                                <button type="submit" class="btn-status">
-                                    <i class="fas fa-save"></i>
-                                    Update Status
-                                </button>
-                            </form>
-                        </td>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                        <th>Distance_km</th>
+                        <th>Location</th>
+                        <th>Coordinates</th>
+                        <th>Unevenness</th>
+                        <th>Entry_fee</th>
+                        <th>Available_slots</th>
+                        <th>Status</th>
+                        <th>Category</th>
+                        <th>Image</th>
+                        <th>Actions</th>
                     </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="14">No hay eventos registrados</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </main>
-</div>
+                </thead>
+                <tbody>
+                    {% for cycling in cyclings %}
+                        <tr>
+                            <td>{{ cycling.id }}</td>
+                            <td>{{ cycling.name }}</td>
+                            <td>{{ cycling.description }}</td>
+                            <td>{{ cycling.date ? cycling.date|date('Y-m-d H:i:s') : '' }}</td>
+                            <td>{{ cycling.distanceKm }}</td>
+                            <td>{{ cycling.location }}</td>
+                            <td>{{ cycling.coordinates }}</td>
+                            <td>{{ cycling.unevenness }}</td>
+                            <td>{{ cycling.entryFee }}</td>
+                            <td>{{ cycling.availableSlots }}</td>
+                            <td>
+                                <span class="status-badge" style="background-color:
+                                    {% if cycling.status == 'open' %}#2ecc71;
+                                    {% elseif cycling.status == 'closed' %}#f1c40f;
+                                    {% elseif cycling.status == 'completed' %}#e74c3c;
+                                    {% else %}#95a5a6;
+                                    {% endif %}">
+                                    {{ cycling.status|capitalize }}
+                                </span>
+                            </td>
+                            <td>{{ cycling.category ?: 'N/A' }}</td>
+                            <td>
+                                {% if cycling.image %}
+                                    <img src="{{ asset('uploads/' ~ cycling.image) }}" alt="{{ cycling.name }}" class="image-thumbnail">
+                                {% else %}
+                                    <span>Sin imagen</span>
+                                {% endif %}
+                            </td>
+                            <td class="action-buttons">
+                                <a href="{{ path('app_cycling_show', {'id': cycling.id}) }}">
+                                    <i class="fas fa-eye"></i>
+                                    Ver
+                                </a>
+                                <a href="{{ path('app_cycling_edit', {'id': cycling.id}) }}">
+                                    <i class="fas fa-edit"></i>
+                                    Editar
+                                </a>
+                                {# action="{{ path('app_cycling_status', {'id': cycling.id}) }}"
+                                <form method="POST" style="display: inline;">
+                                    <select name="status" class="status-select">
+                                        <option value="open" {% if cycling.status == 'open' %} selected {% endif %}>Open</option>
+                                        <option value="closed" {% if cycling.status == 'closed' %} selected {% endif %}>Closed</option>
+                                        <option value="completed" {% if cycling.status == 'completed' %} selected {% endif %}>Completed</option>
+                                    </select>
+                                    <button type="submit" class="btn-status">
+                                        <i class="fas fa-save"></i>
+                                        Update Status
+                                    </button>
+                                </form> #}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="14">No hay eventos registrados</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </main>
+    </div>
 {% endblock %}

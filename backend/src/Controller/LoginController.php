@@ -34,7 +34,7 @@ class LoginController extends AbstractController
         return $this->render('main/register.html.twig');
     }
 
-    #[Route('/register', name:'app_register_submit', methods: ['POST'])]
+    #[Route('/register', name: 'app_register_submit', methods: ['POST'])]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
         try {
@@ -57,10 +57,8 @@ class LoginController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Usuario registrado correctamente');
-            return $this->redirectToRoute('app_login_view');
-            
-        }
-        catch (\Exception $e) {
+            return $this->redirectToRoute('app_login');
+        } catch (\Exception $e) {
             $this->addFlash('error', 'Error al registrar el usuario');
             return $this->redirectToRoute('app_register');
         }

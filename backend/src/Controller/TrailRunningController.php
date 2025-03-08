@@ -28,8 +28,16 @@ final class TrailRunningController extends AbstractController
             'trail_runnings' => $trailRunnings
         ]);
     }
-
-    #[Route('/new', name: 'app_trail_running_new', methods: ['GET', 'POST'])]
+    // Index symfony
+    #[Route('/index_s', name: 'app_trail_running_index_s', methods: ['GET'])]
+    public function index_s(EntityManagerInterface $entityManager, TrailRunningRepository $trailRunningRepository): Response
+    {
+        $trailRunnings = $trailRunningRepository->findAll();
+        return $this->render('trail_running/index.html.twig', [
+            'trail_runnings' => $trailRunnings,
+        ]);
+    }
+    #[Route('/new', name: 'app_trailrunning_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $trailRunning = new TrailRunning();
@@ -37,20 +45,19 @@ final class TrailRunningController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $trailRunning->setStatus('open');
             $entityManager->persist($trailRunning);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_trail_running_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_trail_running_index_s');
         }
 
         return $this->render('trail_running/new.html.twig', [
             'trail_running' => $trailRunning,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
-    
+
     #[Route('/{id}', name: 'app_trail_running_show', methods: ['GET'])]
     public function show(TrailRunning $trailRunning): JsonResponse
     {
@@ -115,7 +122,6 @@ final class TrailRunningController extends AbstractController
         $trailRunning->setStatus($request->request->get('status'));
         $trailRunning->setCategory($request->request->get('category'));
         $trailRunning->setImage($request->request->get('image'));
-
 
         $entityManager->persist($trailRunning);
         $entityManager->flush();

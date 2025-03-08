@@ -1,11 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Running{% endblock %}
+{% block title %}New Running Event{% endblock %}
 
 {% block body %}
-    <h1>Create new Running</h1>
+    <div class="form-container">
+        <h1>Create new Running Event</h1>
 
-    {{ include('running/_form.html.twig') }}
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button class="btn">{{ button_label|default('Save') }}</button>
+        {{ form_end(form) }}
 
-    <a href="{{ path('app_running_index') }}">back to list</a>
+        <a href="{{ path('app_running_index_s') }}">back to list</a>
+    </div>
 {% endblock %}

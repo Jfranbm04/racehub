@@ -13,7 +13,11 @@ final class MainController extends AbstractController
     {
         return $this->render('main/index.html.twig', []);
     }
-
+    #[Route('/indice', name: 'app_indice')]
+    public function indice(): Response
+    {
+        return $this->render('main/vistaIndice.html.twig', []);
+    }
     #[Route('/admin', name: 'app_admin')]
     public function admin(): Response
     {

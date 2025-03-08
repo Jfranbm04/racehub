@@ -17,14 +17,18 @@ use App\Form\CyclingType;
 #[Route('api/cycling')]
 final class CyclingController extends AbstractController
 {
+
+
+    // Index JSON
     #[Route(name: 'app_cycling_index', methods: ['GET'])]
-    public function index(CyclingRepository $cyclRepo, SerializerInterface $serializer): Response
+    public function index(CyclingRepository $cyclRepo): JsonResponse
     {
         $cyclings = $cyclRepo->findAll();
-        return $this->render('cycling/index.html.twig', [
-            'cyclings' => $cyclings
-        ]);
+        return $this->json($cyclings, Response::HTTP_OK, [], ['groups' => 'cycling:read']);
     }
+
+
+
 
     #[Route('/new', name: 'app_cycling_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -81,13 +85,16 @@ final class CyclingController extends AbstractController
 
     //-------METODOS SYMFONY----------
 
-    #[Route('', name: 'app_cycling_index', methods: ['GET'])]
-    public function index_s(CyclingRepository $cyclingRepository): Response
+    #[Route('/index_s', name: 'app_cycling_index_s', methods: ['GET'])]
+    public function index_s(CyclingRepository $cyclRepo, SerializerInterface $serializer): Response
     {
+        $cyclings = $cyclRepo->findAll();
         return $this->render('cycling/index.html.twig', [
-            'cyclings' => $cyclingRepository->findAll(),
+            'cyclings' => $cyclings
         ]);
     }
+
+
 
     #[Route('/{id}', name: 'app_cycling_show', methods: ['GET'])]
     public function show_s(Cycling $cycling): Response
@@ -128,5 +135,4 @@ final class CyclingController extends AbstractController
 
         return $this->redirectToRoute('app_cycling_index');
     }
-
 }

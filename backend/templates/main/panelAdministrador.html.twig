@@ -99,7 +99,6 @@
             padding: 20px;
             min-height: 400px;
         }
-
         .back-button {
             background: var(--secondary);
             border: none;
@@ -132,6 +131,11 @@
 {% endblock %}
 
 {% block body %}
+    <div style="margin-top: 20px;">
+        <a href="{{ path('app_indice') }}" class="btn-admin">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
     <div class="admin-container">
         <header>
             <h1 class="admin-title"><i class="fas fa-cogs"></i> Panel de Administración</h1>
@@ -147,12 +151,12 @@
                     <a href="{{ path('app_running_index_s') }}" class="btn-admin">
                         <i class="fas fa-running"></i> Running
                     </a>
-                    {# <a href="{{ path('app_cycling_show_s') }}" class="btn-admin">
+                    <a href="{{ path('app_cycling_index_s') }}" class="btn-admin">
                         <i class="fas fa-bicycle"></i> Cycling
                     </a>
-                    <a href="{{ path('app_trail_show_s') }}" class="btn-admin">
+                    <a href="{{ path('app_trail_running_index_s') }}" class="btn-admin">
                         <i class="fas fa-mountain"></i> Trail
-                    </a> #}
+                    </a>
                 </div>
 
                 <div class="sport-group">
