@@ -131,35 +131,34 @@ final class TrailRunningController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_trail_running_edit', methods: ['PUT'])]
+    #[Route('/{id}/edit', name: 'app_trail_running_edit', methods: ['GET', 'POST'])]
     public function edit_s(Request $request, TrailRunning $trailRunning, EntityManagerInterface $entityManager): Response
     {
-        $trailRunning->setName($request->request->get('name'));
-        $trailRunning->setDescription($request->request->get('description'));
-        $trailRunning->setDate(new \DateTime($request->request->get('date')));
-        $trailRunning->setDistanceKm($request->request->get('distance'));
-        $trailRunning->setLocation($request->request->get('location'));
-        $trailRunning->setCoordinates($request->request->get('coordinates'));
-        $trailRunning->setUnevenness($request->request->get('unevenness'));
-        $trailRunning->setEntryFee($request->request->get('entry_fee'));
-        $trailRunning->setAvailableSlots($request->request->get('available_slots'));
-        $trailRunning->setStatus($request->request->get('status'));
-        $trailRunning->setCategory($request->request->get('category'));
-        $trailRunning->setImage($request->request->get('image'));
+        $form = $this->createForm(TrailRunningType::class, $trailRunning);
+        $form->handleRequest($request);
 
-        $entityManager->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            return $this->redirectToRoute('app_trail_running_index_s');
+        }
 
-        return $this->render('trail_running/show.html.twig', [
-            'trailRunning' => $trailRunning,
+        return $this->render('trail_running/edit.html.twig', [
+            'trail_running' => $trailRunning,
+            'form' => $form,
         ]);
     }
-
-    #[Route('/{id}', name: 'app_trail_running_delete', methods: ['DELETE'])]
-    public function delete_s(TrailRunning $trailRunning, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/delete', name: 'app_trail_running_delete', methods: ['POST'])]
+    public function delete_s(Request $request, TrailRunning $trailRunning, EntityManagerInterface $entityManager): Response
     {
+        // Eliminar todos los participantes asociados a esta carrera
+        foreach ($trailRunning->getTrailRunningParticipants() as $participant) {
+            $entityManager->remove($participant);
+        }
+
+        // Ahora puedes eliminar la carrera
         $entityManager->remove($trailRunning);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_trail_running_index');
+        return $this->redirectToRoute('app_trail_running_index_s');
     }
 }
