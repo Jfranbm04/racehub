@@ -32,17 +32,24 @@ final class TrailRunningParticipantController extends AbstractController
     }
 
     #[Route('/new', name: 'app_trail_running_participant_new', methods: ['POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function new(Request $request, EntityManagerInterface $entityManager, TrailRunningParticipantRepository $repository): JsonResponse
     {
         try {
             $data = json_decode($request->getContent(), true);
 
-            // Create new participant
-            $participant = new TrailRunningParticipant();
-
             // Get existing entities
             $user = $entityManager->getReference('App\Entity\User', $data['user']);
             $trailRunning = $entityManager->getReference('App\Entity\TrailRunning', $data['trailRunning']);
+
+            // Check if there are available slots and get next dorsal
+            $nextDorsal = $repository->getNextAvailableDorsal($trailRunning);
+
+            if ($nextDorsal === null) {
+                return $this->json(['error' => 'No available slots for this event'], Response::HTTP_BAD_REQUEST);
+            }
+
+            // Create new participant
+            $participant = new TrailRunningParticipant();
 
             // Set the relationships
             $participant->setUser($user);
@@ -50,10 +57,14 @@ final class TrailRunningParticipantController extends AbstractController
             $participant->setDorsal($data['dorsal']);
             $participant->setBanned($data['banned']);
 
+          
+
             $entityManager->persist($participant);
             $entityManager->flush();
 
-            return $this->json($participant, Response::HTTP_CREATED, [], ['groups' => 'trail_running_participant:read']);
+            return $this->json($participant, Response::HTTP_CREATED, [], [
+                'groups' => ['trail_running_participant:read',]
+            ]);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
@@ -130,10 +141,22 @@ final class TrailRunningParticipantController extends AbstractController
     public function delete(TrailRunningParticipant $participant, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
+            // Store participant info before removal
+            $participantInfo = [
+                'id' => $participant->getId(),
+                'user' => $participant->getUser() ? $participant->getUser()->getId() : null,
+                'trailRunning' => $participant->getTrailRunning() ? $participant->getTrailRunning()->getId() : null,
+                'dorsal' => $participant->getDorsal()
+            ];
+
             $entityManager->remove($participant);
             $entityManager->flush();
 
-            return $this->json(null, Response::HTTP_NO_CONTENT);
+            return $this->json([
+                'success' => true,
+                'message' => 'Participant deleted successfully',
+                'deleted_participant' => $participantInfo
+            ], Response::HTTP_OK);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
