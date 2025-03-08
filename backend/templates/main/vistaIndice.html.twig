@@ -201,7 +201,7 @@
 {% block body %}
     <div class="container">
         <header>
-            <h1>Bienvenido, Juan Pérez</h1>
+            <h1>Bienvenido, {{ app.user.name }}</h1>
             <a href="{{ path('app_logout') }}" class="btn-back">
                 <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
             </a>
@@ -211,16 +211,20 @@
         <section class="profile-section">
             <h2>Mi Perfil</h2>
             <div class="profile-info">
-                <img src="https://via.placeholder.com/150" alt="Foto de Perfil">
+                <img src="{{ app.user.image ?? 'https://via.placeholder.com/150' }}" alt="Foto de Perfil">
                 <div class="description">
-                    <p><strong>Nombre:</strong> Juan Pérez</p>
-                    <p><strong>Email:</strong> juanperez@email.com</p>
-                    <p><strong>Descripción:</strong> Soy un apasionado del deporte, especialmente del running y el ciclismo. Me encanta participar en eventos y siempre estoy buscando nuevas oportunidades para mejorar mi rendimiento. ¡Espero verte en los próximos eventos!</p>
+                    <p><strong>Nombre:</strong> {{ app.user.name }}</p>
+                    <p><strong>Email:</strong> {{ app.user.email }}</p>
+                    <p><strong>Género:</strong> {{ app.user.gender ?? 'No especificado' }}</p>
+                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                        <a href="{{ path('app_admin') }}" class="btn-back" style="margin-top: 15px;">
+                            <i class="fas fa-user-shield"></i> Panel de Administración
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </section>
 
-        <!-- Events Section: Eventos Disponibles para Inscripción -->
         <section class="events-section">
             <h2>Eventos Disponibles</h2>
             <div class="event-item">
@@ -248,7 +252,6 @@
                 </div>
             </div>
         </section>
-
         <footer>
             <p>&copy; 2025 RaceHub - Todos los derechos reservados</p>
         </footer>

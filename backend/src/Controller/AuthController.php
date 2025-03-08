@@ -67,6 +67,39 @@ final class AuthController extends AbstractController
         return $this->json(['error' => 'Something went wrong, if you see this message, contact support.'], Response::HTTP_I_AM_A_TEAPOT);
     }
 
+    // #[Route('/login_s', name: 'api_login_s', methods: ['POST'])]
+    // public function login_s(Request $request, UserRepository $userRepo, UserPasswordHasherInterface $userPassHash): Response
+    // {
+    //     // Verificar si el usuario ya está autenticado
+    //     if ($this->getUser()) {
+    //         return $this->redirectToRoute('app_indice'); // Redirige al índice si ya está logueado
+    //     }
+
+    //     // Obtener los datos enviados en la solicitud
+    //     $email = $request->request->get('email');
+    //     $password = $request->request->get('password');
+
+    //     // Validar que los datos requeridos estén presentes
+    //     if (!$email || !$password) {
+    //         return $this->render('main/login.html.twig', [
+    //             'error' => 'Correo electrónico y contraseña son obligatorios.'
+    //         ]);
+    //     }
+
+    //     // Buscar al usuario por su correo electrónico
+    //     $checkUser = $userRepo->findOneBy(['email' => $email]);
+
+    //     // Si no se encuentra el usuario o la contraseña es inválida
+    //     if (!$checkUser || !$userPassHash->isPasswordValid($checkUser, trim($password))) {
+    //         return $this->render('main/login.html.twig', [
+    //             'error' => 'Correo electrónico o contraseña incorrectos.'
+    //         ]);
+    //     }
+
+    //     // Si el inicio de sesión es exitoso, redirigir al índice
+    //     return $this->redirectToRoute('app_indice');
+    // }
+
     #[Route('/logout', name: 'api_logout', methods: ['POST'])]
     public function logout(): JsonResponse
     {
