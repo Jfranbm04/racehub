@@ -36,7 +36,7 @@ class JWTAuthenticationSuccessHandler implements AuthenticationSuccessHandlerInt
         $user = $token->getUser();
         
         // Check if user is banned
-        if ($user instanceof User && $user->getBanned()) {
+        if ($user instanceof User && $user->isBanned()) {
             return new JsonResponse(
                 ['error' => 'Your account has been banned. Please contact the administrator.'],
                 Response::HTTP_FORBIDDEN
