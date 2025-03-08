@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Cycling;
-use App\Form\CyclingType;
 use App\Repository\CyclingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

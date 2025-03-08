@@ -54,12 +54,10 @@ final class TrailRunningParticipantController extends AbstractController
             // Set the relationships
             $participant->setUser($user);
             $participant->setTrailRunning($trailRunning);
-            $participant->setDorsal($nextDorsal);
-            $participant->setBanned(false);
+            $participant->setDorsal($data['dorsal']);
+            $participant->setBanned($data['banned']);
 
-            if (isset($data['time'])) {
-                $participant->setTime(new \DateTime($data['time']));
-            }
+          
 
             $entityManager->persist($participant);
             $entityManager->flush();
@@ -112,15 +110,14 @@ final class TrailRunningParticipantController extends AbstractController
                 $trailRunning = $entityManager->getReference('App\Entity\TrailRunning', $data['trailRunning']);
                 $participant->setTrailRunning($trailRunning);
             }
-
+            if (isset($data['time'])) {
+                $participant->setBanned($data['time']);
+            }
             if (isset($data['dorsal'])) {
                 $participant->setDorsal($data['dorsal']);
             }
             if (isset($data['banned'])) {
                 $participant->setBanned($data['banned']);
-            }
-            if (isset($data['time'])) {
-                $participant->setTime(new \DateTime($data['time']));
             }
 
             $entityManager->flush();
