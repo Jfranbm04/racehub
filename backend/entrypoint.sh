@@ -5,6 +5,8 @@ set -e
 if [ "${1#-}" != "$1" ]; then
     set -- php-fpm "$@"
 fi
+echo "Starting application setup..."
+composer install
 
 echo "Making sure public / private keys for JWT exist..."
 php bin/console lexik:jwt:generate-keypair --skip-if-exists --no-interaction
