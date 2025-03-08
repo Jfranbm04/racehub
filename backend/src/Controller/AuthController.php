@@ -68,33 +68,6 @@ final class AuthController extends AbstractController
         return $this->json(['error' => 'Something went wrong, if you see this message, contact support.'], Response::HTTP_I_AM_A_TEAPOT);
     }
 
-    // #[Route('/login_s', name: 'login_s', methods: ['POST'])]
-    // public function login_s(Request $request, UserRepository $userRepo, UserPasswordHasherInterface $userPassHash): Response
-    // {
-    //     if ($this->getUser()) {
-    //         return $this->json([
-    //             'error' => 'User is already logged in'
-    //         ], Response::HTTP_UNAUTHORIZED);
-    //     }
-
-    //     $data = json_decode($request->getContent(), true);
-
-    //     $checkUser = $userRepo->findOneBy(['email' => $data['email']]);
-
-    //     if (!isset($checkUser)) {
-    //         return $this->json(['error' => 'User or password invalid'], Response::HTTP_UNAUTHORIZED);
-    //     }
-
-    //     if ($userPassHash->isPasswordValid($checkUser, trim($data['password']))) {
-    //         // Changed from JsonResponse to rendering the admin template
-    //         return $this->render('main/panelAdministrador.html.twig', [
-    //             'user' => $checkUser
-    //         ]);
-    //     }
-    //     return $this->json(['error' => 'Something went wrong, if you see this message, contact support.'], Response::HTTP_I_AM_A_TEAPOT);
-    // }
-
-
     #[Route('/logout', name: 'api_logout', methods: ['POST'])]
     public function logout(): JsonResponse
     {
