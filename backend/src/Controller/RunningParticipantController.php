@@ -156,7 +156,7 @@ final class RunningParticipantController extends AbstractController
             $entityManager->remove($participant);
             $entityManager->flush();
 
-            return $this->json(null, Response::HTTP_NO_CONTENT);
+            return $this->json(true, Response::HTTP_OK);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }

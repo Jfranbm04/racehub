@@ -72,11 +72,6 @@ final class TrailRunningParticipantController extends AbstractController
         }
     }
 
-    // #[Route('/{id}', name: 'app_trail_running_participant_show', methods: ['GET'])]
-    // public function show(TrailRunningParticipant $participant): JsonResponse
-    // {
-    //     return $this->json($participant, Response::HTTP_OK, [], ['groups' => 'trail_running_participant:read']);
-    // }
     #[Route('/{id}', name: 'app_trail_running_participant_show', methods: ['GET'])]
     public function show(int $id, TrailRunningParticipantRepository $repository): JsonResponse
     {
@@ -146,7 +141,7 @@ final class TrailRunningParticipantController extends AbstractController
             $entityManager->remove($participant);
             $entityManager->flush();
 
-            return $this->json(null, Response::HTTP_NO_CONTENT);
+            return $this->json(true, Response::HTTP_OK);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
