@@ -167,52 +167,51 @@
                 </thead>
                 <tbody>
                     {% if runnings|length > 0 %}
-                        {% for event in runnings %}
+                        {% for running in runnings %}
                             <tr>
-                                <td>{{ event.id }}</td>
-                                <td>{{ event.name }}</td>
-                                <td>{{ event.date|date('d/m/Y H:i') }}</td>
-                                <td>{{ event.location }}</td>
-                                <td>{{ event.distanceKm }} km</td>
-                                <td>{{ event.entryFee ? event.entryFee ~ '€'  : 'Gratis' }}</td>
-                                <td>{{ event.availableSlots }}</td>
+                                <td>{{ running.id }}</td>
+                                <td>{{ running.name }}</td>
+                                <td>{{ running.date|date('d/m/Y H:i') }}</td>
+                                <td>{{ running.location }}</td>
+                                <td>{{ running.distanceKm }} km</td>
+                                <td>{{ running.entryFee ? running.entryFee ~ '€'  : 'Gratis' }}</td>
+                                <td>{{ running.availableSlots }}</td>
                                 <td>
                                     <span class="status-badge" style="background-color: 
-                                        {% if event.status == 'open' %}#2ecc71;
-                                        {% elseif event.status == 'closed' %}#f1c40f;
-                                        {% elseif event.status == 'completed' %}#e74c3c;
+                                        {% if running.status == 'open' %}#2ecc71;
+                                        {% elseif running.status == 'closed' %}#f1c40f;
+                                        {% elseif running.status == 'completed' %}#e74c3c;
                                         {% else %}#95a5a6;
                                         {% endif %}">
-                                        {{ event.status|capitalize }}
+                                        {{ running.status|capitalize }}
                                     </span>
                                 </td>
-                                <td>{{ event.category ?: 'N/A' }}</td>
+                                <td>{{ running.category ?: 'N/A' }}</td>
                                 <td>
-                                    {% if event.image %}
-                                        <img src="{{ asset('uploads/' ~ event.image) }}" 
-                                             alt="{{ event.name }}" 
+                                    {% if running.image %}
+                                        <img src="{{ asset('uploads/' ~ running.image) }}" 
+                                             alt="{{ running.name }}" 
                                              class="image-thumbnail">
                                     {% else %}
                                         <span>Sin imagen</span>
                                     {% endif %}
                                 </td>
                                 <td class="action-buttons">
-                                    <a href="{{ path('app_running_show', {'id': event.id}) }}">
-                                        <i class="fas fa-eye"></i> Ver
+                                    <a href="{{ path('app_running_show', {'id': running.id}) }}">
+                                        <i class="fas fa-eye"></i>
+                                        Ver
                                     </a>
-                                    <a href="{{ path('app_running_edit', {'id': event.id}) }}">
-                                        <i class="fas fa-edit"></i> Editar
+                                    <a href="{{ path('app_running_edit', {'id': running.id}) }}">
+                                        <i class="fas fa-edit"></i>
+                                        Editar
                                     </a>
-                                    {# <form action="{{ path('app_running_status', {'id': event.id}) }}" method="POST" style="display: inline;">
-                                        <select name="status" class="status-select">
-                                            <option value="open" {% if event.status == 'open' %}selected{% endif %}>Open</option>
-                                            <option value="closed" {% if event.status == 'closed' %}selected{% endif %}>Closed</option>
-                                            <option value="completed" {% if event.status == 'completed' %}selected{% endif %}>Completed</option>
-                                        </select>
-                                        <button type="submit" class="btn-status">
-                                            <i class="fas fa-save"></i> Update Status
+                                    <form method="post" action="{{ path('app_running_delete', {'id': running.id}) }}" onsubmit="return confirm('¿Estás seguro que deseas eliminar este evento?');" style="display: inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ running.id) }}">
+                                        <button class="btn-link" style="color: var(--accent); border: none; background: none; cursor: pointer; font-weight: 600; padding: 0; margin: 0 5px;">
+                                            <i class="fas fa-trash"></i>
+                                            Eliminar
                                         </button>
-                                    </form> #}
+                                    </form>
                                 </td>
                             </tr>
                         {% endfor %}

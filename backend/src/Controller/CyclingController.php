@@ -133,6 +133,6 @@ final class CyclingController extends AbstractController
         $entityManager->remove($cycling);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_cycling_index');
+        return $this->redirectToRoute('app_cycling_index_s');
     }
 }

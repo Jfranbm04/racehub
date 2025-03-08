@@ -227,6 +227,6 @@ final class RunningController extends AbstractController
         $entityManager->remove($running);
         $entityManager->flush();
 
-        return $this->render('main/index.html.twig');
+        return $this->redirectToRoute('app_running_index_s');
     }
 }
