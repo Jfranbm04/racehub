@@ -1,11 +1,109 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva Carrera</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Crear Nueva Carrera</h1>
 
-{% block title %}New Running{% endblock %}
+    <form action="/guardarcarrera" method="POST">
+        <!-- Nombre -->
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" name="name" required>
 
-{% block body %}
-    <h1>Create new Running</h1>
+        <!-- Descripción -->
+        <label for="description">Descripción:</label>
+        <textarea id="description" name="description" rows="4"></textarea>
 
-    {{ include('running/_form.html.twig') }}
+        <!-- Fecha -->
+        <label for="date">Fecha:</label>
+        <input type="datetime-local" id="date" name="date" required>
 
-    <a href="{{ path('app_running_index') }}">back to list</a>
-{% endblock %}
+        <!-- Distancia (km) -->
+        <label for="distance_km">Distancia (km):</label>
+        <input type="number" id="distance_km" name="distance_km" min="1" required>
+
+        <!-- Ubicación -->
+        <label for="location">Ubicación:</label>
+        <input type="text" id="location" name="location" required>
+
+        <!-- Coordenadas -->
+        <label for="coordinates">Coordenadas:</label>
+        <input type="text" id="coordinates" name="coordinates">
+
+        <!-- Cuota de Inscripción -->
+        <label for="entry_fee">Cuota de Inscripción:</label>
+        <input type="number" id="entry_fee" name="entry_fee" min="0">
+
+        <!-- Cupos Disponibles -->
+        <label for="available_slots">Cupos Disponibles:</label>
+        <input type="number" id="available_slots" name="available_slots" min="1" required>
+
+        <!-- Estado -->
+        <label for="status">Estado:</label>
+        <select id="status" name="status" required>
+            <option value="active">Active</option>
+            <option value="closed">Closed</option>
+            <option value="completed">Completed</option>
+        </select>
+
+        <!-- Categoría -->
+        <label for="category">Categoría:</label>
+        <input type="text" id="category" name="category">
+
+        <!-- Imagen -->
+        <label for="image">Imagen (URL):</label>
+        <input type="text" id="image" name="image">
+
+        <!-- Botón de Envío -->
+        <button type="submit">Guardar Carrera</button>
+    </form>
+
+    <a href="/lista-carreras" class="back-link">Volver al Listado</a>
+</body>
+</html>
