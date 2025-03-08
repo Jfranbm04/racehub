@@ -54,8 +54,9 @@ final class TrailRunningParticipantController extends AbstractController
             // Set the relationships
             $participant->setUser($user);
             $participant->setTrailRunning($trailRunning);
-            $participant->setDorsal($data['dorsal']);
-            $participant->setBanned($data['banned']);
+            $participant->setDorsal($nextDorsal);
+            $participant->setBanned(false);
+            $participant->setTime(0);
 
           
 
