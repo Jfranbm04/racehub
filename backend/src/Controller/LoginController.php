@@ -34,7 +34,7 @@ class LoginController extends AbstractController
         return $this->render('main/register.html.twig');
     }
 
-    #[Route('/register', name:'app_register_submit', methods: ['POST'])]
+    #[Route('/register', name: 'app_register_submit', methods: ['POST'])]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
         try {
@@ -53,14 +53,17 @@ class LoginController extends AbstractController
             $user->setRoles(['ROLE_USER']);
             $user->setPassword($userPasswordHasher->hashPassword($user, $password));
 
+            // Generate unique identicon based on user data
+            $uniqueString = $user->getEmail() . $user->getName();
+            $hash = md5($uniqueString);
+            $user->setImage("https://identicon.02420.dev/" . $hash . "/500x500?format=png");
+
             $entityManager->persist($user);
             $entityManager->flush();
 
             $this->addFlash('success', 'Usuario registrado correctamente');
             return $this->redirectToRoute('app_login_view');
-            
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $this->addFlash('error', 'Error al registrar el usuario');
             return $this->redirectToRoute('app_register');
         }

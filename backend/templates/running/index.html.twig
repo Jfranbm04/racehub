@@ -138,7 +138,7 @@
     <div class="admin-container">
         <header>
             <h1 class="admin-title"><i class="fas fa-calendar-alt"></i> Eventos de Running</h1>
-            <a href="{{ path('app_running_new') }}" class="btn-primary">
+            <a href="{{ path('app_running_start') }}" class="btn-primary">
                 <i class="fas fa-plus"></i> Nuevo Evento
             </a>
         </header>
@@ -169,7 +169,7 @@
                                 <td>{{ event.date|date('d/m/Y H:i') }}</td>
                                 <td>{{ event.location }}</td>
                                 <td>{{ event.distanceKm }} km</td>
-                                <td>{{ event.entryFee ? '$' ~ event.entryFee : 'Gratis' }}</td>
+                                <td>{{ event.entryFee ? event.entryFee ~ '€'  : 'Gratis' }}</td>
                                 <td>{{ event.availableSlots }}</td>
                                 <td>
                                     <span class="status-badge" style="background-color: 
