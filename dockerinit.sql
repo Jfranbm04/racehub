@@ -128,6 +128,7 @@ CREATE TABLE `trail_running` (
   `status` varchar(255) NOT NULL,
   `category` varchar(255) DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
+  `gender` varchar(1) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -181,11 +182,10 @@ INSERT INTO `user` (`id`, `email`, `roles`, `password`, `name`, `banned`) VALUES
 (2, 'jane.smith@example.com', '[\"ROLE_USER\"]', '$2y$13$hP1NxHxq5N9ZuR5zAY6YruRYxwAjwwX4RvzVWJvwj9JYfnzaWAn6.', 'Jane Smith', 0),
 (3, 'admin@example.com', '[\"ROLE_ADMIN\"]', '$2y$13$hP1NxHxq5N9ZuR5zAY6YruRYxwAjwwX4RvzVWJvwj9JYfnzaWAn6.', 'Admin User', 0);
 
-INSERT INTO `trail_running` (`id`, `name`, `description`, `date`, `distance_km`, `location`, `coordinates`, `unevenness`, `entry_fee`, `available_slots`, `status`, `category`, `image`) VALUES
-(1, 'Mountain Challenge 2024', 'Exciting mountain trail running event', '2024-06-15 08:00:00', 21, 'Sierra Nevada', '37.054402,-3.887383', 1200, 30, 100, 'open', 'intermediate', 'mountain-challenge.jpg'),
-(2, 'Forest Trail Run', 'Beautiful forest trail running experience', '2024-07-20 09:00:00', 15, 'Black Forest', '37.891416,-4.779483', 800, 25, 50, 'open', 'beginner', 'forest-trail.jpg'),
-(3, 'Ultra Trail Marathon', 'Challenging ultra trail marathon', '2024-08-10 06:00:00', 50, 'Pyrenees', '42.642508,1.012573', 2500, 50, 75, 'open', 'advanced', 'ultra-trail.jpg');
-
+INSERT INTO `trail_running` (`id`, `name`, `description`, `date`, `distance_km`, `location`, `coordinates`, `unevenness`, `entry_fee`, `available_slots`, `status`, `category`, `image`, `gender`) VALUES
+(1, 'Mountain Challenge 2024', 'Exciting mountain trail running event', '2024-06-15 08:00:00', 21, 'Sierra Nevada', '37.054402,-3.887383', 1200, 30, 100, 'open', 'intermediate', 'mountain-challenge.jpg', 'M'),
+(2, 'Forest Trail Run', 'Beautiful forest trail running experience', '2024-07-20 09:00:00', 15, 'Black Forest', '37.891416,-4.779483', 800, 25, 50, 'open', 'beginner', 'forest-trail.jpg', 'F'),
+(3, 'Ultra Trail Marathon', 'Challenging ultra trail marathon', '2024-08-10 06:00:00', 50, 'Pyrenees', '42.642508,1.012573', 2500, 50, 75, 'open', 'advanced', 'ultra-trail.jpg', 'M');
 INSERT INTO `trail_running_participant` (`id`, `user_id`, `trail_running_id`, `time`, `dorsal`, `banned`) VALUES
 (1, 1, 1, 1718450400000, 101, 0),
 (2, 2, 1, 1718451100000, 102, 0),
