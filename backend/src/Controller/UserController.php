@@ -80,30 +80,6 @@ final class UserController extends AbstractController
                 $user -> setName($data['name']);
             }
 
-            if(isset($data['email'])) {
-                $user -> setEmail($data['email']);
-            }
-
-            if(isset($data['role'])) {
-                $user -> setRoles($data['role']);
-            }
-
-            if(isset($data['banned'])) {
-                $user -> setBanned($data['banned']);
-            }
-
-            if(isset($data['age'])) {
-                $user -> setAge($data['age']);
-            }
-
-            if(isset($data['gender'])) {
-                $user -> setGender($data['gender']);
-            }
-
-            if(isset($data['image'])) {
-                $user -> setImage($data['image']);
-            }
-
             if(isset($data['oldpassword']) && isset($data['newpassword'])) {
                 if(!$userPassHash -> isPasswordValid($user, trim($data['oldpassword']))){
                     return $this -> json(false, Response::HTTP_OK);
