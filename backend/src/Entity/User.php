@@ -74,7 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     #[Groups(["user:read", "user:new", "cycling:read", "cycling_participant:read", "running:read", "running_participant:read", "trail_running:read", "trail_running_participant:read"])]
-    private ?int $age = 0;
+    private ?\DateTimeInterface $age;
 
     #[ORM\Column(length: 1)]
     #[Groups(["user:read", "user:new", "cycling:read", "cycling_participant:read", "running:read", "running_participant:read", "trail_running:read", "trail_running_participant:read"])]
@@ -89,6 +89,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->cyclingParticipants = new ArrayCollection();
         $this->runningParticipants = new ArrayCollection();
         $this->trailRunningParticipants = new ArrayCollection();
+        $this -> age = new \DateTime();
     }
 
     public function getId(): ?int
@@ -285,7 +286,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->age;
     }
 
-    public function setAge(int $age): static
+    public function setAge(\DateTimeInterface $age): static
     {
         $this->age = $age;
 
