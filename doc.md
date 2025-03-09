@@ -80,12 +80,23 @@ https://api.racehub.com
 
 **Request Body:**
 ```json
-{ "email": "string", "password": "string" }
+{ 
+  "email": "string", 
+  "password": "string" 
+}
 ```
 
 **Response:**
 ```json
-{ "user": { "id": 1, "email": "user@example.com", "roles": ["ROLE_USER"] }, "message": "Login successful" }
+{ 
+  "user": 
+        { 
+          "id": 1, 
+          "email": "user@example.com", 
+          "roles": ["ROLE_USER"] }, 
+          "message": "Login successful" 
+        }
+}
 ```
 
 ### Logout
@@ -95,7 +106,9 @@ https://api.racehub.com
 
 **Response:**
 ```json
-{ "message": "Logout successful" }
+{ 
+  "message": "Logout successful" 
+}
 ```
 
 ---
@@ -106,7 +119,15 @@ https://api.racehub.com
 
 **Response:**
 ```json
-[ { "id": 1, "email": "john@example.com", "roles": ["ROLE_USER"], "name": "John Doe", "banned": false } ]
+[ 
+  { 
+    "id": 1, 
+    "email": "john@example.com", 
+    "roles": ["ROLE_USER"], 
+    "name": "John Doe", 
+    "banned": false 
+  } 
+]
 ```
 
 ### Get User by ID
@@ -114,7 +135,13 @@ https://api.racehub.com
 
 **Response:**
 ```json
-{ "id": 1, "email": "john@example.com", "roles": ["ROLE_USER"], "name": "John Doe", "banned": false }
+{ 
+  "id": 1, 
+  "email": "john@example.com", 
+  "roles": ["ROLE_USER"], 
+  "name": "John Doe", 
+  "banned": false 
+}
 ```
 
 ### Edit User
@@ -122,12 +149,21 @@ https://api.racehub.com
 
 **Request Body:**
 ```json
-{ "email": "new@example.com", "roles": ["ROLE_ADMIN"], "name": "John Updated", "oldpassword": "oldpass", "newpassword": "newpass", "banned": false }
+{ 
+  "email": "new@example.com", 
+  "roles": ["ROLE_ADMIN"], 
+  "name": "John Updated", 
+  "oldpassword": "oldpass", 
+  "newpassword": "newpass", 
+  "banned": false 
+}
 ```
 
 **Response:**
 ```json
-{ "success": true }
+{ 
+  "success": true 
+}
 ```
 
 ---
@@ -138,7 +174,16 @@ https://api.racehub.com
 
 **Response:**
 ```json
-[ { "id": 1, "name": "Tour de Example", "description": "Annual cycling event", "date": "2024-06-15T09:00:00Z", "distance_km": 150, "location": "Paris", "image": "url-to-image" } ]
+[ 
+  { 
+    "id": 1, "name": "Tour de Example", 
+    "description": "Annual cycling event", 
+    "date": "2024-06-15T09:00:00Z", 
+    "distance_km": 150, 
+    "location": "Paris", 
+    "image": "url-to-image" 
+  } 
+]
 ```
 
 ### Get Cycling Event by ID
@@ -146,7 +191,15 @@ https://api.racehub.com
 
 **Response:**
 ```json
-{ "id": 1, "name": "Tour de Example", "description": "Annual cycling event", "date": "2024-06-15T09:00:00Z", "distance_km": 150, "location": "Paris", "image": "url-to-image" }
+{ 
+  "id": 1, 
+  "name": "Tour de Example", 
+  "description": "Annual cycling event", 
+  "date": "2024-06-15T09:00:00Z", 
+  "distance_km": 150, 
+  "location": "Paris", 
+  "image": "url-to-image" 
+}
 ```
 
 ---
@@ -157,7 +210,16 @@ https://api.racehub.com
 
 **Response:**
 ```json
-[ { "id": 1, "user": 1, "cycling": 1, "time": "02:30:00", "dorsal": 101, "banned": false } ]
+[ 
+  { 
+    "id": 1, 
+    "user": 1, 
+    "cycling": 1, 
+    "time": "02:30:00", 
+    "dorsal": 101, 
+    "banned": false 
+  } 
+]
 ```
 
 ### Register for Cycling Event
@@ -165,12 +227,25 @@ https://api.racehub.com
 
 **Request Body:**
 ```json
-{ "user": 1, "cycling": 1, "time": "02:30:00", "dorsal": 101, "banned": false }
+{ 
+  "user": 1, 
+  "cycling": 1, 
+  "time": "02:30:00", 
+  "dorsal": 101, 
+  "banned": false 
+}
 ```
 
 **Response:**
 ```json
-{ "id": 1, "user": 1, "cycling": 1, "time": "02:30:00", "dorsal": 101, "banned": false }
+{ 
+  "id": 1, 
+  "user": 1, 
+  "cycling": 1, 
+  "time": "02:30:00", 
+  "dorsal": 101, 
+  "banned": false 
+}
 ```
 
 ### Delete Participant
@@ -178,7 +253,9 @@ https://api.racehub.com
 
 **Response:**
 ```json
-{ "success": true }
+{ 
+  "success": true 
+}
 ```
 
 ---
@@ -197,7 +274,18 @@ https://api.racehub.com
 
 **Error Response Format:**
 ```json
-{ "status": "error", "code": 400, "message": "Error description", "errors": [ { "field": "username", "message": "Username is required" } ] }
+{ 
+  "status": "error", 
+  "code": 400, 
+  "message": "Error description", 
+  "errors": 
+    [ 
+      { 
+        "field": "username", 
+        "message": "Username is required" 
+      } 
+    ] 
+}
 ```
 
 ---
