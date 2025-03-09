@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,8 +36,22 @@ final class UserController extends AbstractController
             'users' => $users,
         ]);
     }
+    #[Route('/{id}/edit_s', name: 'app_user_edit_s', methods: ['GET', 'POST'])]
+    public function edit_s(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            return $this->redirectToRoute('app_users');
+        }
 
+        return $this->render('user/edit.html.twig', [
+            'user' => $user,
+            'form' => $form,
+        ]);
+    }
     #[Route('/new', name: 'app_user_new', methods: ['POST'])]
     public function new(Request $request, EntityManagerInterface $entMngr, UserPasswordHasherInterface $userPassHash): JsonResponse
     {
