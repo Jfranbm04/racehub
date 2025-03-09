@@ -40,7 +40,7 @@ class TrailRunningParticipant
      */
     #[ORM\Column(type: Types::BIGINT)]
     #[Groups(["trail_running_participant:read", "user:read", "trail_running:read"])]
-    private ?string $time = null;
+    private ?string $time = '0';
 
     /**
      * Propiedad dorsal

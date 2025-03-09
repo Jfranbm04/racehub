@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Running;
+use App\Form\RunningType;
 use App\Repository\RunningRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,13 +16,14 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/api/running')]
 final class RunningController extends AbstractController
 {
-
+    // Index JSON
     #[Route(name: 'app_running_index', methods: ['GET'])]
     public function index(RunningRepository $runningRepository): JsonResponse
     {
         $runnings = $runningRepository->findAll();
         return $this->json($runnings, Response::HTTP_OK, [], ['groups' => 'running:read']);
     }
+
     // Muestra la lista de carreras
     #[Route('/index_s', name: 'app_running_index_s', methods: ['GET'])]
     public function index_s(EntityManagerInterface $entityManager, RunningRepository $runningRepository): Response
@@ -37,6 +39,7 @@ final class RunningController extends AbstractController
     {
         return $this->json($running, Response::HTTP_OK, [], ['groups' => 'cycling:read']);
     }
+  
     // Muestra la vista para crear una nueva carrera
     #[Route('/newView', name: 'app_running_start', methods: ['GET'])]
     public function start(): Response
@@ -47,15 +50,28 @@ final class RunningController extends AbstractController
     #[Route('/new', name: 'app_running_new', methods: ['POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
-        try {
-            $running = $serializer->deserialize($request->getContent(), Running::class, 'json');
+        return $this->json($running, Response::HTTP_OK, [], ['groups' => 'running:read']);
+    }
+
+    #[Route('/new', name: 'app_running_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $running = new Running();
+        $form = $this->createForm(RunningType::class, $running);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $running->setStatus('open');
             $entityManager->persist($running);
             $entityManager->flush();
 
-            return $this->json($running, Response::HTTP_CREATED, [], ['groups' => 'running:read']);
-        } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return $this->redirectToRoute('app_running_index', [], Response::HTTP_SEE_OTHER);
         }
+
+        return $this->render('running/new.html.twig', [
+            'running' => $running,
+            'form' => $form,
+        ]);
     }
 
     // Creo la funcion guardarcarrera
@@ -85,8 +101,6 @@ final class RunningController extends AbstractController
         // Redirigir al usuario a una página de confirmación o listado
         return $this->redirectToRoute('app_running_index');
     }
-
-
 
     #[Route('/{id}/status', name: 'app_running_status', methods: ['POST'])]
     public function updateStatus(Request $request, Running $running, EntityManagerInterface $entityManager): Response
@@ -176,6 +190,6 @@ final class RunningController extends AbstractController
         $entityManager->remove($running);
         $entityManager->flush();
 
-        return $this->render('main/index.html.twig');
+        return $this->redirectToRoute('app_running_index_s');
     }
 }

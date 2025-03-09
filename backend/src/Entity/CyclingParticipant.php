@@ -54,7 +54,7 @@ class CyclingParticipant
      */
     #[ORM\Column]
     #[Groups(["cycling_participant:read", "user:read", "cycling:read"])]
-    private ?bool $banned = null;
+    private ?bool $banned = false;
 
     public function getId(): ?int
     {

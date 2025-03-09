@@ -33,10 +33,9 @@ final class AuthController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->json([
-                'message' => 'User registered successfully',
-                'user' => $user
-            ], Response::HTTP_CREATED, [], ['groups' => 'user:read']);
+            return $this->render('main/login.html.twig', [
+                'message' => 'Registration successful! Please login.'
+            ]);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
@@ -68,32 +67,38 @@ final class AuthController extends AbstractController
         return $this->json(['error' => 'Something went wrong, if you see this message, contact support.'], Response::HTTP_I_AM_A_TEAPOT);
     }
 
-    // #[Route('/login_s', name: 'login_s', methods: ['POST'])]
+    // #[Route('/login_s', name: 'api_login_s', methods: ['POST'])]
     // public function login_s(Request $request, UserRepository $userRepo, UserPasswordHasherInterface $userPassHash): Response
     // {
+    //     // Verificar si el usuario ya está autenticado
     //     if ($this->getUser()) {
-    //         return $this->json([
-    //             'error' => 'User is already logged in'
-    //         ], Response::HTTP_UNAUTHORIZED);
+    //         return $this->redirectToRoute('app_indice'); // Redirige al índice si ya está logueado
     //     }
 
-    //     $data = json_decode($request->getContent(), true);
+    //     // Obtener los datos enviados en la solicitud
+    //     $email = $request->request->get('email');
+    //     $password = $request->request->get('password');
 
-    //     $checkUser = $userRepo->findOneBy(['email' => $data['email']]);
-
-    //     if (!isset($checkUser)) {
-    //         return $this->json(['error' => 'User or password invalid'], Response::HTTP_UNAUTHORIZED);
-    //     }
-
-    //     if ($userPassHash->isPasswordValid($checkUser, trim($data['password']))) {
-    //         // Changed from JsonResponse to rendering the admin template
-    //         return $this->render('main/panelAdministrador.html.twig', [
-    //             'user' => $checkUser
+    //     // Validar que los datos requeridos estén presentes
+    //     if (!$email || !$password) {
+    //         return $this->render('main/login.html.twig', [
+    //             'error' => 'Correo electrónico y contraseña son obligatorios.'
     //         ]);
     //     }
-    //     return $this->json(['error' => 'Something went wrong, if you see this message, contact support.'], Response::HTTP_I_AM_A_TEAPOT);
-    // }
 
+    //     // Buscar al usuario por su correo electrónico
+    //     $checkUser = $userRepo->findOneBy(['email' => $email]);
+
+    //     // Si no se encuentra el usuario o la contraseña es inválida
+    //     if (!$checkUser || !$userPassHash->isPasswordValid($checkUser, trim($password))) {
+    //         return $this->render('main/login.html.twig', [
+    //             'error' => 'Correo electrónico o contraseña incorrectos.'
+    //         ]);
+    //     }
+
+    //     // Si el inicio de sesión es exitoso, redirigir al índice
+    //     return $this->redirectToRoute('app_indice');
+    // }
 
     #[Route('/logout', name: 'api_logout', methods: ['POST'])]
     public function logout(): JsonResponse

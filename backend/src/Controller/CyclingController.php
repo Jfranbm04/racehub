@@ -9,31 +9,46 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+
+use App\Form\CyclingType;
 
 #[Route('api/cycling')]
 final class CyclingController extends AbstractController
 {
+
+
+    // Index JSON
     #[Route(name: 'app_cycling_index', methods: ['GET'])]
-    public function index(CyclingRepository $cyclRepo, SerializerInterface $serializer): JsonResponse
+    public function index(CyclingRepository $cyclRepo): JsonResponse
     {
         $cyclings = $cyclRepo->findAll();
         return $this->json($cyclings, Response::HTTP_OK, [], ['groups' => 'cycling:read']);
     }
 
-    #[Route('/new', name: 'app_cycling_new', methods: ['POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
+
+
+
+    #[Route('/new', name: 'app_cycling_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        try {
-            $cycling = $serializer->deserialize($request->getContent(), Cycling::class, 'json');
+        $cycling = new Cycling();
+        $form = $this->createForm(CyclingType::class, $cycling);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $cycling->setStatus('open');
             $entityManager->persist($cycling);
             $entityManager->flush();
 
-            return $this->json($cycling, Response::HTTP_CREATED, [], ['groups' => 'cycling:read']);
-        } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return $this->redirectToRoute('app_cycling_index', [], Response::HTTP_SEE_OTHER);
         }
+
+        return $this->render('cycling/new.html.twig', [
+            'cycling' => $cycling,
+            'form' => $form,
+        ]);
     }
 
     #[Route('/{id}', name: 'app_cycling_show', methods: ['GET'])]
@@ -56,7 +71,7 @@ final class CyclingController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_cycling_delete', methods: ['DELETE'])]
-    public function delete(Request $request, Cycling $cycling, EntityManagerInterface $entityManager): JsonResponse
+    public function delete(Cycling $cycling, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
             $entityManager->remove($cycling);
@@ -68,62 +83,56 @@ final class CyclingController extends AbstractController
         }
     }
 
-    #[Route('/new_s', name: 'app_cycling_start', methods: ['POST'])]
-    public function new_s(Cycling $cycling, EntityManagerInterface $entityManager): Response
+    //-------METODOS SYMFONY----------
+
+    #[Route('/index_s', name: 'app_cycling_index_s', methods: ['GET'])]
+    public function index_s(CyclingRepository $cyclRepo, SerializerInterface $serializer): Response
     {
-        $cycling = new Cycling();
+        $cyclings = $cyclRepo->findAll();
+        return $this->render('cycling/index.html.twig', [
+            'cyclings' => $cyclings
+        ]);
+    }
 
-        $cycling->setName('Cycling 1');
-        $cycling->setDescription('Cycling 1 description');
-        $cycling->setDate(new \DateTime());
-        $cycling->setDistanceKm(0);
-        $cycling->setLocation('Cycling 1 location');
-        $cycling->setCoordinates('0,0');
-        $cycling->setUnevenness(0);
-        $cycling->setEntryFee(0);
-        $cycling->setAvailableSlots(0);  
-        $cycling->setStatus(0);
-        $cycling->setCategory('Cycling 1 category');      
-        $cycling->setStatus('In progress');
-        $cycling->setImage('Cycling 1 image url');
 
-        $entityManager->persist($cycling);
-        $entityManager->flush();
 
+    #[Route('/{id}', name: 'app_cycling_show', methods: ['GET'])]
+    public function show_s(Cycling $cycling): Response
+    {
         return $this->render('cycling/show.html.twig', [
             'cycling' => $cycling,
         ]);
     }
 
-    #[Route('/{id}/edit_s', name: 'app_cycling_edit', methods: ['PUT'])]
+    #[Route('/{id}/edit', name: 'app_cycling_edit', methods: ['GET', 'POST'])]
     public function edit_s(Request $request, Cycling $cycling, EntityManagerInterface $entityManager): Response
     {
-        $cycling->setName($request->request->get('name'));
-        $cycling->setDescription($request->request->get('description'));
-        $cycling->setDate(new \DateTime($request->request->get('date')));
-        $cycling->setDistanceKm($request->request->get('distance_km'));
-        $cycling->setLocation($request->request->get('location'));
-        $cycling->setCoordinates($request->request->get('coordinates'));
-        $cycling->setUnevenness($request->request->get('unevenness'));
-        $cycling->setEntryFee($request->request->get('entry_fee'));
-        $cycling->setAvailableSlots($request->request->get('available_slots'));
-        $cycling->setStatus($request->request->get('status'));
-        $cycling->setCategory($request->request->get('category'));
-        $cycling->setImage($request->request->get('image'));
+        $form = $this->createForm(CyclingType::class, $cycling);
+        $form->handleRequest($request);
 
-        $entityManager->persist($cycling);
-        $entityManager->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            return $this->redirectToRoute('app_cycling_index');
+        }
 
-        return $this->redirectToRoute('app_cycling_show', ['id' => $cycling->getId()]);
+        return $this->render('cycling/edit.html.twig', [
+            'form' => $form->createView(),
+            'cycling' => $cycling,
+        ]);
     }
 
-    #[Route('/{id}', name: 'app_cycling_delete', methods: ['DELETE'])]
-    public function delete_s(Cycling $cycling, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/delete', name: 'app_cycling_delete', methods: ['POST'])]
+    public function delete_s(Request $request, Cycling $cycling, EntityManagerInterface $entityManager): Response
     {
+        // Eliminar todos los participantes asociados a esta carrera
+        foreach ($cycling->getCyclingParticipants() as $participant) {
+            $entityManager->remove($participant);
+        }
+
+        // Ahora puedes eliminar la carrera
         $entityManager->remove($cycling);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_cycling_index');
+        return $this->redirectToRoute('app_cycling_index_s');
     }
-
 }

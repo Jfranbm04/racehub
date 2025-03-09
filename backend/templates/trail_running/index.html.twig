@@ -1,57 +1,227 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}TrailRunning index{% endblock %}
-
-{% block body %}
-    <h1>TrailRunning index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Date</th>
-                <th>Distance_km</th>
-                <th>Location</th>
-                <th>Coordinates</th>
-                <th>Unevenness</th>
-                <th>Entry_fee</th>
-                <th>Available_slots</th>
-                <th>Status</th>
-                <th>Category</th>
-                <th>Image</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for trail_running in trail_runnings %}
-            <tr>
-                <td>{{ trail_running.id }}</td>
-                <td>{{ trail_running.name }}</td>
-                <td>{{ trail_running.description }}</td>
-                <td>{{ trail_running.date ? trail_running.date|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ trail_running.distanceKm }}</td>
-                <td>{{ trail_running.location }}</td>
-                <td>{{ trail_running.coordinates }}</td>
-                <td>{{ trail_running.unevenness }}</td>
-                <td>{{ trail_running.entryFee }}</td>
-                <td>{{ trail_running.availableSlots }}</td>
-                <td>{{ trail_running.status }}</td>
-                <td>{{ trail_running.category }}</td>
-                <td>{{ trail_running.image }}</td>
-                <td>
-                    <a href="{{ path('app_trail_running_show', {'id': trail_running.id}) }}">show</a>
-                    <a href="{{ path('app_trail_running_edit', {'id': trail_running.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="14">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_trail_running_new') }}">Create new</a>
+{% block title %}Eventos - Panel de Administración
 {% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	<style>:root
+	{
+		--primary: #003d5c;
+		--secondary: #007f80;
+		--accent: #ff6b6b;
+		--light: #f8f9fa;
+		--dark: #1b2631;
+	}
+
+	.admin-container {
+		display: grid;
+		grid-template-areas: "header" "main";
+		grid-template-rows: auto 1fr;
+		min-height: 100vh;
+		padding: 20px;
+		gap: 20px;
+	}
+
+	header {
+		grid-area: header;
+		background: var(--light);
+		border-radius: 12px;
+		padding: 20px;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	main {
+		grid-area: main;
+		background: var(--light);
+		border-radius: 12px;
+		padding: 20px;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	}
+
+	.event-table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-top: 20px;
+	}
+
+	.event-table th,
+	.event-table td {
+		padding: 12px;
+		text-align: left;
+		border-bottom: 1px solid #ddd;
+	}
+
+	.event-table th {
+		background: var(--secondary);
+		color: white;
+		font-weight: bold;
+	}
+
+	.event-table tr:hover {
+		background-color: #f1f1f1;
+	}
+
+	.btn-primary {
+		background: linear-gradient(135deg, var(--accent), #c0392b);
+		border: none;
+		color: white;
+		padding: 10px 20px;
+		border-radius: 8px;
+		cursor: pointer;
+		transition: transform 0.2s ease;
+	}
+
+	.btn-primary:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+	}
+
+	.action-buttons a {
+		color: var(--primary);
+		margin: 0 5px;
+		text-decoration: none;
+		font-weight: 600;
+	}
+
+	.action-buttons a:hover {
+		color: var(--accent);
+	}
+
+	.status-badge {
+		padding: 5px 10px;
+		border-radius: 5px;
+		font-weight: bold;
+	}
+
+	.no-records {
+		text-align: center;
+		font-size: 1.1rem;
+		color: var(--accent);
+		padding: 20px;
+	}
+
+	.image-thumbnail {
+		max-width: 80px;
+		height: auto;
+		border-radius: 4px;
+	}
+	.status-select {
+		padding: 5px;
+		border-radius: 4px;
+		border: 1px solid var(--secondary);
+		margin-right: 5px;
+	}
+
+	.btn-status {
+		background: var(--secondary);
+		border: none;
+		color: white;
+		padding: 5px 10px;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 0.9rem;
+	}
+
+	.btn-status:hover {
+		background: var(--primary);
+	}
+</style>{% endblock %}{% block body %}
+	<div style="margin-top: 20px;">
+			<a href="{{ path('app_admin') }}" class="btn-primary">
+				<i class="fas fa-arrow-left"></i> Volver
+			</a>
+		</div>
+	<div class="admin-container">
+	<header>
+		<h1 class="admin-title">
+			<i class="fas fa-calendar-alt"></i>
+			Eventos de TrailRunning</h1>
+		<a href="{{ path('app_trail_running_new') }}" class="btn-primary">
+			<i class="fas fa-plus"></i>
+			Nuevo Evento
+		</a>
+	</header>
+
+	<main>
+		<table class="event-table">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Nombre</th>
+					<th>Descripción</th>
+					<th>Fecha</th>
+					<th>Distancia (km)</th>
+					<th>Ubicación</th>
+					<th>Coordenadas</th>
+					<th>Desnivel</th>
+					<th>Precio</th>
+					<th>Plazas disponibles</th>
+					<th>Estado</th>
+					<th>Categoría</th>
+					<th>Imagen</th>
+					<th>Acciones</th>
+                    </tr>
+			</thead>
+			<tbody>
+				{% for trail_running in trail_runnings %}
+					<tr>
+						<td>{{ trail_running.id }}</td>
+						<td>{{ trail_running.name }}</td>
+						<td>{{ trail_running.description }}</td>
+						<td>{{ trail_running.date ? trail_running.date|date('Y-m-d H:i:s') : '' }}</td>
+						<td>{{ trail_running.distanceKm }}</td>
+						<td>{{ trail_running.location }}</td>
+						<td>{{ trail_running.coordinates }}</td>
+						<td>{{ trail_running.unevenness }}</td>
+						<td>{{ trail_running.entryFee }}</td>
+						<td>{{ trail_running.availableSlots }}</td>
+						<td>
+							<span class="status-badge" style="background-color:
+								{% if trail_running.status == 'open' %}#2ecc71;
+								{% elseif trail_running.status == 'closed' %}#f1c40f;
+								{% elseif trail_running.status == 'completed' %}#e74c3c;
+								{% else %}#95a5a6;
+								{% endif %}">
+								{{ trail_running.status|capitalize }}
+							</span>
+						</td>
+						<td>{{ trail_running.category ?: 'N/A' }}</td>
+						<td>
+							{% if trail_running.image %}
+								<img src="{{ asset('uploads/' ~ trail_running.image) }}" alt="{{ trail_running.name }}" class="image-thumbnail">
+							{% else %}
+								<span>Sin imagen</span>
+							{% endif %}
+						</td>
+						<td class="action-buttons">
+							<a href="{{ path('app_trail_running_show', {'id': trail_running.id}) }}">
+								<i class="fas fa-eye"></i>
+								Ver
+							</a>
+							<a href="{{ path('app_trail_running_edit', {'id': trail_running.id}) }}">
+								<i class="fas fa-edit"></i>
+								Editar
+							</a>
+							<form method="post" action="{{ path('app_trail_running_delete', {'id': trail_running.id}) }}" onsubmit="return confirm('¿Estás seguro que deseas eliminar este evento?');" style="display: inline;">
+								<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trail_running.id) }}">
+								<button class="btn-link" style="color: var(--accent); border: none; background: none; cursor: pointer; font-weight: 600; padding: 0; margin: 0 5px;">
+									<i class="fas fa-trash"></i>
+									Eliminar
+								</button>
+							</form>
+						</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="14">No hay eventos registrados</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</main>
+</div>{% endblock %}

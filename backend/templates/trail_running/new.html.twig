@@ -1,11 +1,56 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New TrailRunning{% endblock %}
+{% block title %}Nuevo evento de trailrunning{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--light);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
 
+        .page-title {
+            color: var(--primary);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--secondary);
+        }
+
+        .btn-back {
+            background: var(--secondary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+{% endblock %}
 {% block body %}
-    <h1>Create new TrailRunning</h1>
+    <div class="form-container">
+        <h1 class="page-title">
+            <i class="fas fa-mountain"></i>
+            Crear Nuevo Evento de Running
+        </h1>
 
-    {{ include('trail_running/_form.html.twig') }}
+        {{ include('running/_form.html.twig') }}
 
-    <a href="{{ path('app_trail_running_index') }}">back to list</a>
+        <a href="{{ path('app_trail_running_index_s') }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i>
+            Volver al listado
+        </a>
+    </div>
 {% endblock %}

@@ -51,59 +51,17 @@
 <body>
     <h1>Crear Nueva Carrera</h1>
 
-    <form action="/guardarcarrera" method="POST">
-        <!-- Nombre -->
-        <label for="name">Nombre:</label>
-        <input type="text" id="name" name="name" required>
+{% block title %}New Running Event{% endblock %}
 
-        <!-- Descripción -->
-        <label for="description">Descripción:</label>
-        <textarea id="description" name="description" rows="4"></textarea>
+{% block body %}
+    <div class="form-container">
+        <h1>Create new Running Event</h1>
 
-        <!-- Fecha -->
-        <label for="date">Fecha:</label>
-        <input type="datetime-local" id="date" name="date" required>
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button class="btn">{{ button_label|default('Save') }}</button>
+        {{ form_end(form) }}
 
-        <!-- Distancia (km) -->
-        <label for="distance_km">Distancia (km):</label>
-        <input type="number" id="distance_km" name="distance_km" min="1" required>
-
-        <!-- Ubicación -->
-        <label for="location">Ubicación:</label>
-        <input type="text" id="location" name="location" required>
-
-        <!-- Coordenadas -->
-        <label for="coordinates">Coordenadas:</label>
-        <input type="text" id="coordinates" name="coordinates">
-
-        <!-- Cuota de Inscripción -->
-        <label for="entry_fee">Cuota de Inscripción:</label>
-        <input type="number" id="entry_fee" name="entry_fee" min="0">
-
-        <!-- Cupos Disponibles -->
-        <label for="available_slots">Cupos Disponibles:</label>
-        <input type="number" id="available_slots" name="available_slots" min="1" required>
-
-        <!-- Estado -->
-        <label for="status">Estado:</label>
-        <select id="status" name="status" required>
-            <option value="active">Active</option>
-            <option value="closed">Closed</option>
-            <option value="completed">Completed</option>
-        </select>
-
-        <!-- Categoría -->
-        <label for="category">Categoría:</label>
-        <input type="text" id="category" name="category">
-
-        <!-- Imagen -->
-        <label for="image">Imagen (URL):</label>
-        <input type="text" id="image" name="image">
-
-        <!-- Botón de Envío -->
-        <button type="submit">Guardar Carrera</button>
-    </form>
-
-    <a href="/lista-carreras" class="back-link">Volver al Listado</a>
-</body>
-</html>
+        <a href="{{ path('app_running_index_s') }}">back to list</a>
+    </div>
+{% endblock %}

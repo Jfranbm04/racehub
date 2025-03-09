@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\RunningParticipant;
+use App\Form\RunningParticipantType;
 use App\Repository\RunningParticipantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,14 +48,27 @@ final class RunningParticipantController extends AbstractController
             $participant = new RunningParticipant();
 
             // Get existing entities
-            $user = $entityManager->getReference('App\Entity\User', $data['user']);
             $running = $entityManager->getReference('App\Entity\Running', $data['running']);
 
             // Set the relationships
-            $participant->setUser($user);
+            $participant->setUser($entityManager->getReference('App\Entity\User', $data['user']));
             $participant->setRunning($running);
-            $participant->setDorsal($data['dorsal']);
-            $participant->setBanned($data['banned']);
+
+            //Set random dorsal
+            $dorsals = $running->getrunningParticipants()->map(function ($participant) {
+                return $participant->getDorsal();
+            })->toArray();
+
+            // This code is shit but fuck it we ball
+            $dors = rand(1, $running->getAvailableSlots() * 2);
+            for ($i = 0; $i < sizeof($dorsals); $i++) {
+                if ($dors == $dorsals[$i]) {
+                    $dors = rand(1, $running->getAvailableSlots() * 2);
+                    $i = 0;
+                }
+                break;
+            }
+            $participant->setDorsal($dors);
 
             $entityManager->persist($participant);
             $entityManager->flush();
@@ -73,6 +87,36 @@ final class RunningParticipantController extends AbstractController
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
+
+    // New symfony
+    #[Route('/new_s', name: 'app_running_participant_new_s', methods: ['GET', 'POST'])]
+    public function new_s(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $runningParticipant = new RunningParticipant();
+
+        $form = $this->createForm(RunningParticipantType::class, $runningParticipant);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $entityManager->persist($runningParticipant);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('app_running_participant_index_s');
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Error al crear el participante: ' . $e->getMessage());
+            }
+        }
+
+        // Renderizar la vista del formulario
+        return $this->render('running_participant/new.html.twig', [
+            'running_participant' => $runningParticipant,
+            'form' => $form->createView(),
+        ]);
+    }
+
+
 
     #[Route('/{id}', name: 'app_running_participant_show', methods: ['GET'])]
     public function show(int $id, RunningParticipantRepository $repository): JsonResponse
@@ -95,45 +139,21 @@ final class RunningParticipantController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_running_participant_edit', methods: ['PUT'])]
-    public function edit(Request $request, RunningParticipant $participant, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/{id}/edit', name: 'app_running_participant_edit', methods: ['GET', 'POST'])]
+    public function edit_s(Request $request, RunningParticipant $runningParticipant, EntityManagerInterface $entityManager): Response
     {
-        try {
-            $data = json_decode($request->getContent(), true);
+        $form = $this->createForm(RunningParticipantType::class, $runningParticipant);
+        $form->handleRequest($request);
 
-            if (isset($data['user'])) {
-                $user = $entityManager->getReference('App\Entity\User', $data['user']);
-                $participant->setUser($user);
-            }
-            if (isset($data['running'])) {
-                $running = $entityManager->getReference('App\Entity\Running', $data['running']);
-                $participant->setRunning($running);
-            }
-            if (isset($data['time'])) {
-                $participant->setBanned($data['time']);
-            }
-            if (isset($data['dorsal'])) {
-                $participant->setDorsal($data['dorsal']);
-            }
-            if (isset($data['banned'])) {
-                $participant->setBanned($data['banned']);
-            }
-
+        if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
-            return $this->json($participant, Response::HTTP_OK, [], [
-                'groups' => [
-                    'running_participant:read',
-                    'user:read',
-                    'running:read'
-                ],
-                'circular_reference_handler' => function ($object) {
-                    return $object->getId();
-                }
-            ]);
-        } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return $this->redirectToRoute('app_running_participant_index_s');
         }
+
+        return $this->render('running_participant/edit.html.twig', [
+            'running_participant' => $runningParticipant,
+            'form' => $form,
+        ]);
     }
 
     #[Route('/{id}', name: 'app_running_participant_delete', methods: ['DELETE'])]
@@ -143,7 +163,7 @@ final class RunningParticipantController extends AbstractController
             $entityManager->remove($participant);
             $entityManager->flush();
 
-            return $this->json(null, Response::HTTP_NO_CONTENT);
+            return $this->json(true, Response::HTTP_OK);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }

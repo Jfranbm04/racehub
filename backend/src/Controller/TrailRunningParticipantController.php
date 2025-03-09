@@ -32,50 +32,46 @@ final class TrailRunningParticipantController extends AbstractController
     }
 
     #[Route('/new', name: 'app_trail_running_participant_new', methods: ['POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, TrailRunningParticipantRepository $repository): JsonResponse
+    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
             $data = json_decode($request->getContent(), true);
 
-            // Get existing entities
-            $user = $entityManager->getReference('App\Entity\User', $data['user']);
-            $trailRunning = $entityManager->getReference('App\Entity\TrailRunning', $data['trailRunning']);
-
-            // Check if there are available slots and get next dorsal
-            $nextDorsal = $repository->getNextAvailableDorsal($trailRunning);
-
-            if ($nextDorsal === null) {
-                return $this->json(['error' => 'No available slots for this event'], Response::HTTP_BAD_REQUEST);
-            }
-
             // Create new participant
             $participant = new TrailRunningParticipant();
 
-            // Set the relationships
-            $participant->setUser($user);
-            $participant->setTrailRunning($trailRunning);
-            $participant->setDorsal($nextDorsal);
-            $participant->setBanned(false);
-            $participant->setTime(0);
+            // Get existing entities
+            $trailRunning = $entityManager->getReference('App\Entity\TrailRunning', $data['trailRunning']);
 
-          
+            // Set the relationships
+            $participant->setUser($entityManager->getReference('App\Entity\User', $data['user']));
+            $participant->setTrailRunning($trailRunning);
+
+            //Set random dorsal
+            $dorsals = $trailRunning -> gettrailRunningParticipants() -> map(function ($participant){
+                return $participant -> getDorsal();
+            }) -> toArray();
+
+            // This code is shit but fuck it we ball
+            $dors = rand(1, $trailRunning -> getAvailableSlots() * 2);
+            for($i = 0; $i < sizeof($dorsals); $i++){
+                if($dors == $dorsals[$i]){
+                    $dors = rand(1, $trailRunning -> getAvailableSlots() * 2);
+                    $i = 0;
+                }
+                break;
+            }
+            $participant -> setDorsal($dors);
 
             $entityManager->persist($participant);
             $entityManager->flush();
 
-            return $this->json($participant, Response::HTTP_CREATED, [], [
-                'groups' => ['trail_running_participant:read',]
-            ]);
+            return $this->json($participant, Response::HTTP_CREATED, [], ['groups' => 'trail_running_participant:read']);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
-    // #[Route('/{id}', name: 'app_trail_running_participant_show', methods: ['GET'])]
-    // public function show(TrailRunningParticipant $participant): JsonResponse
-    // {
-    //     return $this->json($participant, Response::HTTP_OK, [], ['groups' => 'trail_running_participant:read']);
-    // }
     #[Route('/{id}', name: 'app_trail_running_participant_show', methods: ['GET'])]
     public function show(int $id, TrailRunningParticipantRepository $repository): JsonResponse
     {
@@ -142,22 +138,10 @@ final class TrailRunningParticipantController extends AbstractController
     public function delete(TrailRunningParticipant $participant, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
-            // Store participant info before removal
-            $participantInfo = [
-                'id' => $participant->getId(),
-                'user' => $participant->getUser() ? $participant->getUser()->getId() : null,
-                'trailRunning' => $participant->getTrailRunning() ? $participant->getTrailRunning()->getId() : null,
-                'dorsal' => $participant->getDorsal()
-            ];
-
             $entityManager->remove($participant);
             $entityManager->flush();
 
-            return $this->json([
-                'success' => true,
-                'message' => 'Participant deleted successfully',
-                'deleted_participant' => $participantInfo
-            ], Response::HTTP_OK);
+            return $this->json(true, Response::HTTP_OK);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }

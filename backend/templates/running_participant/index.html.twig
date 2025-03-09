@@ -103,10 +103,15 @@
 {% endblock %}
 
 {% block body %}
+    <div style="margin-bottom: 20px;">
+        <a href="{{ path('app_admin') }}" class="btn-primary">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
     <div class="admin-container">
         <header>
             <h1 class="admin-title"><i class="fas fa-users"></i> Participantes</h1>
-            <a href="{{ path('app_running_participant_new') }}" class="btn-primary">
+            <a href="{{ path('app_running_participant_new_s') }}" class="btn-primary">
                 <i class="fas fa-plus"></i> Nuevo Participante
             </a>
         </header>
@@ -116,6 +121,8 @@
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Carrera</th>
                         <th>Tiempo</th>
                         <th>Dorsal</th>
                         <th>Baneado</th>
@@ -126,7 +133,9 @@
                     {% if running_participants|length > 0 %}
                         {% for participant in running_participants %}
                             <tr>
-                                <td>{{ participant.id }}</td>
+                                <td>{{ participant.user.id }}</td>
+                                <td>{{ participant.user.name }}</td>
+                                <td>{{ participant.running.name }}</td>
                                 <td>{{ participant.time ? participant.time|date('Y-m-d H:i:s') : '-' }}</td>
                                 <td>{{ participant.dorsal }}</td>
                                 <td>

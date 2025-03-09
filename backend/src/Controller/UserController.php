@@ -26,6 +26,16 @@ final class UserController extends AbstractController
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
+    // index symfony
+    #[Route('/index_s', name: 'app_users', methods: ['GET'])]
+    public function index_s(UserRepository $userRepository): Response
+    {
+        $users = $userRepository->findAll();
+        return $this->render('user/index.html.twig', [
+            'users' => $users,
+        ]);
+    }
+
 
     #[Route('/new', name: 'app_user_new', methods: ['POST'])]
     public function new(Request $request, EntityManagerInterface $entMngr, UserPasswordHasherInterface $userPassHash): JsonResponse
@@ -57,7 +67,7 @@ final class UserController extends AbstractController
                 $entMngr->remove($user);
                 $entMngr->flush();
 
-                return $this->json(['message' => 'Usuario eliminado'], Response::HTTP_OK);
+                return $this->json(true, Response::HTTP_OK);
             }
 
             return $this->json(['error' => 'Something went wrong, if you see this message, contact support.'], Response::HTTP_I_AM_A_TEAPOT);
@@ -74,30 +84,6 @@ final class UserController extends AbstractController
 
             if (isset($data['name'])) {
                 $user->setName($data['name']);
-            }
-
-            if (isset($data['email'])) {
-                $user->setEmail($data['email']);
-            }
-
-            if (isset($data['role'])) {
-                $user->setRoles($data['role']);
-            }
-
-            if (isset($data['banned'])) {
-                $user->setBanned($data['banned']);
-            }
-
-            if (isset($data['age'])) {
-                $user->setAge($data['age']);
-            }
-
-            if (isset($data['gender'])) {
-                $user->setGender($data['gender']);
-            }
-
-            if (isset($data['image'])) {
-                $user->setImage($data['image']);
             }
 
             if (isset($data['oldpassword']) && isset($data['newpassword'])) {

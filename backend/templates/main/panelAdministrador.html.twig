@@ -99,7 +99,6 @@
             padding: 20px;
             min-height: 400px;
         }
-
         .back-button {
             background: var(--secondary);
             border: none;
@@ -147,12 +146,12 @@
                     <a href="{{ path('app_running_index_s') }}" class="btn-admin">
                         <i class="fas fa-running"></i> Running
                     </a>
-                    {# <a href="{{ path('app_cycling_show_s') }}" class="btn-admin">
+                    <a href="{{ path('app_cycling_index_s') }}" class="btn-admin">
                         <i class="fas fa-bicycle"></i> Cycling
                     </a>
-                    <a href="{{ path('app_trail_show_s') }}" class="btn-admin">
+                    <a href="{{ path('app_trail_running_index_s') }}" class="btn-admin">
                         <i class="fas fa-mountain"></i> Trail
-                    </a> #}
+                    </a>
                 </div>
 
                 <div class="sport-group">
@@ -170,9 +169,9 @@
 
                 <div class="sport-group">
                     <h3 class="sport-category">Usuarios</h3>
-                    {# <a href="{{ path('app_users') }}" class="btn-admin">
+                    <a href="{{ path('app_users') }}" class="btn-admin">
                         <i class="fas fa-user-cog"></i> Gestionar Usuarios
-                    </a> #}
+                    </a>
                 </div>
             </div>
 
