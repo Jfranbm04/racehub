@@ -93,10 +93,11 @@ https://api.racehub.com
         { 
           "id": 1, 
           "email": "user@example.com", 
-          "roles": ["ROLE_USER"] }, 
-          "message": "Login successful" 
-        }
+          "roles": ["ROLE_USER"] 
+        }, 
+        "message": "Login successful" 
 }
+
 ```
 
 ### Logout
