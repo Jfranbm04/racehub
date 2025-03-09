@@ -1,39 +1,199 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}User index{% endblock %}
+{% block title %}Usuarios - Panel de Administración{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #003d5c;
+            --secondary: #007f80;
+            --accent: #ff6b6b;
+            --light: #f8f9fa;
+            --dark: #1b2631;
+        }
+
+        .admin-container {
+            display: grid;
+            grid-template-areas: 
+                "header"
+                "main";
+            grid-template-rows: auto 1fr;
+            min-height: 100vh;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        header {
+            grid-area: header;
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        main {
+            grid-area: main;
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .user-table th,
+        .user-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .user-table th {
+            background: var(--secondary);
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #c0392b);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+        }
+
+        .action-buttons a {
+            color: var(--primary);
+            margin: 0 5px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .action-buttons a:hover {
+            color: var(--accent);
+        }
+
+        .role-badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            background-color: var(--secondary);
+        }
+
+        .no-records {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--accent);
+            padding: 20px;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>User index</h1>
+    <div style="margin-bottom: 20px;">
+        <a href="{{ path('app_admin') }}" class="btn-primary">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
+    <div class="admin-container">
+        <header>
+            <h1 class="admin-title"><i class="fas fa-users"></i> Gestión de Usuarios</h1>
+            <a href="{{ path('app_register') }}" class="btn-primary">
+                <i class="fas fa-plus"></i> Nuevo Usuario
+            </a>
+        </header>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Email</th>
-                <th>Roles</th>
-                <th>Password</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
-                <td>{{ user.password }}</td>
-                <td>
-                    <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>
-                    <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <main>
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Edad</th>
+                        <th>Género</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if users|length > 0 %}
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.age }}</td>
+                                <td>{{ user.gender }}</td>
+                                <td>
+                                    <span class="role-badge">
+                                        {% if 'ROLE_ADMIN' in user.roles %}
+                                            Administrador
+                                        {% else %}
+                                            Usuario
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td class="action-buttons">
+                                    <a href="{{ path('app_user_show', {'id': user.id}) }}">
+                                        <i class="fas fa-eye"></i> Ver
+                                    </a>
+                                    <a href="{{ path('app_user_edit', {'id': user.id}) }}">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
+                                    <a href="#" onclick="if(confirm('¿Estás seguro de que deseas eliminar este usuario?')) { deleteUser('{{ user.id }}') }" style="color: #e74c3c;">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="no-records">No hay usuarios registrados</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </main>
+    </div>
 
-    <a href="{{ path('app_user_new') }}">Create new</a>
+    <script>
+        function deleteUser(id) {
+            fetch(`/api/user/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Error al eliminar el usuario');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al eliminar el usuario');
+            });
+        }
+    </script>
 {% endblock %}

@@ -30,6 +30,18 @@ final class TrailRunningParticipantController extends AbstractController
             }
         ]);
     }
+    // Index symfony
+    #[Route('/participant/index_s', name: 'app_trail_running_participant_index_s', methods: ['GET'])]
+    public function participant_index_s(TrailRunningParticipantRepository $trailRunningRepository): Response
+    {
+        $participants = $trailRunningRepository->findAll();
+
+        return $this->render('trail_running_participant/index.html.twig', [
+            'trail_running_participants' => $participants,
+        ]);
+    }
+
+
 
     #[Route('/new', name: 'app_trail_running_participant_new', methods: ['POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
@@ -48,20 +60,20 @@ final class TrailRunningParticipantController extends AbstractController
             $participant->setTrailRunning($trailRunning);
 
             //Set random dorsal
-            $dorsals = $trailRunning -> gettrailRunningParticipants() -> map(function ($participant){
-                return $participant -> getDorsal();
-            }) -> toArray();
+            $dorsals = $trailRunning->gettrailRunningParticipants()->map(function ($participant) {
+                return $participant->getDorsal();
+            })->toArray();
 
             // This code is shit but fuck it we ball
-            $dors = rand(1, $trailRunning -> getAvailableSlots() * 2);
-            for($i = 0; $i < sizeof($dorsals); $i++){
-                if($dors == $dorsals[$i]){
-                    $dors = rand(1, $trailRunning -> getAvailableSlots() * 2);
+            $dors = rand(1, $trailRunning->getAvailableSlots() * 2);
+            for ($i = 0; $i < sizeof($dorsals); $i++) {
+                if ($dors == $dorsals[$i]) {
+                    $dors = rand(1, $trailRunning->getAvailableSlots() * 2);
                     $i = 0;
                 }
                 break;
             }
-            $participant -> setDorsal($dors);
+            $participant->setDorsal($dors);
 
             $entityManager->persist($participant);
             $entityManager->flush();

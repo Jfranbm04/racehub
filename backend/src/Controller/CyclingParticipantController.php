@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse; 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -20,6 +20,15 @@ final class CyclingParticipantController extends AbstractController
     {
         $participants = $cyclingParticipantRepository->findAll();
         return $this->json($participants, Response::HTTP_OK, [], ['groups' => 'cycling_participant:read']);
+    }
+
+    // index symfony
+    #[Route('/index_s', name: 'app_cycling_participant_index_s', methods: ['GET'])]
+    public function index_s(CyclingParticipantRepository $cyclingParticipantRepository): Response
+    {
+        return $this->render('cycling_participant/index.html.twig', [
+            'cycling_participants' => $cyclingParticipantRepository->findAll(),
+        ]);
     }
 
     #[Route('/new', name: 'app_cycling_participant_new', methods: ['POST'])]
@@ -36,20 +45,20 @@ final class CyclingParticipantController extends AbstractController
             $participant->setCycling($cycling);
 
             //Set random dorsal
-            $dorsals = $cycling -> getCyclingParticipants() -> map(function ($participant){
-                return $participant -> getDorsal();
-            }) -> toArray();
+            $dorsals = $cycling->getCyclingParticipants()->map(function ($participant) {
+                return $participant->getDorsal();
+            })->toArray();
 
             // This code is shit but fuck it we ball
-            $dors = rand(1, $cycling -> getAvailableSlots() * 2);
-            for($i = 0; $i < sizeof($dorsals); $i++){
-                if($dors == $dorsals[$i]){
-                    $dors = rand(1, $cycling -> getAvailableSlots() * 2);
+            $dors = rand(1, $cycling->getAvailableSlots() * 2);
+            for ($i = 0; $i < sizeof($dorsals); $i++) {
+                if ($dors == $dorsals[$i]) {
+                    $dors = rand(1, $cycling->getAvailableSlots() * 2);
                     $i = 0;
                 }
                 break;
             }
-            $participant -> setDorsal($dors);
+            $participant->setDorsal($dors);
 
             $entityManager->persist($participant);
             $entityManager->flush();
