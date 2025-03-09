@@ -28,6 +28,7 @@ final class TrailRunningController extends AbstractController
             'trail_runnings' => $trailRunnings
         ]);
     }
+    
     // Index symfony
     #[Route('/index_s', name: 'app_trail_running_index_s', methods: ['GET'])]
     public function index_s(EntityManagerInterface $entityManager, TrailRunningRepository $trailRunningRepository): Response
@@ -37,6 +38,7 @@ final class TrailRunningController extends AbstractController
             'trail_runnings' => $trailRunnings,
         ]);
     }
+    
     #[Route('/new', name: 'app_trailrunning_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -56,7 +58,6 @@ final class TrailRunningController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
 
     #[Route('/{id}', name: 'app_trail_running_show', methods: ['GET'])]
     public function show(TrailRunning $trailRunning): JsonResponse
