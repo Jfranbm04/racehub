@@ -66,11 +66,6 @@ symfony server:start
 
 ## API Documentation
 
-### Base URL
-```
-https://api.racehub.com
-```
-
 ## Authentication
 
 ### Login
@@ -306,7 +301,6 @@ https://api.racehub.com
 ## Support
 - Issues: GitHub Issues
 - Email: support@racehub.com
-- Documentation: [Link to detailed documentation]
 
 **Last Updated:** 2025  
 **Version:** 1.0.0
