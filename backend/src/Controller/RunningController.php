@@ -155,10 +155,16 @@ final class RunningController extends AbstractController
     public function delete(Running $running, EntityManagerInterface $entityManager): JsonResponse
     {
         try {
+            // Primero eliminamos los participantes asociados
+            foreach ($running->getRunningParticipants() as $participant) {
+                $entityManager->remove($participant);
+            }
+
+            // Luego eliminamos la carrera
             $entityManager->remove($running);
             $entityManager->flush();
 
-            return $this->json(null, Response::HTTP_NO_CONTENT);
+            return $this->json(true, Response::HTTP_OK);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
@@ -184,7 +190,7 @@ final class RunningController extends AbstractController
         return $this->render('main/index.html.twig');
     }
 
-    #[Route('/{id}', name: 'app_running_delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'app_running_delete_s', methods: ['DELETE'])]
     public function delete_s(Running $running, EntityManagerInterface $entityManager): Response
     {
         $entityManager->remove($running);
