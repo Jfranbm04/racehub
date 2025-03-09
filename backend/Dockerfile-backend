@@ -48,6 +48,7 @@ RUN chmod -R 777 /var/www/html/var
 
 # Copy and set permissions for entrypoint
 COPY entrypoint.sh /var/www/html/entrypoint.sh
+RUN dos2unix /var/www/html/entrypoint.sh
 RUN chmod +x /var/www/html/entrypoint.sh
 
 # Expose port
