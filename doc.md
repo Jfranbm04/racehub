@@ -172,7 +172,8 @@ symfony server:start
 ```json
 [ 
   { 
-    "id": 1, "name": "Tour de Example", 
+    "id": 1, 
+    "name": "Tour de Example", 
     "description": "Annual cycling event", 
     "date": "2024-06-15T09:00:00Z", 
     "distance_km": 150, 
