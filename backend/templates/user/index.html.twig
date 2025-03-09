@@ -159,7 +159,7 @@
                                     <a href="{{ path('app_user_show', {'id': user.id}) }}">
                                         <i class="fas fa-eye"></i> Ver
                                     </a>
-                                    <a href="{{ path('app_user_edit', {'id': user.id}) }}">
+                                    <a href="{{ path('app_user_edit_s', {'id': user.id}) }}">
                                         <i class="fas fa-edit"></i> Editar
                                     </a>
                                     <a href="#" onclick="if(confirm('¿Estás seguro de que deseas eliminar este usuario?')) { deleteUser('{{ user.id }}') }" style="color: #e74c3c;">

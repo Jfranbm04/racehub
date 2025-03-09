@@ -33,12 +33,6 @@ final class RunningController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_running_show', methods: ['GET'])]
-    public function show(Running $running): JsonResponse
-    {
-        return $this->json($running, Response::HTTP_OK, [], ['groups' => 'running:read']);
-    }
-
     #[Route('/new', name: 'app_running_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -60,7 +54,11 @@ final class RunningController extends AbstractController
         ]);
     }
 
-
+    #[Route('/{id}', name: 'app_running_show', methods: ['GET'])]
+    public function show(Running $running): JsonResponse
+    {
+        return $this->json($running, Response::HTTP_OK, [], ['groups' => 'running:read']);
+    }
 
     // // Muestra la vista para crear una nueva carrera
     // #[Route('/newView', name: 'app_running_start', methods: ['GET', 'POST'])]
@@ -139,25 +137,21 @@ final class RunningController extends AbstractController
         }
     }
 
-    #[Route('/{id}/edit_s', name: 'app_running_edit', methods: ['PUT'])]
+    #[Route('/{id}/edit_s', name: 'app_running_edit_s', methods: ['GET', 'POST'])]
     public function edit_s(Request $request, Running $running, EntityManagerInterface $entityManager): Response
     {
-        $running->setName($request->request->get('name'));
-        $running->setDescription($request->request->get('description'));
-        $running->setDate(new \DateTime($request->request->get('date')));
-        $running->setDistanceKm($request->request->get('distance_km'));
-        $running->setLocation($request->request->get('location'));
-        $running->setCoordinates($request->request->get('coordinates'));
-        $running->setEntryFee($request->request->get('entry_fee'));
-        $running->setAvailableSlots($request->request->get('available_slots'));
-        $running->setStatus($request->request->get('status'));
-        $running->setCategory($request->request->get('category'));
-        $running->setImage($request->request->get('image'));
+        $form = $this->createForm(RunningType::class, $running);
+        $form->handleRequest($request);
 
-        $entityManager->persist($running);
-        $entityManager->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            return $this->redirectToRoute('app_running_index_s');
+        }
 
-        return $this->redirectToRoute('app_running_show', ['id' => $running->getId()]);
+        return $this->render('running/edit.html.twig', [
+            'running' => $running,
+            'form' => $form,
+        ]);
     }
 
 
@@ -207,25 +201,25 @@ final class RunningController extends AbstractController
     // }
 
 
-    #[Route('/{id}/edit_s', name: 'app_running_status', methods: ['PUT'])]
-    public function running_s(Request $request, Running $running, EntityManagerInterface $entityManager): Response
-    {
-        $running->setName($request->request->get('name'));
-        $running->setDescription($request->request->get('description'));
-        $running->setDate(new \DateTime($request->request->get('date')));
-        $running->setDistanceKm($request->request->get('distance_km'));
-        $running->setLocation($request->request->get('location'));
-        $running->setCoordinates($request->request->get('coordinates'));
-        $running->setEntryFee($request->request->get('entry_fee'));
-        $running->setAvailableSlots($request->request->get('available_slots'));
-        $running->setCategory($request->request->get('category'));
-        $running->setImage($request->request->get('image'));
+    // #[Route('/{id}/edit_s', name: 'app_running_status', methods: ['PUT'])]
+    // public function running_s(Request $request, Running $running, EntityManagerInterface $entityManager): Response
+    // {
+    //     $running->setName($request->request->get('name'));
+    //     $running->setDescription($request->request->get('description'));
+    //     $running->setDate(new \DateTime($request->request->get('date')));
+    //     $running->setDistanceKm($request->request->get('distance_km'));
+    //     $running->setLocation($request->request->get('location'));
+    //     $running->setCoordinates($request->request->get('coordinates'));
+    //     $running->setEntryFee($request->request->get('entry_fee'));
+    //     $running->setAvailableSlots($request->request->get('available_slots'));
+    //     $running->setCategory($request->request->get('category'));
+    //     $running->setImage($request->request->get('image'));
 
-        $entityManager->persist($running);
-        $entityManager->flush();
+    //     $entityManager->persist($running);
+    //     $entityManager->flush();
 
-        return $this->render('main/index.html.twig');
-    }
+    //     return $this->render('main/index.html.twig');
+    // }
 
     #[Route('/{id}', name: 'app_running_delete_s', methods: ['DELETE'])]
     public function delete_s(Running $running, EntityManagerInterface $entityManager): Response
