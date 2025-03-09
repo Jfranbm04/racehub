@@ -303,9 +303,6 @@ https://api.racehub.com
 - Write unit tests
 - Document new features
 
-## License
-[Your License]
-
 ## Support
 - Issues: GitHub Issues
 - Email: support@racehub.com
