@@ -16,7 +16,9 @@
 
         .admin-container {
             display: grid;
-            grid-template-areas: "header" "main";
+            grid-template-areas: 
+                "header"
+                "main";
             grid-template-rows: auto 1fr;
             min-height: 100vh;
             padding: 20px;
@@ -28,7 +30,7 @@
             background: var(--light);
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -39,7 +41,7 @@
             background: var(--light);
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         .event-table {
@@ -97,10 +99,11 @@
             font-weight: bold;
         }
 
-        .image-thumbnail {
-            max-width: 80px;
-            height: auto;
-            border-radius: 4px;
+        .no-records {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--accent);
+            padding: 20px;
         }
 
         .status-select {
@@ -134,92 +137,104 @@
     </div>
     <div class="admin-container">
         <header>
-            <h1 class="admin-title">
-                <i class="fas fa-bicycle"></i>
-                Eventos de Cycling
-            </h1>
+            <h1 class="admin-title"><i class="fas fa-bicycle"></i> Eventos de Ciclismo</h1>
             <a href="{{ path('app_cycling_new') }}" class="btn-primary">
-                <i class="fas fa-plus"></i>
-                Nuevo Evento
+                <i class="fas fa-plus"></i> Nuevo Evento
             </a>
         </header>
 
         <main>
             <table class="event-table">
-               <thead>
+                <thead>
                     <tr>
-                        <th>Id</th>
+                        <th>ID</th>
                         <th>Nombre</th>
-                        <th>Descripción</th>
                         <th>Fecha</th>
-                        <th>Distancia (km)</th>
                         <th>Ubicación</th>
-                        <th>Coordenadas</th>
+                        <th>Distancia</th>
                         <th>Desnivel</th>
-                        <th>Precio</th>
-                        <th>Plazas disponibles</th>
+                        <th>Cuota</th>
+                        <th>Plazas</th>
                         <th>Estado</th>
                         <th>Categoría</th>
-                        <th>Imagen</th>
+                        <th>Género</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for cycling in cyclings %}
-                        <tr>
-                            <td>{{ cycling.id }}</td>
-                            <td>{{ cycling.name }}</td>
-                            <td>{{ cycling.description }}</td>
-                            <td>{{ cycling.date ? cycling.date|date('Y-m-d H:i:s') : '' }}</td>
-                            <td>{{ cycling.distanceKm }}</td>
-                            <td>{{ cycling.location }}</td>
-                            <td>{{ cycling.coordinates }}</td>
-                            <td>{{ cycling.unevenness }}</td>
-                            <td>{{ cycling.entryFee }}</td>
-                            <td>{{ cycling.availableSlots }}</td>
-                            <td>
-                                <span class="status-badge" style="background-color:
-                                    {% if cycling.status == 'open' %}#2ecc71;
-                                    {% elseif cycling.status == 'closed' %}#f1c40f;
-                                    {% elseif cycling.status == 'completed' %}#e74c3c;
-                                    {% else %}#95a5a6;
-                                    {% endif %}">
-                                    {{ cycling.status|capitalize }}
-                                </span>
-                            </td>
-                            <td>{{ cycling.category ?: 'N/A' }}</td>
-                            <td>
-                                {% if cycling.image %}
-                                    <img src="{{ asset('uploads/' ~ cycling.image) }}" alt="{{ cycling.name }}" class="image-thumbnail">
-                                {% else %}
-                                    <span>Sin imagen</span>
-                                {% endif %}
-                            </td>
-                            <td class="action-buttons">
-                                <a href="{{ path('app_cycling_show', {'id': cycling.id}) }}">
-                                    <i class="fas fa-eye"></i>
-                                    Ver
-                                </a>
-                                <a href="{{ path('app_cycling_edit', {'id': cycling.id}) }}">
-                                    <i class="fas fa-edit"></i>
-                                    Editar
-                                </a>
-                                <form method="post" action="{{ path('app_cycling_delete', {'id': cycling.id}) }}" onsubmit="return confirm('¿Estás seguro que deseas eliminar este evento?');" style="display: inline;">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ cycling.id) }}">
-                                    <button class="btn-link" style="color: var(--accent); border: none; background: none; cursor: pointer; font-weight: 600; padding: 0; margin: 0 5px;">
-                                        <i class="fas fa-trash"></i>
-                                        Eliminar
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
+                    {% if cyclings|length > 0 %}
+                        {% for cycling in cyclings %}
+                            <tr>
+                                <td>{{ cycling.id }}</td>
+                                <td>{{ cycling.name }}</td>
+                                <td>{{ cycling.date|date('d/m/Y H:i') }}</td>
+                                <td>{{ cycling.location }}</td>
+                                <td>{{ cycling.distanceKm }} km</td>
+                                <td>{{ cycling.unevenness }} m</td>
+                                <td>{{ cycling.entryFee ? cycling.entryFee ~ '€'  : 'Gratis' }}</td>
+                                <td>{{ cycling.availableSlots }}</td>
+                                <td>
+                                    <span class="status-badge" style="background-color: 
+                                        {% if cycling.status == 'open' %}#2ecc71;
+                                        {% elseif cycling.status == 'closed' %}#f1c40f;
+                                        {% elseif cycling.status == 'completed' %}#e74c3c;
+                                        {% else %}#95a5a6;
+                                        {% endif %}">
+                                        {{ cycling.status|capitalize }}
+                                    </span>
+                                </td>
+                                <td>{{ cycling.category ?: 'N/A' }}</td>
+                                <td>
+                                    {% if cycling.gender == 'T' %}
+                                        Todos
+                                    {% elseif cycling.gender == 'M' %}
+                                        Masculino
+                                    {% elseif cycling.gender == 'F' %}
+                                        Femenino
+                                    {% else %}
+                                        Mixto
+                                    {% endif %}
+                                </td>
+                                <td class="action-buttons">
+                                    <a href="{{ path('app_cycling_show', {'id': cycling.id}) }}">
+                                        <i class="fas fa-eye"></i> Ver
+                                    </a>
+                                    <a href="{{ path('app_cycling_edit', {'id': cycling.id}) }}">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
+                                    <form action="{{ path('app_cycling_delete_s', {'id': cycling.id}) }}" method="post" style="display: inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta carrera?')">
+                                        <button type="submit" style="background: none; border: none; color: #e74c3c; cursor: pointer; font-weight: 600;">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="14">No hay eventos registrados</td>
+                            <td colspan="11" class="no-records">No hay eventos registrados</td>
                         </tr>
-                    {% endfor %}
+                    {% endif %}
                 </tbody>
             </table>
         </main>
     </div>
+    <script>
+        function deleteCycling(id) {
+            fetch(`/api/cycling/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Error al eliminar la carrera');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al eliminar la carrera');
+            });
+        }
+    </script>
 {% endblock %}

@@ -161,7 +161,7 @@
                         <th>Plazas</th>
                         <th>Estado</th>
                         <th>Categoría</th>
-                        <th>Imagen</th>
+                        <th>Género</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -188,19 +188,21 @@
                                 </td>
                                 <td>{{ running.category ?: 'N/A' }}</td>
                                 <td>
-                                    {% if running.image %}
-                                        <img src="{{ asset('uploads/' ~ running.image) }}" 
-                                             alt="{{ running.name }}" 
-                                             class="image-thumbnail">
+                                    {% if running.gender == 'T' %}
+                                        Todos
+                                    {% elseif running.gender == 'M' %}
+                                        Masculino
+                                    {% elseif running.gender == 'F' %}
+                                        Femenino
                                     {% else %}
-                                        <span>Sin imagen</span>
+                                        Mixto
                                     {% endif %}
                                 </td>
                                 <td class="action-buttons">
                                     <a href="{{ path('app_running_show', {'id': running.id}) }}">
                                         <i class="fas fa-eye"></i> Ver
                                     </a>
-                                    <a href="{{ path('app_running_edit', {'id': running.id}) }}">
+                                    <a href="{{ path('app_running_edit_s', {'id': running.id}) }}">
                                         <i class="fas fa-edit"></i> Editar
                                     </a>
                                     <a href="#" onclick="if(confirm('¿Estás seguro de que deseas eliminar esta carrera?')) { deleteRunning('{{ running.id }}') }" style="color: #e74c3c;">

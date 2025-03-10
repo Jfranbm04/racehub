@@ -38,9 +38,11 @@ class RunningType extends AbstractType
             ->add('image', TextType::class)
             ->add('gender', ChoiceType::class, [
                 'choices' => [
-                    'Male' => 'M',
-                    'Female' => 'F'
+                    'Todos' => 'T',
+                    'Masculino' => 'M',
+                    'Femenino' => 'F'
                 ],
+                'label' => 'Género',
                 'required' => true
             ])
         ;

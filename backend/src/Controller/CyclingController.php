@@ -121,7 +121,7 @@ final class CyclingController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'app_cycling_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'app_cycling_delete_s', methods: ['POST'])]
     public function delete_s(Request $request, Cycling $cycling, EntityManagerInterface $entityManager): Response
     {
         // Eliminar todos los participantes asociados a esta carrera
