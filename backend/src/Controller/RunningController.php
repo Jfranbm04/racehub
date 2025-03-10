@@ -53,26 +53,27 @@ final class RunningController extends AbstractController
         return $this->json($running, Response::HTTP_OK, [], ['groups' => 'running:read']);
     }
 
-    #[Route('/new', name: 'app_running_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $running = new Running();
-        $form = $this->createForm(RunningType::class, $running);
-        $form->handleRequest($request);
+    // Fernando: Esto supongo que es de hacer el merge de main 3 a main como no lo necesito lo voy a comentar
+    // #[Route('/new', name: 'app_running_new', methods: ['GET', 'POST'])]
+    // public function new(Request $request, EntityManagerInterface $entityManager): Response
+    // {
+    //     $running = new Running();
+    //     $form = $this->createForm(RunningType::class, $running);
+    //     $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $running->setStatus('open');
-            $entityManager->persist($running);
-            $entityManager->flush();
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         $running->setStatus('open');
+    //         $entityManager->persist($running);
+    //         $entityManager->flush();
 
-            return $this->redirectToRoute('app_running_index', [], Response::HTTP_SEE_OTHER);
-        }
+    //         return $this->redirectToRoute('app_running_index', [], Response::HTTP_SEE_OTHER);
+    //     }
 
-        return $this->render('running/new.html.twig', [
-            'running' => $running,
-            'form' => $form,
-        ]);
-    }
+    //     return $this->render('running/new.html.twig', [
+    //         'running' => $running,
+    //         'form' => $form,
+    //     ]);
+    // }
 
     // Creo la funcion guardarcarrera
     #[Route('/guardarcarrera', name: 'app_running_guardar_carrera', methods: ['POST'])]
