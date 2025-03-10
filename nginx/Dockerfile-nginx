@@ -5,6 +5,7 @@ FROM nginx:latest
 # Install required packages
 RUN apt-get update && apt-get install -y \
     openssl \
+    dos2unix \
     && rm -rf /var/lib/apt/lists/*
 
 # Create necessary directories
@@ -30,6 +31,7 @@ RUN chown -R nginx:nginx /var/run/php && \
     chmod -R 755 /var/run/php
 
 COPY certs.sh /certs.sh
+RUN dos2unix /var/run/
 RUN chmod +x /certs.sh
 EXPOSE 80
 
