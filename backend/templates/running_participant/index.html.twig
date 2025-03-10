@@ -152,6 +152,9 @@
                                     <a href="{{ path('app_running_participant_edit', {'id': participant.id}) }}">
                                         <i class="fas fa-edit"></i> Editar
                                     </a>
+                                    <a href="#" onclick="if(confirm('¿Estás seguro de que deseas eliminar este participante?')) { deleteParticipant('{{ participant.id }}') }" style="color: #e74c3c;">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -164,4 +167,22 @@
             </table>
         </main>
     </div>
+    <script>
+        function deleteParticipant(id) {
+            fetch(`/api/running_participant/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Error al eliminar el participante');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al eliminar el participante');
+            });
+        }
+    </script>
 {% endblock %}

@@ -52,6 +52,10 @@ class LoginController extends AbstractController
             $user->setBanned(0);
             $user->setRoles(['ROLE_USER']);
             $user->setPassword($userPasswordHasher->hashPassword($user, $password));
+            // Generate unique identicon based on user data
+            $uniqueString = $user->getEmail() . $user->getName();
+            $hash = md5($uniqueString);
+            $user->setImage("https://identicon.02420.dev/" . $hash . "/500x500?format=png");
 
             // Generate unique identicon based on user data
             $uniqueString = $user->getEmail() . $user->getName();

@@ -1,11 +1,26 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New CyclingParticipant{% endblock %}
+{% block title %}New Cycling Participant{% endblock %}
 
 {% block body %}
-    <h1>Create new CyclingParticipant</h1>
+    <div style="margin-bottom: 20px;">
+        <a href="{{ path('app_cycling_participant_index_s') }}" class="btn-primary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
 
-    {{ include('cycling_participant/_form.html.twig') }}
+    <div class="admin-container">
+        <header>
+            <h1 class="admin-title"><i class="fas fa-bicycle"></i> New Cycling Participant</h1>
+        </header>
 
-    <a href="{{ path('app_cycling_participant_index') }}">back to list</a>
+        <main>
+            {{ form_start(form) }}
+                {{ form_widget(form) }}
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-save"></i> Save
+                </button>
+            {{ form_end(form) }}
+        </main>
+    </div>
 {% endblock %}

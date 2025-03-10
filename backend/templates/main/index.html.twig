@@ -32,7 +32,7 @@
         }
 
         nav {
-            z-index: 1;
+            z-index: 2;
             top: 0;
             position: sticky;
             display: flex;
@@ -67,6 +67,11 @@
             letter-spacing: .6rem;
         }
 
+        .icono_nav {
+            width: 4rem;
+            height: 3rem;
+        }
+
         nav ul {
             display: flex;
             flex-flow: row;
@@ -77,7 +82,7 @@
             margin-right: 3rem;
         }
 
-        nav li a {
+        nav a {
             font-family: "Madimi One";
             color: whitesmoke;
             text-decoration: none;
@@ -85,7 +90,7 @@
             transition: .2s;
         }
 
-        nav li a::after {
+        nav a::after {
             content: "";
             width: 0px;
             height: 2px;
@@ -94,14 +99,11 @@
             transition: .2s;
         }
 
-        nav li a:hover::after {
+        nav a:hover::after {
             width: 100%;
         }
 
-        nav li a:hover {
-            font-weight: bold;
-            font-size: 1.45rem;
-        }
+        
 
         nav .btn {
             text-decoration: none;
@@ -182,7 +184,7 @@
 
         .logo img {
             filter: brightness(.7);
-            height: 40rem;
+            height: 30rem;
             margin-bottom: 1rem;
         }
 
@@ -233,6 +235,96 @@
             padding: 1rem;
             flex-basis: 33%;
         }
+        .about-section {
+        text-align: center;
+        padding: 4rem 0;
+        max-width: 1200px;
+        margin: 0 auto;
+        color: var(--secondary-color);
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 1px 1px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 3px 3px;
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .stats-section {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .stat-card h3 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+
+        .testimonials {
+            padding: 4rem 0;
+            background-color: whitesmoke;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .testimonial-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 8px;
+        }
+
+        .testimonial-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            text-align: center;
+            color: var(--secondary-color);
+            margin-bottom: 2rem;
+            font-family: "Madimi One";
+        }
     </style>
 {% endblock %}
 
@@ -240,11 +332,7 @@
     <!-- Barra de navegación -->
     <nav>
         <div>
-            <ul>
-                <li><a href="#">HOME</a></li>
-                <li><a href="#">RACES</a></li>
-                <li><a href="#">ABOUT US</a></li>
-            </ul>
+            <a href="#"><img src="{{ asset('images/racehub.png') }}" alt="Logo" class = "icono_nav"></a>
         </div>
         <div class="nav_logo">RACEHUB</div>
         <div>
@@ -259,8 +347,7 @@
             <div class="backgrounds"></div>
             <div class="content">
                 <div class="logo">
-                    {# Actualizado: resources/images → images #}
-                    <img src="{{ asset('images/bike.png') }}" alt="Logo">
+                    <img src="{{ asset('images/racehub.png') }}" alt="Logo">
                 </div>
                 <h1>¡Bienvenido a RaceHub!</h1>
                 <p>Descubre las mejores carreras y eventos deportivos...</p>
@@ -270,6 +357,11 @@
 
     <!-- Sección de información -->
     <main>
+        <section class="about-section">
+            <h2 class="section-title">¿Qué es RaceHub?</h2>
+            <p>RaceHub es tu plataforma integral para eventos deportivos al aire libre. Conectamos a deportistas, organizadores y entusiastas del deporte.</p>
+        </section>
+
         <div class="companyInfo">
             <div>
                 <img src="{{ asset('images/running-run.svg') }}" alt="Información">
@@ -287,12 +379,70 @@
                 <p>Explora senderos y caminos desafiantes con nuestros eventos de trail running.</p>
             </div>
         </div>
+
+        <section class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-calendar-alt"></i>
+                <h4>Eventos Todo el Año</h4>
+                <p>Calendario actualizado con los mejores eventos deportivos en toda España</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-users"></i>
+                <h4>Comunidad Activa</h4>
+                <p>Participa en actividades y comparte experiencias</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-medal"></i>
+                <h4>Superación Diaria</h4>
+                <p>Mantente en forma con carreras nuevas todos los días</p>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <h2 class="section-title" style="color: white;">RaceHub en Números</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>1000+</h3>
+                    <p>Eventos Realizados</p>
+                </div>
+                <div class="stat-card">
+                    <h3>50K+</h3>
+                    <p>Participantes</p>
+                </div>
+                <div class="stat-card">
+                    <h3>100+</h3>
+                    <p>Organizadores</p>
+                </div>
+                <div class="stat-card">
+                    <h3>15+</h3>
+                    <p>Provincias</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonials">
+            <h2 class="section-title">Lo que dicen nuestros usuarios</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <h4>María García</h4>
+                    <p>"RaceHub ha transformado mi experiencia en carreras. ¡Ahora puedo encontrar todos los eventos en un solo lugar!"</p>
+                </div>
+                <div class="testimonial-card">
+                    <h4>Carlos Martínez</h4>
+                    <p>"Como organizador, la plataforma me facilita enormemente la gestión de eventos."</p>
+                </div>
+                <div class="testimonial-card">
+                    <h4>Laura Sánchez</h4>
+                    <p>"La comunidad es increíble. He conocido a muchos compañeros de entrenamiento gracias a RaceHub."</p>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Pie de página -->
     <footer>
-        <div>1234, Street name. City</div>
-        <div style="text-align: center;">RaceHub (C) 2025. All rights reserved</div>
+        <div>18001, Granada </div>
+        <div style="text-align: center;">RaceHub (C) 2025. Todos los derechos reservados</div>
         <div></div>
     </footer>
 
