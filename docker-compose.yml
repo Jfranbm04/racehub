@@ -62,6 +62,48 @@ services:
     networks:
       - network_racehub
 
+  # Your existing services remain unchanged
+
+  # Add React frontend services
+  # running-frontend:
+  #   image: node:18-alpine
+  #   working_dir: /app
+  #   volumes:
+  #     - ./running:/app
+  #   ports:
+  #     - "5173:5173"
+  #   command: sh -c "npm install && npm run dev -- --host --port 5173"
+  #   environment:
+  #     - VITE_API_URL=http://localhost:81/api
+  #   networks:
+  #     - network_racehub
+
+  # cycling-frontend:
+  #   image: node:18-alpine
+  #   working_dir: /app
+  #   volumes:
+  #     - ./cycling:/app
+  #   ports:
+  #     - "5174:5173"
+  #   command: sh -c "npm install && npm run dev -- --host --port 5173"
+  #   environment:
+  #     - VITE_API_URL=http://localhost:81/api
+  #   networks:
+  #     - network_racehub
+
+  # trail-frontend:
+  #   image: node:18-alpine
+  #   working_dir: /app
+  #   volumes:
+  #     - ./trailrunning:/app
+  #   ports:
+  #     - "5175:5173"
+  #   command: sh -c "npm install && npm run dev -- --host --port 5173"
+  #   environment:
+  #     - VITE_API_URL=http://localhost:81/api
+  #   networks:
+  #     - network_racehub
+
 networks:
   network_racehub:
     driver: bridge
