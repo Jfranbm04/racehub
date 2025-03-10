@@ -23,8 +23,7 @@ final class RunningController extends AbstractController
         $runnings = $runningRepository->findAll();
         return $this->json($runnings, Response::HTTP_OK, [], ['groups' => 'running:read']);
     }
-
-    // Muestra la lista de carreras
+    // Index symfony
     #[Route('/index_s', name: 'app_running_index_s', methods: ['GET'])]
     public function index_s(EntityManagerInterface $entityManager, RunningRepository $runningRepository): Response
     {
@@ -34,25 +33,6 @@ final class RunningController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_running_show', methods: ['GET'])]
-    public function show(Running $running): JsonResponse
-    {
-        return $this->json($running, Response::HTTP_OK, [], ['groups' => 'cycling:read']);
-    }
-  
-    // Muestra la vista para crear una nueva carrera
-    #[Route('/newView', name: 'app_running_start', methods: ['GET'])]
-    public function start(): Response
-    {
-        return $this->render('running/new.html.twig');
-    }
-
-    #[Route('/new', name: 'app_running_new', methods: ['POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
-    {
-        return $this->json($running, Response::HTTP_OK, [], ['groups' => 'running:read']);
-    }
-  
     #[Route('/new', name: 'app_running_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -102,32 +82,34 @@ final class RunningController extends AbstractController
     // }
 
     // Creo la funcion guardarcarrera
-    #[Route('/guardarcarrera', name: 'app_running_guardar_carrera', methods: ['POST'])]
-    public function guardarCarrera(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        // Crear una nueva instancia de Running
-        $running = new Running();
+    // #[Route('/guardarcarrera', name: 'app_running_guardar_carrera', methods: ['POST'])]
+    // public function guardarCarrera(Request $request, EntityManagerInterface $entityManager): Response
+    // {
+    //     // Crear una nueva instancia de Running
+    //     $running = new Running();
 
-        // Asignar valores desde el formulario
-        $running->setName($request->request->get('name'));
-        $running->setDescription($request->request->get('description'));
-        $running->setDate(new \DateTime($request->request->get('date')));
-        $running->setDistanceKm((int) $request->request->get('distance_km'));
-        $running->setLocation($request->request->get('location'));
-        $running->setCoordinates($request->request->get('coordinates'));
-        $running->setEntryFee((int) $request->request->get('entry_fee'));
-        $running->setAvailableSlots((int) $request->request->get('available_slots'));
-        $running->setCategory($request->request->get('category'));
-        $running->setImage($request->request->get('image'));
-        $running->setStatus($request->request->get('status'));
+    //     // Asignar valores desde el formulario
+    //     $running->setName($request->request->get('name'));
+    //     $running->setDescription($request->request->get('description'));
+    //     $running->setDate(new \DateTime($request->request->get('date')));
+    //     $running->setDistanceKm((int) $request->request->get('distance_km'));
+    //     $running->setLocation($request->request->get('location'));
+    //     $running->setCoordinates($request->request->get('coordinates'));
+    //     $running->setEntryFee((int) $request->request->get('entry_fee'));
+    //     $running->setAvailableSlots((int) $request->request->get('available_slots'));
+    //     $running->setCategory($request->request->get('category'));
+    //     $running->setImage($request->request->get('image'));
+    //     $running->setStatus($request->request->get('status'));
 
-        // Guardar la entidad en la base de datos
-        $entityManager->persist($running);
-        $entityManager->flush();
+    //     // Guardar la entidad en la base de datos
+    //     $entityManager->persist($running);
+    //     $entityManager->flush();
 
-        // Redirigir al usuario a una página de confirmación o listado
-        return $this->redirectToRoute('app_running_index');
-    }
+    //     // Redirigir al usuario a una página de confirmación o listado
+    //     return $this->redirectToRoute('app_running_index');
+    // }
+
+
 
     #[Route('/{id}/status', name: 'app_running_status', methods: ['POST'])]
     public function updateStatus(Request $request, Running $running, EntityManagerInterface $entityManager): Response
