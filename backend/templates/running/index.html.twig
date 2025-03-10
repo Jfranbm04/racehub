@@ -200,7 +200,7 @@
                                     <a href="{{ path('app_running_show', {'id': running.id}) }}">
                                         <i class="fas fa-eye"></i> Ver
                                     </a>
-                                    <a href="{{ path('app_running_edit', {'id': running.id}) }}">
+                                    <a href="{{ path('app_running_edit_s', {'id': running.id}) }}">
                                         <i class="fas fa-edit"></i> Editar
                                     </a>
                                     <a href="#" onclick="if(confirm('¿Estás seguro de que deseas eliminar esta carrera?')) { deleteRunning('{{ running.id }}') }" style="color: #e74c3c;">
