@@ -24,9 +24,7 @@ final class TrailRunningController extends AbstractController
     {
         $trailRunnings = $trailRunningRepository->findAll();
 
-        return $this->render('trail_running/index.html.twig', [
-            'trail_runnings' => $trailRunnings
-        ]);
+        return $this->json($trailRunnings, Response::HTTP_OK, [], ['groups' => 'trail_running:read']);
     }
     // Index symfony
     #[Route('/index_s', name: 'app_trail_running_index_s', methods: ['GET'])]
