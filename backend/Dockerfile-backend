@@ -1,0 +1,59 @@
+FROM php:8.2-fpm
+
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    libicu-dev \
+    openssl \
+    acl \
+    dos2unix \
+    && docker-php-ext-install pdo pdo_mysql
+
+# Cambiar el usuario www-data para que tenga UID y GID específicos
+RUN usermod -u 1000 www-data \
+    && groupmod -g 1000 www-data
+
+# Copiar los archivos de la aplicación y asignar los permisos correctos
+COPY --chown=www-data:www-data . /var/www/html/
+
+# Cambiar los permisos para los archivos y directorios públicos
+RUN chmod -R 755 /var/www/html/public
+
+# Establecer el usuario a www-data para la ejecución de la aplicación
+USER root
+
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+# COPY . .
+# Instalar dependencias con Composer
+# RUN composer require symfony/orm-pack doctrine/doctrine-bundle doctrine/dbal api \
+#     && composer install --no-dev --optimize-autoloader \
+#     && php bin/console cache:clear --no-warmup || true
+
+RUN composer install --no-dev --optimize-autoloader \
+    && php bin/console cache:clear --no-warmup || true
+# RUN rm -rf /var/lib/api/lists/*
+# Ejecutar migraciones en una sola capa
+# RUN php bin/console doctrine:database:create
+RUN php bin/console doctrine:migrations:diff --no-interaction || true \
+    # && php bin/console doctrine:migrations:migrate --no-interaction || true
+    && rm -rf var/cache/* || true \
+    && mkdir -p var/cache && chmod 777 var/cache
+
+# Establecer permisos para el directorio var
+RUN chmod -R 777 /var/www/html/var
+
+# Copy and set permissions for entrypoint
+COPY entrypoint.sh /var/www/html/entrypoint.sh
+RUN dos2unix /var/www/html/entrypoint.sh
+RUN chmod +x /var/www/html/entrypoint.sh
+
+# Expose port
+EXPOSE 8000
+# CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+# Use the entrypoint script
+ENTRYPOINT ["/var/www/html/entrypoint.sh"]
+

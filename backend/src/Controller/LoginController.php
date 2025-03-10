@@ -13,19 +13,19 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class LoginController extends AbstractController
 {
-    #[Route(path: '/login', name: 'app_login')]
+    #[Route(path: '/login', name: 'app_login', methods: ['GET', 'POST'])]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_main');
+        }
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        return $this->render('main/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 
     #[Route('/register', name: 'app_register', methods: ['GET'])]
@@ -57,11 +57,16 @@ class LoginController extends AbstractController
             $hash = md5($uniqueString);
             $user->setImage("https://identicon.02420.dev/" . $hash . "/500x500?format=png");
 
+            // Generate unique identicon based on user data
+            $uniqueString = $user->getEmail() . $user->getName();
+            $hash = md5($uniqueString);
+            $user->setImage("https://identicon.02420.dev/" . $hash . "/500x500?format=png");
+
             $entityManager->persist($user);
             $entityManager->flush();
 
             $this->addFlash('success', 'Usuario registrado correctamente');
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login_view');
         } catch (\Exception $e) {
             $this->addFlash('error', 'Error al registrar el usuario');
             return $this->redirectToRoute('app_register');
